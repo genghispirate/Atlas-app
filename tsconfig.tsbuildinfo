@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/Globe.tsx","./src/components/MapView.tsx","./src/components/PlaceDetail.tsx","./src/lib/db.ts"],"version":"5.9.3"}
