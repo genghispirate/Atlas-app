@@ -58,7 +58,7 @@ import com.pact.app.ui.theme.TextTertiary
 
 /**
  * The wall. Shown instantly over any locked app. Back and "leave" both go
- * home; the only way through is a fresh code from the keyholder.
+ * home; the only way through is a fresh code from the sponsor.
  */
 class BlockActivity : ComponentActivity() {
 

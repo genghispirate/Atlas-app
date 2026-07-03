@@ -76,17 +76,17 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
             Text("Settings", style = MaterialTheme.typography.headlineSmall)
         }
 
-        SectionLabel("Your keyholder")
+        SectionLabel("Your sponsor")
         Spacer(Modifier.height(8.dp))
         PactCard {
             Text(snapshot.guardianName, style = MaterialTheme.typography.titleMedium)
             Text("Paired · holds your unlock codes", style = MaterialTheme.typography.bodyMedium, color = Mint)
             Spacer(Modifier.height(12.dp))
             TextButton(onClick = { gate = Gate.RePair }) {
-                Text("Change keyholder…", color = Periwinkle)
+                Text("Change sponsor…", color = Periwinkle)
             }
             Text(
-                "Changing your keyholder needs a code from your current one, then pairs a brand-new key.",
+                "Changing your sponsor needs a code from your current one, then pairs a brand-new key.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextTertiary,
             )
@@ -125,10 +125,10 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
         PactCard {
             Text(
                 "Pact runs entirely on this phone — no account, no server, no internet needed. " +
-                    "Unlock codes are standard authenticator codes (TOTP): your keyholder's phone " +
+                    "Unlock codes are standard authenticator codes (TOTP): your sponsor's phone " +
                     "and yours each compute the same 6-digit code from a shared key and the clock, " +
                     "so codes work even when both phones are offline.\n\n" +
-                    "The key was shown exactly once, during setup, and only your keyholder has it. " +
+                    "The key was shown exactly once, during setup, and only your sponsor has it. " +
                     "It is stored on this phone encrypted inside the Android Keystore.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
@@ -165,7 +165,7 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
         )
         Gate.RePair -> VerifyCodeDialog(
             state = state,
-            title = "Change keyholder?",
+            title = "Change sponsor?",
             subtitle = "First, a code from ${snapshot.guardianName} to unlock the change.",
             onDismiss = { gate = Gate.None },
             onVerified = {
@@ -190,7 +190,7 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
     }
 }
 
-/** Pair a new keyholder: name → QR → verify a code from the new device. */
+/** Pair a new sponsor: name → QR → verify a code from the new device. */
 @Composable
 private fun RePairDialog(state: PactState, onDismiss: () -> Unit) {
     var name by remember { mutableStateOf("") }
@@ -205,7 +205,7 @@ private fun RePairDialog(state: PactState, onDismiss: () -> Unit) {
         title = {
             Text(
                 when (stage) {
-                    0 -> "New keyholder"
+                    0 -> "New sponsor"
                     1 -> "Scan on their phone"
                     else -> "Prove it works"
                 },
@@ -246,7 +246,7 @@ private fun RePairDialog(state: PactState, onDismiss: () -> Unit) {
                             Image(bitmap = qr, contentDescription = "Pairing QR code", modifier = Modifier.size(200.dp))
                         }
                         Text(
-                            "On $name's phone, add this to Google Authenticator (tap +, scan QR). Manual key:\n${Totp.prettySecret(newSecret)}",
+                            "On $name's phone: install Pact and choose “I'm the sponsor” to scan this — or scan it with Google Authenticator. Manual key:\n${Totp.prettySecret(newSecret)}",
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextSecondary,
                             textAlign = TextAlign.Center,

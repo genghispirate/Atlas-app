@@ -17,7 +17,13 @@ class PactState private constructor(context: Context) {
     private val prefs: SharedPreferences =
         context.applicationContext.getSharedPreferences("pact_state", Context.MODE_PRIVATE)
 
+    enum class Role { UNSET, USER, SPONSOR }
+
+    /** Someone a sponsor holds the key for. [secretBlob] is Keystore-encrypted. */
+    data class Sponsee(val name: String, val secretBlob: String)
+
     data class Snapshot(
+        val role: Role = Role.UNSET,
         val setupComplete: Boolean = false,
         val guardianName: String = "",
         val blocked: Set<String> = emptySet(),
@@ -25,6 +31,7 @@ class PactState private constructor(context: Context) {
         val failedAttempts: Int = 0,
         val lockoutUntil: Long = 0L,
         val strictMode: Boolean = false,
+        val sponsees: List<Sponsee> = emptyList(),
     )
 
     private val _snapshot = MutableStateFlow(read())
@@ -41,6 +48,7 @@ class PactState private constructor(context: Context) {
 
     fun completeSetup(guardianName: String, secretBase32: String, blocked: Set<String>) {
         prefs.edit()
+            .putString(KEY_ROLE, Role.USER.name)
             .putBoolean(KEY_SETUP, true)
             .putString(KEY_GUARDIAN, guardianName.trim())
             .putString(KEY_SECRET, Vault.encrypt(secretBase32))
@@ -49,6 +57,28 @@ class PactState private constructor(context: Context) {
             .apply()
         refresh()
     }
+
+    // -------------------------------------------------------------- sponsor
+
+    fun becomeSponsor() {
+        prefs.edit().putString(KEY_ROLE, Role.SPONSOR.name).apply()
+        refresh()
+    }
+
+    fun addSponsee(name: String, secretBase32: String) {
+        val next = _snapshot.value.sponsees + Sponsee(name.trim(), Vault.encrypt(secretBase32))
+        prefs.edit().putString(KEY_SPONSEES, encodeSponsees(next)).apply()
+        refresh()
+    }
+
+    fun removeSponsee(name: String) {
+        val next = _snapshot.value.sponsees.filterNot { it.name == name }
+        prefs.edit().putString(KEY_SPONSEES, encodeSponsees(next)).apply()
+        refresh()
+    }
+
+    /** Decrypted secret for a sponsee — used only to render their live code. */
+    fun sponseeSecret(sponsee: Sponsee): String? = Vault.decrypt(sponsee.secretBlob)
 
     /** Replace the guardian (new secret). Caller must have verified a current code first. */
     fun rePair(guardianName: String, newSecretBase32: String) {
@@ -174,6 +204,9 @@ class PactState private constructor(context: Context) {
     }
 
     private fun read(): Snapshot = Snapshot(
+        role = runCatching { Role.valueOf(prefs.getString(KEY_ROLE, null) ?: "") }
+            .getOrElse { if (prefs.getBoolean(KEY_SETUP, false)) Role.USER else Role.UNSET },
+        sponsees = decodeSponsees(prefs.getString(KEY_SPONSEES, "") ?: ""),
         setupComplete = prefs.getBoolean(KEY_SETUP, false),
         guardianName = prefs.getString(KEY_GUARDIAN, "") ?: "",
         blocked = prefs.getStringSet(KEY_BLOCKED, emptySet()) ?: emptySet(),
@@ -189,6 +222,28 @@ class PactState private constructor(context: Context) {
             .filter { it.value > now }
             .joinToString(";") { "${it.key}=${it.value}" }
     }
+
+    // Sponsee entries: base64(name),blob joined with "|" — the blob's own
+    // "iv:ct" colon never collides with either separator.
+    private fun encodeSponsees(list: List<Sponsee>): String =
+        list.joinToString("|") {
+            android.util.Base64.encodeToString(
+                it.name.toByteArray(Charsets.UTF_8), android.util.Base64.NO_WRAP
+            ) + "," + it.secretBlob
+        }
+
+    private fun decodeSponsees(raw: String): List<Sponsee> =
+        raw.split("|").mapNotNull { entry ->
+            val i = entry.indexOf(',')
+            if (i <= 0) return@mapNotNull null
+            val name = runCatching {
+                String(
+                    android.util.Base64.decode(entry.substring(0, i), android.util.Base64.NO_WRAP),
+                    Charsets.UTF_8
+                )
+            }.getOrNull() ?: return@mapNotNull null
+            Sponsee(name, entry.substring(i + 1))
+        }
 
     private fun decodeUnlocks(raw: String): Map<String, Long> =
         raw.split(";")
@@ -213,6 +268,8 @@ class PactState private constructor(context: Context) {
         private const val KEY_LOCKOUT = "lockout_until"
         private const val KEY_LAST_STEP = "last_accepted_step"
         private const val KEY_STRICT = "strict_mode"
+        private const val KEY_ROLE = "role"
+        private const val KEY_SPONSEES = "sponsees"
 
         @Volatile
         private var instance: PactState? = null

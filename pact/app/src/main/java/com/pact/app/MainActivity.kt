@@ -35,6 +35,7 @@ import com.pact.app.ui.HomeScreen
 import com.pact.app.ui.OnboardingFlow
 import com.pact.app.ui.PactButton
 import com.pact.app.ui.SettingsScreen
+import com.pact.app.ui.SponsorHome
 import com.pact.app.ui.theme.PactTheme
 import com.pact.app.ui.theme.TextSecondary
 
@@ -65,6 +66,10 @@ private fun PactApp(state: PactState) {
     val snapshot by state.snapshot.collectAsState()
     var screen by rememberSaveable { mutableStateOf(Screen.Home) }
 
+    if (snapshot.role == PactState.Role.SPONSOR) {
+        SponsorHome(state)
+        return
+    }
     if (!snapshot.setupComplete) {
         OnboardingFlow(state = state, onDone = { screen = Screen.Home })
         return

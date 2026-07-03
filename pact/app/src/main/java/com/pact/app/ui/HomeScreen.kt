@@ -3,6 +3,7 @@ package com.pact.app.ui
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,6 +49,7 @@ import com.pact.app.core.Apps
 import com.pact.app.core.PactState
 import com.pact.app.service.BlockerService
 import com.pact.app.ui.theme.Amber
+import com.pact.app.ui.theme.CardBorder
 import com.pact.app.ui.theme.Ink
 import com.pact.app.ui.theme.Mint
 import com.pact.app.ui.theme.Periwinkle
@@ -87,8 +89,8 @@ fun HomeScreen(
                 .fillMaxWidth()
                 .padding(top = 12.dp, bottom = 16.dp),
         ) {
-            Icon(Icons.Rounded.Shield, contentDescription = null, tint = Periwinkle)
-            Spacer(Modifier.width(10.dp))
+            PactLogo(36)
+            Spacer(Modifier.width(12.dp))
             Text("Pact", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
             IconButton(onClick = onAddApps) {
                 Icon(Icons.Rounded.Add, contentDescription = "Add apps", tint = TextSecondary)
@@ -164,6 +166,7 @@ fun HomeScreen(
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(18.dp))
                             .background(MaterialTheme.colorScheme.surface)
+                            .border(1.dp, CardBorder, RoundedCornerShape(18.dp))
                             .padding(horizontal = 14.dp, vertical = 12.dp),
                     ) {
                         AppIconImage(remember(pkg) { Apps.icon(context, pkg) }, sizeDp = 40)
@@ -206,6 +209,7 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(18.dp))
                         .background(MaterialTheme.colorScheme.surface)
+                        .border(1.dp, CardBorder, RoundedCornerShape(18.dp))
                         .clickable { appForAction = pkg }
                         .padding(horizontal = 14.dp, vertical = 12.dp),
                 ) {

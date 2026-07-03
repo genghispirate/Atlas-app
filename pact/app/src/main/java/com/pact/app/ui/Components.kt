@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +17,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +24,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -35,8 +35,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
+import com.pact.app.ui.theme.CardBorder
+import com.pact.app.ui.theme.Ink
+import com.pact.app.ui.theme.PactGradient
+import com.pact.app.ui.theme.Surface1
 import com.pact.app.ui.theme.Surface2
-import com.pact.app.ui.theme.TextSecondary
+import com.pact.app.ui.theme.TextTertiary
 import kotlinx.coroutines.delay
 
 /** A clock that ticks once a second, for countdowns. */
@@ -45,6 +49,15 @@ fun rememberNow(): State<Long> = produceState(initialValue = System.currentTimeM
     while (true) {
         value = System.currentTimeMillis()
         delay(1000L)
+    }
+}
+
+/** A faster clock (4 Hz) for smooth progress rings. */
+@Composable
+fun rememberNowFast(): State<Long> = produceState(initialValue = System.currentTimeMillis()) {
+    while (true) {
+        value = System.currentTimeMillis()
+        delay(250L)
     }
 }
 
@@ -60,6 +73,7 @@ fun formatCountdown(millis: Long): String {
     }
 }
 
+/** Primary action: the signature gradient pill. Tonal variant for secondary actions. */
 @Composable
 fun PactButton(
     text: String,
@@ -68,21 +82,27 @@ fun PactButton(
     enabled: Boolean = true,
     tonal: Boolean = false,
 ) {
-    Button(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = modifier.height(54.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = if (tonal) {
-            ButtonDefaults.buttonColors(
-                containerColor = Surface2,
-                contentColor = MaterialTheme.colorScheme.onSurface,
+    val shape = RoundedCornerShape(18.dp)
+    Box(
+        modifier = modifier
+            .height(56.dp)
+            .clip(shape)
+            .then(
+                if (tonal) Modifier
+                    .background(Surface2)
+                    .border(1.dp, CardBorder, shape)
+                else Modifier.background(PactGradient)
             )
-        } else {
-            ButtonDefaults.buttonColors()
-        },
+            .alpha(if (enabled) 1f else 0.4f)
+            .clickable(enabled = enabled, onClick = onClick),
+        contentAlignment = Alignment.Center,
     ) {
-        Text(text, style = MaterialTheme.typography.labelLarge)
+        Text(
+            text,
+            style = MaterialTheme.typography.labelLarge,
+            color = if (tonal) MaterialTheme.colorScheme.onSurface else Ink,
+            modifier = Modifier.padding(horizontal = 24.dp),
+        )
     }
 }
 
@@ -143,7 +163,7 @@ fun CodeInput(
                                         isError -> MaterialTheme.colorScheme.error
                                         active -> MaterialTheme.colorScheme.primary
                                         filled -> MaterialTheme.colorScheme.outline
-                                        else -> Color.Transparent
+                                        else -> CardBorder
                                     },
                                     shape = RoundedCornerShape(14.dp),
                                 ),
@@ -169,23 +189,53 @@ fun SectionLabel(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text.uppercase(),
         style = MaterialTheme.typography.labelMedium,
-        color = TextSecondary,
+        color = TextTertiary,
         modifier = modifier.padding(horizontal = 4.dp),
     )
 }
 
+/** Elevated card: soft surface with a hairline border — the v1.1 house style. */
 @Composable
 fun PactCard(
     modifier: Modifier = Modifier,
-    background: Color = MaterialTheme.colorScheme.surface,
+    background: Color = Surface1,
     content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit,
 ) {
+    val shape = RoundedCornerShape(24.dp)
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(22.dp))
+            .clip(shape)
             .background(background)
+            .border(1.dp, CardBorder, shape)
             .padding(20.dp),
         content = content,
     )
+}
+
+/** A numbered instruction row for guided setup steps. */
+@Composable
+fun NumberedStep(number: Int, text: androidx.compose.ui.text.AnnotatedString) {
+    Row(verticalAlignment = Alignment.Top) {
+        Box(
+            modifier = Modifier
+                .size(26.dp)
+                .clip(CircleShape)
+                .background(PactGradient),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                "$number",
+                style = MaterialTheme.typography.labelMedium,
+                color = Ink,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+        Text(
+            text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 12.dp, top = 2.dp),
+        )
+    }
 }

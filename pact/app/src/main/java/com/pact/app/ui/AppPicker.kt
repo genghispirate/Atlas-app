@@ -1,6 +1,7 @@
 package com.pact.app.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,8 +37,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.pact.app.core.Apps
+import com.pact.app.ui.theme.CardBorder
 import com.pact.app.ui.theme.Ink
 import com.pact.app.ui.theme.Periwinkle
+import com.pact.app.ui.theme.Surface1
 import com.pact.app.ui.theme.Surface2
 import com.pact.app.ui.theme.TextTertiary
 
@@ -80,12 +83,18 @@ fun AppPickerList(
         ) {
             items(visible, key = { it.pkg }) { app ->
                 val isSelected = app.pkg in selected
+                val rowShape = RoundedCornerShape(16.dp)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(if (isSelected) Surface2 else MaterialTheme.colorScheme.surface)
+                        .clip(rowShape)
+                        .background(if (isSelected) Surface2 else Surface1)
+                        .border(
+                            width = 1.dp,
+                            color = if (isSelected) Periwinkle.copy(alpha = 0.5f) else CardBorder,
+                            shape = rowShape,
+                        )
                         .clickable {
                             onSelectedChange(
                                 if (isSelected) selected - app.pkg else selected + app.pkg

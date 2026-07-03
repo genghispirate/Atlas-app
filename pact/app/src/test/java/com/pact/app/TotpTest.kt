@@ -78,6 +78,19 @@ class TotpTest {
     }
 
     @Test
+    fun extractSecretHandlesOtpAuthUrisAndRawKeys() {
+        val secret = Totp.generateSecret()
+        // scanning the pairing QR (otpauth URI)
+        assertEquals(secret, Totp.extractSecret(Totp.otpAuthUri(secret, "Sam")))
+        // typing the pretty-printed key by hand, lowercase with spaces
+        assertEquals(secret, Totp.extractSecret(Totp.prettySecret(secret).lowercase()))
+        // junk is rejected
+        assertNull(Totp.extractSecret("otpauth://totp/Pact:Sam?issuer=Pact"))
+        assertNull(Totp.extractSecret("not a key at all!"))
+        assertNull(Totp.extractSecret("SHORT"))
+    }
+
+    @Test
     fun otpAuthUriIsWellFormed() {
         val uri = Totp.otpAuthUri("ABC234", "Sam Smith")
         assertTrue(uri.startsWith("otpauth://totp/Pact:Sam%20Smith?secret=ABC234&issuer=Pact"))

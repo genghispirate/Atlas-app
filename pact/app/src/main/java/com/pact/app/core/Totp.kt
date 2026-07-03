@@ -130,4 +130,23 @@ object Totp {
     /** Grouped like "ABCD EFGH ..." for manual entry. */
     fun prettySecret(secretBase32: String): String =
         secretBase32.chunked(4).joinToString(" ")
+
+    /**
+     * Extract the secret from an otpauth:// URI (what the pairing QR encodes),
+     * or from a raw Base32 key typed by hand. Returns null if neither works.
+     */
+    fun extractSecret(scannedOrTyped: String): String? {
+        val input = scannedOrTyped.trim()
+        if (input.startsWith("otpauth://", ignoreCase = true)) {
+            val secret = Regex("[?&]secret=([A-Za-z2-7=]+)", RegexOption.IGNORE_CASE)
+                .find(input)?.groupValues?.get(1)?.uppercase()?.trimEnd('=')
+                ?: return null
+            return secret.takeIf { isPlausibleSecret(it) }
+        }
+        val raw = input.replace(" ", "").replace("-", "").uppercase().trimEnd('=')
+        return raw.takeIf { isPlausibleSecret(it) }
+    }
+
+    private fun isPlausibleSecret(s: String): Boolean =
+        s.length in 16..64 && s.all { it in BASE32_ALPHABET }
 }
