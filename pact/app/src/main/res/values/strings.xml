@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pact</string>
+    <string name="accessibility_service_label">Pact app shield</string>
+    <string name="accessibility_service_description">Pact uses this permission for one thing only: noticing when a locked app comes to the foreground so it can show the lock screen. Pact does not read your screen content, does not collect data, and works entirely offline.</string>
+</resources>
