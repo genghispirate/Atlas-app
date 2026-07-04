@@ -13,17 +13,17 @@
     <string name="common_skip">Passer</string>
 
     <string name="intro_page1_title">Verrouillez ce qui vous aspire</string>
-    <string name="intro_page1_body">Pact bloque les applis que vous n\'arrivez pas à lâcher — Instagram, TikTok, YouTube, peu importe. Elles restent verrouillées jusqu\'à ce que quelqu\'un vous rouvre la porte.</string>
-    <string name="intro_page2_title">Une personne, pas un mot de passe</string>
-    <string name="intro_page2_body">Vous choisissez un parrain : un proche, un parent, un ami de confiance. Seul son code à 6 chiffres ouvre vos applis. La volonté cesse d\'être le maillon faible.</string>
-    <string name="intro_page3_title">Privé. Hors ligne. À vous.</string>
-    <string name="intro_page3_body">Pas de compte, pas de serveur, pas d\'internet — jamais. Les codes fonctionnent comme des codes 2FA : votre parrain peut vous en lire un au téléphone.</string>
+    <string name="intro_page1_body">Pact bloque en douceur les applis que vous n\'arrivez pas à lâcher — Instagram, TikTok, YouTube, peu importe. Elles restent fermées jusqu\'à ce qu\'on vous rouvre la porte.</string>
+    <string name="intro_page2_title">Un cercle, pas un mot de passe</string>
+    <string name="intro_page2_body">Vous choisissez les gens en qui vous avez confiance — un proche, un parent, un ami. Quand vous voulez revenir, vous leur demandez et ils décident. La volonté cesse d\'être le maillon faible.</string>
+    <string name="intro_page3_title">Privé par conception</string>
+    <string name="intro_page3_body">Pas de compte, pas d\'inscription, rien à configurer. Chaque demande et message est chiffré de bout en bout — personne au milieu ne peut rien lire, pas même nous.</string>
     <string name="intro_get_started">Commencer</string>
 
     <string name="role_title">Ce téléphone est pour qui ?</string>
-    <string name="role_body">Pact a deux côtés : la personne qui verrouille ses applis, et celle qui garde la clé.</string>
+    <string name="role_body">Pact a deux côtés : la personne qui verrouille ses applis, et les gens de confiance qui aident à les garder.</string>
     <string name="role_user_title">Bloquer mes applis</string>
-    <string name="role_user_body">Je veux verrouiller mes applis et confier la clé à quelqu\'un de confiance.</string>
+    <string name="role_user_body">Je veux verrouiller les applis distrayantes et laisser des gens de confiance garder la clé.</string>
     <string name="role_sponsor_title">Je suis le parrain</string>
     <string name="role_sponsor_body">Un proche m\'a demandé de garder ses codes de déverrouillage.</string>
 
@@ -65,8 +65,8 @@
     <string name="search_apps">Rechercher des applis</string>
     <string name="often_locked">Souvent verrouillée</string>
 
-    <string name="seal_title">Votre Pact est scellé</string>
-    <string name="seal_body">Vos applis sont verrouillées. Désormais, %1$s détient la clé — et c\'est exactement le but.</string>
+    <string name="seal_title">Tout est prêt</string>
+    <string name="seal_body">Vos applis sont verrouillées. Désormais, votre cercle décide quand vous revenez — et c\'est exactement le but.</string>
     <string name="seal_begin">Commencer</string>
 
     <string name="home_with">avec %1$s</string>
@@ -320,6 +320,15 @@
     <string name="identity_reset">Nouvelle identité (avancé)…</string>
     <string name="identity_reset_note">Génère de nouvelles clés et efface votre cercle. Chacun doit rescanner votre code.</string>
     <string name="no_connection_note">La livraison peut prendre un instant — les messages patientent et partent dès que le réseau revient.</string>
+    <string name="focus_start">Lancer une session de concentration</string>
+    <string name="focus_body">Verrouillez tout pour un temps donné. Sans demandes, sans pauses — une plage nette que vous vous offrez.</string>
+    <string name="focus_active_title">Session de concentration</string>
+    <string name="focus_active_sub">Tout reste verrouillé pendant %1$s</string>
+    <string name="focus_pick_title">Combien de temps ?</string>
+    <string name="focus_25m">25 minutes</string>
+    <string name="focus_1h">1 heure</string>
+    <string name="focus_2h">2 heures</string>
+    <string name="focus_confirm_note">Impossible d\'arrêter avant la fin — c\'est ce qui la rend efficace.</string>
     <plurals name="lock_n_apps">
         <item quantity="one">Verrouiller %1$d appli</item>
         <item quantity="other">Verrouiller %1$d applis</item>

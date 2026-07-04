@@ -6,7 +6,7 @@ Pact locks the apps that pull you in. The only way back in is your **circle** �
 trust — approving your request. There are no passwords, no accounts, no servers, and no codes to
 type. Just people who care, holding your locks.
 
-<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v4.0.apk"><code>release/Pact-v4.0.apk</code></a></em></p>
+<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v4.1.apk"><code>release/Pact-v4.1.apk</code></a></em></p>
 
 ---
 
@@ -90,14 +90,15 @@ payloads on unguessable inbox topics.
 
 ## Also included
 
-Difficulty tiers · urge tracking · post-break reflection · an Insights screen (streak, walls
-per day, most tempting apps, craving hours, triggers) · a home-screen widget · quiet,
-actionable notifications (requests, approvals, messages) · encrypted passphrase backup + stats
-CSV.
+Difficulty tiers · **focus sessions** (lock everything for a set stretch, no unlocks) · urge
+tracking · post-break reflection · an Insights screen (streak, walls per day, most tempting
+apps, craving hours, triggers) · a home-screen widget · quiet, actionable notifications
+(requests, approvals, messages) · encrypted passphrase backup + stats CSV · animated,
+Compose-drawn illustrations · 10 languages.
 
 ## Install
 
-Copy `release/Pact-v4.0.apk` to **both** phones — yours and each trusted person's — allow
+Copy `release/Pact-v4.1.apk` to **both** phones — yours and each trusted person's — allow
 "install from unknown sources", and follow the in-app setup. Requires Android 8.0+ (API 26).
 No Google services needed.
 

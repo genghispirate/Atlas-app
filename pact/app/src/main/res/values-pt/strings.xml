@@ -13,17 +13,17 @@
     <string name="common_skip">Pular</string>
 
     <string name="intro_page1_title">Bloqueie o que te prende</string>
-    <string name="intro_page1_body">O Pact bloqueia os apps que você não consegue largar — Instagram, TikTok, YouTube, o que for. Eles ficam trancados até alguém deixar você voltar.</string>
-    <string name="intro_page2_title">Uma pessoa, não uma senha</string>
-    <string name="intro_page2_body">Você escolhe um padrinho — parceiro, mãe, amigo próximo. Só um código de 6 dígitos dele abre seus apps. A força de vontade deixa de ser o elo fraco.</string>
-    <string name="intro_page3_title">Privado. Offline. Seu.</string>
-    <string name="intro_page3_body">Sem conta, sem servidor, sem internet — nunca. Os códigos funcionam como códigos 2FA: seu padrinho pode ler um para você por telefone.</string>
+    <string name="intro_page1_body">O Pact bloqueia com calma os apps que você não larga — Instagram, TikTok, YouTube, o que for. Ficam fechados até você ser deixado voltar.</string>
+    <string name="intro_page2_title">Um círculo, não uma senha</string>
+    <string name="intro_page2_body">Você escolhe as pessoas em quem confia — parceiro, familiar, amigo. Quando quiser voltar, você pede e elas decidem. A força de vontade deixa de ser o elo fraco.</string>
+    <string name="intro_page3_title">Privado por concepção</string>
+    <string name="intro_page3_body">Sem conta, sem cadastro, nada para configurar. Cada pedido e mensagem é criptografado de ponta a ponta — ninguém no meio lê nada, nem nós.</string>
     <string name="intro_get_started">Começar</string>
 
     <string name="role_title">Este celular é de quem?</string>
-    <string name="role_body">O Pact tem dois lados: quem tranca os próprios apps e quem guarda a chave.</string>
+    <string name="role_body">O Pact tem dois lados: quem tranca os apps e as pessoas de confiança que ajudam a guardá-los.</string>
     <string name="role_user_title">Bloquear meus apps</string>
-    <string name="role_user_body">Quero trancar meus apps e entregar a chave a alguém de confiança.</string>
+    <string name="role_user_body">Quero trancar apps que distraem e deixar pessoas de confiança guardarem a chave.</string>
     <string name="role_sponsor_title">Sou o padrinho</string>
     <string name="role_sponsor_body">Alguém importante para mim pediu que eu guardasse os códigos de desbloqueio.</string>
 
@@ -65,8 +65,8 @@
     <string name="search_apps">Buscar apps</string>
     <string name="often_locked">Bloqueado com frequência</string>
 
-    <string name="seal_title">Seu Pact está selado</string>
-    <string name="seal_body">Seus apps estão trancados. Daqui em diante, %1$s guarda a chave — e a ideia é exatamente essa.</string>
+    <string name="seal_title">Tudo pronto</string>
+    <string name="seal_body">Seus apps estão trancados. Daqui em diante, seu círculo decide quando você volta — e é exatamente essa a ideia.</string>
     <string name="seal_begin">Começar</string>
 
     <string name="home_with">com %1$s</string>
@@ -320,6 +320,15 @@
     <string name="identity_reset">Nova identidade (avançado)…</string>
     <string name="identity_reset_note">Gera chaves novas e limpa seu círculo. Todos precisam escanear seu código de novo.</string>
     <string name="no_connection_note">A entrega pode demorar um instante — as mensagens ficam na fila e saem quando houver rede.</string>
+    <string name="focus_start">Iniciar uma sessão de foco</string>
+    <string name="focus_body">Tranque tudo por um tempo. Sem pedidos, sem pausas — um trecho limpo que você se dá.</string>
+    <string name="focus_active_title">Sessão de foco</string>
+    <string name="focus_active_sub">Tudo fica trancado por %1$s</string>
+    <string name="focus_pick_title">Quanto tempo de foco?</string>
+    <string name="focus_25m">25 minutos</string>
+    <string name="focus_1h">1 hora</string>
+    <string name="focus_2h">2 horas</string>
+    <string name="focus_confirm_note">Não dá para terminar antes — é isso que faz funcionar.</string>
     <plurals name="lock_n_apps">
         <item quantity="one">Trancar %1$d app</item>
         <item quantity="other">Trancar %1$d apps</item>

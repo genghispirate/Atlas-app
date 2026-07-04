@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.BarChart
+import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Settings
@@ -94,7 +95,9 @@ fun HomeScreen(
     }
     var appForAction by remember { mutableStateOf<String?>(null) }
     var changeRequested by remember { mutableStateOf(false) }
+    var choosingFocus by remember { mutableStateOf(false) }
     val hasCircle = netSnap.approvers().isNotEmpty()
+    val focusActive = snapshot.focusActive(now)
 
     // Break/shield notifications are optional; ask once on Android 13+.
     val notifPermission = rememberLauncherForActivityResult(
@@ -162,6 +165,68 @@ fun HomeScreen(
                         )
                     },
                 )
+            }
+
+            // focus session: active banner, or the invitation to start one
+            if (snapshot.blocked.isNotEmpty()) {
+                item {
+                    if (focusActive) {
+                        PactCard(
+                            background = Surface2,
+                            modifier = Modifier.padding(top = 4.dp),
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Rounded.Bolt, contentDescription = null, tint = Periwinkle)
+                                Spacer(Modifier.width(12.dp))
+                                Column {
+                                    Text(
+                                        stringResource(R.string.focus_active_title),
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = Periwinkle,
+                                    )
+                                    Text(
+                                        stringResource(
+                                            R.string.focus_active_sub,
+                                            formatCountdown(snapshot.focusUntil - now),
+                                        ),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = TextSecondary,
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Surface1)
+                                .border(1.dp, CardBorder, RoundedCornerShape(20.dp))
+                                .clickable { choosingFocus = true }
+                                .padding(horizontal = 16.dp, vertical = 14.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(Surface2),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(Icons.Rounded.Bolt, contentDescription = null, tint = Periwinkle, modifier = Modifier.size(22.dp))
+                            }
+                            Spacer(Modifier.width(14.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(stringResource(R.string.focus_start), style = MaterialTheme.typography.titleSmall)
+                                Text(
+                                    stringResource(R.string.focus_body),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = TextTertiary,
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
             // circle empty → gentle nudge (red locks fall back to a pause)
@@ -362,6 +427,43 @@ fun HomeScreen(
             },
             dismissButton = {
                 TextButton(onClick = { appForAction = null }) { Text(stringResource(R.string.common_close)) }
+            },
+        )
+    }
+
+    if (choosingFocus) {
+        AlertDialog(
+            onDismissRequest = { choosingFocus = false },
+            containerColor = MaterialTheme.colorScheme.surface,
+            title = { Text(stringResource(R.string.focus_pick_title), style = MaterialTheme.typography.headlineSmall) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    listOf(
+                        R.string.focus_25m to 25 * 60_000L,
+                        R.string.focus_1h to 60 * 60_000L,
+                        R.string.focus_2h to 120 * 60_000L,
+                    ).forEach { (labelRes, duration) ->
+                        PactButton(
+                            stringResource(labelRes),
+                            onClick = {
+                                state.startFocus(duration)
+                                choosingFocus = false
+                            },
+                            tonal = true,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        stringResource(R.string.focus_confirm_note),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextTertiary,
+                    )
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { choosingFocus = false }) { Text(stringResource(R.string.common_cancel)) }
             },
         )
     }

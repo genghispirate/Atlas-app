@@ -13,17 +13,17 @@
     <string name="common_skip">跳过</string>
 
     <string name="intro_page1_title">锁住让你沉迷的应用</string>
-    <string name="intro_page1_body">Pact 会屏蔽你放不下的应用——Instagram、TikTok、YouTube，随你选。它们会一直锁着，直到有人放你回去。</string>
-    <string name="intro_page2_title">是一个人，不是一串密码</string>
-    <string name="intro_page2_body">你选择一位守护人——伴侣、父母或挚友。只有他们给出的最新 6 位验证码才能解锁你的应用。意志力不再是薄弱环节。</string>
-    <string name="intro_page3_title">私密、离线、属于你</string>
-    <string name="intro_page3_body">没有账号，没有服务器，永远不需要联网。验证码和两步验证码原理相同，守护人在电话里念给你听就行。</string>
+    <string name="intro_page1_body">Pact 悄悄屏蔽你放不下的应用——Instagram、TikTok、YouTube，随你选。在有人放你回去之前，它们一直关着。</string>
+    <string name="intro_page2_title">一个圈子，而非密码</string>
+    <string name="intro_page2_body">你选择信任的人——伴侣、父母、朋友。想回去时你向他们请求，由他们决定。意志力不再是薄弱环节。</string>
+    <string name="intro_page3_title">从设计上就私密</string>
+    <string name="intro_page3_body">没有账号，无需注册，也没有要配置的东西。每条请求和消息都是端到端加密——中间没有人能读到任何内容，我们也不能。</string>
     <string name="intro_get_started">开始使用</string>
 
     <string name="role_title">这部手机是谁的？</string>
-    <string name="role_body">Pact 有两个角色：锁定自己应用的人，和保管钥匙的人。</string>
+    <string name="role_body">Pact 有两个角色：锁定应用的人，以及帮忙守护的受信任的人。</string>
     <string name="role_user_title">锁定我的应用</string>
-    <string name="role_user_body">我想锁住让我分心的应用，把钥匙交给信任的人。</string>
+    <string name="role_user_body">我想锁定让我分心的应用，把钥匙交给我信任的人保管。</string>
     <string name="role_sponsor_title">我是守护人</string>
     <string name="role_sponsor_body">我在乎的人请我保管他们的解锁验证码。</string>
 
@@ -65,8 +65,8 @@
     <string name="search_apps">搜索应用</string>
     <string name="often_locked">常被锁定</string>
 
-    <string name="seal_title">你的 Pact 已缔结</string>
-    <string name="seal_body">应用已锁定。从现在起，钥匙在%1$s手里——这正是关键所在。</string>
+    <string name="seal_title">一切就绪</string>
+    <string name="seal_body">你的应用已锁定。从现在起，由你的圈子决定你何时回来——这正是重点。</string>
     <string name="seal_begin">开始</string>
 
     <string name="home_with">与%1$s</string>
@@ -320,6 +320,15 @@
     <string name="identity_reset">新身份（高级）…</string>
     <string name="identity_reset_note">生成新密钥并清空你的圈子。每个人都需要重新扫描你的码。</string>
     <string name="no_connection_note">送达可能稍有延迟——消息会排队，网络恢复后发出。</string>
+    <string name="focus_start">开始专注时段</string>
+    <string name="focus_body">在设定时间内锁定一切。没有请求，没有休息——一段你送给自己的干净时光。</string>
+    <string name="focus_active_title">专注时段</string>
+    <string name="focus_active_sub">一切将锁定 %1$s</string>
+    <string name="focus_pick_title">专注多久？</string>
+    <string name="focus_25m">25 分钟</string>
+    <string name="focus_1h">1 小时</string>
+    <string name="focus_2h">2 小时</string>
+    <string name="focus_confirm_note">无法提前结束——这正是它有效的原因。</string>
     <plurals name="lock_n_apps">
         <item quantity="other">锁定 %1$d 个应用</item>
     </plurals>

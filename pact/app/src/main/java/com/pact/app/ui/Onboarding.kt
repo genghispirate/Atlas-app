@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -51,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -74,6 +76,7 @@ import com.pact.app.ui.theme.Surface1
 import com.pact.app.ui.theme.Surface2
 import com.pact.app.ui.theme.TextSecondary
 import com.pact.app.ui.theme.TextTertiary
+import com.pact.app.ui.theme.Violet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -143,86 +146,104 @@ private data class IntroPage(
 private fun IntroPager(onFinished: () -> Unit) {
     val pages = listOf(
         IntroPage({ ArtLockedPhone() }, R.string.intro_page1_title, R.string.intro_page1_body),
-        IntroPage({ ArtTwoPeople() }, R.string.intro_page2_title, R.string.intro_page2_body),
-        IntroPage({ ArtOfflineShield() }, R.string.intro_page3_title, R.string.intro_page3_body),
+        IntroPage({ ArtCircle() }, R.string.intro_page2_title, R.string.intro_page2_body),
+        IntroPage({ ArtEncryptedShield() }, R.string.intro_page3_title, R.string.intro_page3_body),
     )
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
 
-    Column(Modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier
+    Box(Modifier.fillMaxSize()) {
+        // ambient brand wash behind everything
+        Box(
+            Modifier
                 .fillMaxWidth()
-                .padding(top = 64.dp, start = 28.dp, end = 28.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            PactLogo(40)
-            Spacer(Modifier.width(12.dp))
-            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineSmall)
-            Spacer(Modifier.weight(1f))
-            if (pagerState.currentPage < pages.size - 1) {
-                TextButton(onClick = onFinished) {
-                    Text(stringResource(R.string.common_skip), color = TextTertiary)
+                .height(420.dp)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Violet.copy(alpha = 0.14f), Color.Transparent)
+                    )
+                )
+        )
+        Column(Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(top = 20.dp, start = 28.dp, end = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                PactLogo(34)
+                Spacer(Modifier.width(10.dp))
+                Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.weight(1f))
+                if (pagerState.currentPage < pages.size - 1) {
+                    TextButton(onClick = onFinished) {
+                        Text(stringResource(R.string.common_skip), color = TextTertiary)
+                    }
                 }
             }
-        }
 
-        HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
-            val p = pages[page]
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                p.art()
-                Spacer(Modifier.height(28.dp))
-                Text(
-                    stringResource(p.title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(Modifier.height(14.dp))
-                Text(
-                    stringResource(p.body),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = TextSecondary,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            repeat(pages.size) { i ->
-                Box(
+            HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
+                val p = pages[page]
+                Column(
                     modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .size(if (i == pagerState.currentPage) 24.dp else 8.dp, 8.dp)
-                        .clip(CircleShape)
-                        .background(if (i == pagerState.currentPage) Periwinkle else Surface2)
-                )
+                        .fillMaxSize()
+                        .padding(horizontal = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    p.art()
+                    Spacer(Modifier.height(20.dp))
+                    Text(
+                        stringResource(p.title),
+                        style = MaterialTheme.typography.displaySmall,
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(Modifier.height(14.dp))
+                    Text(
+                        stringResource(p.body),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = TextSecondary,
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                repeat(pages.size) { i ->
+                    val active = i == pagerState.currentPage
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .size(if (active) 26.dp else 8.dp, 8.dp)
+                            .clip(CircleShape)
+                            .then(
+                                if (active) Modifier.background(PactGradient)
+                                else Modifier.background(Surface2)
+                            )
+                    )
+                }
+            }
+            PactButton(
+                text = stringResource(
+                    if (pagerState.currentPage == pages.size - 1) R.string.intro_get_started
+                    else R.string.common_next
+                ),
+                onClick = {
+                    if (pagerState.currentPage == pages.size - 1) onFinished()
+                    else scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(horizontal = 28.dp, vertical = 20.dp),
+            )
         }
-        PactButton(
-            text = stringResource(
-                if (pagerState.currentPage == pages.size - 1) R.string.intro_get_started
-                else R.string.common_next
-            ),
-            onClick = {
-                if (pagerState.currentPage == pages.size - 1) onFinished()
-                else scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .padding(horizontal = 28.dp, vertical = 20.dp),
-        )
     }
 }
 

@@ -159,7 +159,16 @@ fun BlockWall(
             )
             Spacer(Modifier.height(28.dp))
 
+            val focusActive = pactSnap.focusActive(now) && pactSnap.blocked.contains(pkg)
             when {
+                focusActive -> {
+                    Text(
+                        stringResource(R.string.focus_active_sub, formatCountdown(pactSnap.focusUntil - now)),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Periwinkle,
+                        textAlign = TextAlign.Center,
+                    )
+                }
                 tier == Tier.RED && hasApprovers -> AskCircleFlow(
                     network = network,
                     state = state,

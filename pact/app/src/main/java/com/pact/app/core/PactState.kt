@@ -62,6 +62,8 @@ class PactState private constructor(context: Context) {
         /** Yellow self-unlock rests until this time, per app. */
         val yellowCooldownUntil: Map<String, Long> = emptyMap(),
         val strictMode: Boolean = false,
+        /** A focus session locks every blocked app, no unlocks, until this time. */
+        val focusUntil: Long = 0L,
         /** Rolling daily stats, most recent last. Bounded to [DAYS_KEPT]. */
         val days: List<DayStats> = emptyList(),
         /** Cumulative count of block events per hour of day (24 buckets). */
@@ -73,6 +75,8 @@ class PactState private constructor(context: Context) {
         val longestStreakDays: Int = 0,
     ) {
         fun tierOf(pkg: String): Tier = tiers[pkg] ?: Tier.RED
+
+        fun focusActive(nowMillis: Long = System.currentTimeMillis()): Boolean = focusUntil > nowMillis
 
         val today: DayStats get() = days.lastOrNull()?.takeIf { it.day == dayKey(System.currentTimeMillis()) }
             ?: DayStats(dayKey(System.currentTimeMillis()))
@@ -154,12 +158,24 @@ class PactState private constructor(context: Context) {
         refresh()
     }
 
+    /**
+     * Start a focus session: every blocked app stays shut for [durationMillis],
+     * ignoring any active break. A commitment you make to yourself; there's no
+     * way to end it early on purpose — that's the point.
+     */
+    fun startFocus(durationMillis: Long) {
+        prefs.edit().putLong(KEY_FOCUS, System.currentTimeMillis() + durationMillis).apply()
+        refresh()
+    }
+
     fun isBlockedNow(pkg: String, nowMillis: Long = System.currentTimeMillis()): Boolean {
         val s = _snapshot.value
         if (!s.setupComplete) return false
         val covered = s.blocked.contains(pkg) ||
             (s.strictMode && pkg in PROTECTED_WHEN_STRICT)
         if (!covered) return false
+        // During a focus session, nothing blocked gets through — even active breaks.
+        if (s.blocked.contains(pkg) && s.focusActive(nowMillis)) return true
         return (s.unlockUntil[pkg] ?: 0L) <= nowMillis
     }
 
@@ -312,6 +328,7 @@ class PactState private constructor(context: Context) {
         unlockUntil = decodeLongMap(prefs.getString(KEY_UNLOCKS, "") ?: ""),
         yellowCooldownUntil = decodeLongMap(prefs.getString(KEY_COOLDOWNS, "") ?: ""),
         strictMode = prefs.getBoolean(KEY_STRICT, false),
+        focusUntil = prefs.getLong(KEY_FOCUS, 0L),
         days = decodeDays(prefs.getString(KEY_DAYS, "") ?: ""),
         hourHistogram = decodeHours(prefs.getString(KEY_HOURS, "") ?: ""),
         events = decodeEvents(prefs.getString(KEY_EVENTS, "") ?: ""),
@@ -445,6 +462,7 @@ class PactState private constructor(context: Context) {
         private const val KEY_UNLOCKS = "unlock_until"
         private const val KEY_COOLDOWNS = "yellow_cooldowns"
         private const val KEY_STRICT = "strict_mode"
+        private const val KEY_FOCUS = "focus_until"
         private const val KEY_ROLE = "role"
         private const val KEY_DAYS = "stat_days"
         private const val KEY_HOURS = "stat_hours"

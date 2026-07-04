@@ -1,5 +1,10 @@
 package com.pact.app.ui
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,25 +17,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CloudOff
-import androidx.compose.material.icons.rounded.Key
+import androidx.compose.material.icons.rounded.Bolt
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.pact.app.ui.theme.CardBorder
 import com.pact.app.ui.theme.Ink
@@ -40,24 +48,58 @@ import com.pact.app.ui.theme.Periwinkle
 import com.pact.app.ui.theme.Surface1
 import com.pact.app.ui.theme.Surface2
 import com.pact.app.ui.theme.Violet
+import com.pact.app.ui.theme.VioletDeep
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
- * Decorative illustrations for the intro pages, drawn entirely in Compose —
- * no image assets, crisp at any density, tiny APK cost.
+ * Decorative hero illustrations for the intro pages, drawn entirely in
+ * Compose — layered shapes, soft glows, and slow ambient motion. No image
+ * assets, crisp at any density, tiny APK cost, and every mark is on-brand.
  */
 
+private const val ART_SIZE = 280
+
 @Composable
-private fun Glow(size: Int, color: Color, content: @Composable () -> Unit) {
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(size.dp)) {
+private fun ArtStage(glow: Color, content: @Composable androidx.compose.foundation.layout.BoxScope.() -> Unit) {
+    // A soft radial glow behind a floating stage, gently drifting.
+    val transition = rememberInfiniteTransition(label = "art")
+    val drift by transition.animateFloat(
+        initialValue = -6f,
+        targetValue = 6f,
+        animationSpec = infiniteRepeatable(tween(4200), RepeatMode.Reverse),
+        label = "drift",
+    )
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(ART_SIZE.dp)) {
         Box(
             modifier = Modifier
-                .size(size.dp)
+                .size((ART_SIZE - 20).dp)
+                .blur(60.dp)
                 .background(
-                    Brush.radialGradient(listOf(color.copy(alpha = 0.28f), color.copy(alpha = 0f)))
+                    Brush.radialGradient(listOf(glow.copy(alpha = 0.5f), glow.copy(alpha = 0f))),
+                    CircleShape,
                 )
         )
-        content()
+        Box(
+            modifier = Modifier.offset(y = drift.dp),
+            contentAlignment = Alignment.Center,
+            content = content,
+        )
     }
+}
+
+/** A soft-shadowed tile with a rounded gradient, like a premium app icon. */
+@Composable
+private fun GlassTile(sizeDp: Int, corner: Int, gradient: Brush, content: @Composable androidx.compose.foundation.layout.BoxScope.() -> Unit = {}) {
+    Box(
+        modifier = Modifier
+            .size(sizeDp.dp)
+            .clip(RoundedCornerShape(corner.dp))
+            .background(gradient)
+            .border(1.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(corner.dp)),
+        contentAlignment = Alignment.Center,
+        content = content,
+    )
 }
 
 private val TILE_COLORS = listOf(
@@ -66,29 +108,30 @@ private val TILE_COLORS = listOf(
     Color(0xFF8E7CFF), Color(0xFF60D394), Color(0xFFFACC15),
 )
 
-/** Page 1: a phone full of tempting app tiles with a big lock badge. */
+/** Page 1: a phone full of glowing app tiles, sealed by a big lock badge. */
 @Composable
 fun ArtLockedPhone() {
-    Glow(260, Violet) {
-        Box {
+    ArtStage(glow = Violet) {
+        Box(contentAlignment = Alignment.Center) {
+            // phone body
             Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(11.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .size(width = 132.dp, height = 200.dp)
-                    .clip(RoundedCornerShape(28.dp))
-                    .background(Surface1)
-                    .border(2.dp, CardBorder, RoundedCornerShape(28.dp))
-                    .padding(top = 18.dp),
+                    .size(width = 150.dp, height = 216.dp)
+                    .clip(RoundedCornerShape(34.dp))
+                    .background(Brush.verticalGradient(listOf(Surface2, Surface1)))
+                    .border(1.5.dp, CardBorder, RoundedCornerShape(34.dp))
+                    .padding(top = 22.dp),
             ) {
                 repeat(3) { row ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(11.dp)) {
                         repeat(3) { col ->
-                            Box(
-                                modifier = Modifier
-                                    .size(28.dp)
-                                    .clip(RoundedCornerShape(9.dp))
-                                    .background(TILE_COLORS[row * 3 + col].copy(alpha = 0.85f))
+                            val c = TILE_COLORS[row * 3 + col]
+                            GlassTile(
+                                sizeDp = 30,
+                                corner = 10,
+                                gradient = Brush.linearGradient(listOf(c, c.copy(alpha = 0.72f))),
                             )
                         }
                     }
@@ -96,137 +139,150 @@ fun ArtLockedPhone() {
                 Spacer(Modifier.height(2.dp))
                 Box(
                     Modifier
-                        .size(width = 44.dp, height = 5.dp)
+                        .size(width = 46.dp, height = 5.dp)
                         .clip(CircleShape)
                         .background(Surface2)
                 )
             }
+            // frosted seal over the grid
             Box(
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .offset(x = 26.dp, y = 18.dp)
-                    .size(74.dp)
-                    .clip(CircleShape)
-                    .background(PactGradient)
-                    .border(4.dp, Ink, CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    Icons.Rounded.Lock,
-                    contentDescription = null,
-                    tint = Ink,
-                    modifier = Modifier.size(34.dp),
-                )
+                    .size(width = 150.dp, height = 216.dp)
+                    .clip(RoundedCornerShape(34.dp))
+                    .background(Ink.copy(alpha = 0.35f))
+            )
+            // lock badge
+            GlassTile(sizeDp = 76, corner = 26, gradient = PactGradient) {
+                Icon(Icons.Rounded.Lock, contentDescription = null, tint = Ink, modifier = Modifier.size(38.dp))
             }
         }
     }
 }
 
-/** Page 2: two people joined by a key — the human unlock. */
+/** Page 2: you at the centre, your circle of trusted people orbiting around. */
 @Composable
-fun ArtTwoPeople() {
-    Glow(260, Periwinkle) {
-        Box(contentAlignment = Alignment.Center) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                PersonBubble(tint = Periwinkle)
-                Canvas(Modifier.size(width = 84.dp, height = 24.dp)) {
-                    drawLine(
-                        color = Color(0xFF3A4568),
-                        start = Offset(0f, size.height / 2),
-                        end = Offset(size.width, size.height / 2),
-                        strokeWidth = 3.dp.toPx(),
-                        cap = StrokeCap.Round,
-                        pathEffect = PathEffect.dashPathEffect(
-                            floatArrayOf(6.dp.toPx(), 8.dp.toPx())
+fun ArtCircle() {
+    val transition = rememberInfiniteTransition(label = "circle")
+    val spin by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(tween(38000), RepeatMode.Restart),
+        label = "spin",
+    )
+    ArtStage(glow = Periwinkle) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.size(ART_SIZE.dp)) {
+            // dashed orbit ring
+            Canvas(Modifier.size(210.dp)) {
+                drawCircle(
+                    color = Color(0xFF3A4568),
+                    style = Stroke(
+                        width = 1.5.dp.toPx(),
+                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(3.dp.toPx(), 9.dp.toPx())),
+                    ),
+                )
+            }
+            // orbiting avatars
+            val radius = 105f
+            val tints = listOf(Periwinkle, Mint, Color(0xFFFFB65C), Color(0xFFF472B6), Violet)
+            tints.forEachIndexed { i, tint ->
+                val angle = Math.toRadians((spin + i * (360.0 / tints.size)))
+                Box(
+                    modifier = Modifier
+                        .offset(
+                            x = (radius * cos(angle)).dp,
+                            y = (radius * sin(angle)).dp,
                         ),
-                    )
+                ) {
+                    AvatarChip(tint)
                 }
-                PersonBubble(tint = Mint)
             }
-            Box(
-                modifier = Modifier
-                    .size(54.dp)
-                    .clip(CircleShape)
-                    .background(PactGradient)
-                    .border(4.dp, Ink, CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    Icons.Rounded.Key,
-                    contentDescription = null,
-                    tint = Ink,
-                    modifier = Modifier.size(26.dp),
-                )
+            // you, at the centre, holding a heart
+            GlassTile(sizeDp = 84, corner = 42, gradient = PactGradient) {
+                Icon(Icons.Rounded.Favorite, contentDescription = null, tint = Ink, modifier = Modifier.size(38.dp))
             }
         }
     }
 }
 
 @Composable
-private fun PersonBubble(tint: Color) {
+private fun AvatarChip(tint: Color) {
     Box(
         modifier = Modifier
-            .size(84.dp)
+            .size(48.dp)
             .clip(CircleShape)
             .background(Surface1)
-            .border(3.dp, tint.copy(alpha = 0.7f), CircleShape),
+            .border(2.dp, tint.copy(alpha = 0.8f), CircleShape),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            Icons.Rounded.Person,
-            contentDescription = null,
-            tint = tint,
-            modifier = Modifier.size(44.dp),
-        )
+        Icon(Icons.Rounded.Person, contentDescription = null, tint = tint, modifier = Modifier.size(26.dp))
     }
 }
 
-/** Page 3: a shield in orbit — private and offline. */
+/** Page 3: a shield wrapped in an encrypted ring — private by design. */
 @Composable
-fun ArtOfflineShield() {
-    Glow(260, Mint) {
+fun ArtEncryptedShield() {
+    val transition = rememberInfiniteTransition(label = "shield")
+    val spin by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(tween(26000), RepeatMode.Restart),
+        label = "ringspin",
+    )
+    ArtStage(glow = Mint) {
         Box(contentAlignment = Alignment.Center) {
-            Canvas(Modifier.size(210.dp)) {
-                val ringStroke = androidx.compose.ui.graphics.drawscope.Stroke(
-                    width = 2.dp.toPx(),
-                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 10.dp.toPx())),
-                )
-                drawCircle(color = Color(0xFF3A4568), style = ringStroke)
-                drawCircle(color = Color(0xFF3A4568), radius = size.minDimension / 2.9f, style = ringStroke)
-                // orbiting dots
-                drawCircle(Periwinkle, radius = 5.dp.toPx(), center = Offset(size.width * 0.5f, 0f + 2.dp.toPx()))
-                drawCircle(Mint, radius = 5.dp.toPx(), center = Offset(size.width * 0.86f, size.height * 0.78f))
-                drawCircle(Violet, radius = 4.dp.toPx(), center = Offset(size.width * 0.16f, size.height * 0.7f))
-            }
-            Box(
-                modifier = Modifier
-                    .size(108.dp)
-                    .clip(RoundedCornerShape(34.dp))
-                    .background(PactGradient),
-                contentAlignment = Alignment.Center,
+            // rotating encryption ring: dashes + bit dots
+            Canvas(
+                Modifier
+                    .size(232.dp)
+                    .rotate(spin)
             ) {
+                drawCircle(
+                    color = Color(0xFF3A4568),
+                    style = Stroke(
+                        width = 2.dp.toPx(),
+                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 12.dp.toPx())),
+                    ),
+                )
+                val r = size.minDimension / 2f
+                val cx = size.width / 2f
+                val cy = size.height / 2f
+                listOf(Periwinkle, Mint, Violet, Color(0xFFFFB65C)).forEachIndexed { i, c ->
+                    val a = Math.toRadians(i * 90.0)
+                    drawCircle(
+                        color = c,
+                        radius = 4.dp.toPx(),
+                        center = Offset(cx + (r * cos(a)).toFloat(), cy + (r * sin(a)).toFloat()),
+                    )
+                }
+            }
+            // inner counter-rotating ring
+            Canvas(
+                Modifier
+                    .size(168.dp)
+                    .rotate(-spin * 1.4f)
+            ) {
+                drawCircle(
+                    color = Color(0xFF2A3554),
+                    style = Stroke(
+                        width = 1.5.dp.toPx(),
+                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 8.dp.toPx())),
+                        cap = StrokeCap.Round,
+                    ),
+                )
+            }
+            // shield
+            GlassTile(sizeDp = 116, corner = 38, gradient = PactGradient) {
                 Icon(
                     Icons.Rounded.Shield,
                     contentDescription = null,
                     tint = Color(0xFFF4F6FF),
-                    modifier = Modifier.size(54.dp),
+                    modifier = Modifier.size(56.dp),
                 )
-            }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .offset(x = (-16).dp, y = (-16).dp)
-                    .size(46.dp)
-                    .clip(CircleShape)
-                    .background(Surface1)
-                    .border(2.dp, Mint.copy(alpha = 0.7f), CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
                 Icon(
-                    Icons.Rounded.CloudOff,
+                    Icons.Rounded.Bolt,
                     contentDescription = null,
-                    tint = Mint,
-                    modifier = Modifier.size(22.dp),
+                    tint = VioletDeep,
+                    modifier = Modifier.size(24.dp),
                 )
             }
         }

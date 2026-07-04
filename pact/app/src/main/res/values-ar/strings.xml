@@ -13,17 +13,17 @@
     <string name="common_skip">تخطي</string>
 
     <string name="intro_page1_title">اقفل ما يشدّك إليه</string>
-    <string name="intro_page1_body">يحجب Pact التطبيقات التي لا تستطيع تركها — إنستغرام، تيك توك، يوتيوب، أيًا كانت. تبقى مقفلة حتى يسمح لك أحدهم بالعودة.</string>
-    <string name="intro_page2_title">إنسان، لا كلمة مرور</string>
-    <string name="intro_page2_body">تختار كفيلًا — شريك حياتك، أحد والديك، صديقًا مقرّبًا. رمزه المكوّن من 6 أرقام هو الوحيد الذي يفتح تطبيقاتك. لم تعد قوة الإرادة هي الحلقة الأضعف.</string>
-    <string name="intro_page3_title">خاص. بلا إنترنت. ملكك.</string>
-    <string name="intro_page3_body">بلا حساب، بلا خادم، بلا إنترنت — أبدًا. تعمل الرموز مثل رموز التحقق الثنائي، فيستطيع كفيلك قراءة الرمز لك عبر أي مكالمة هاتفية.</string>
+    <string name="intro_page1_body">يحجب Pact بهدوء التطبيقات التي لا تتركها — إنستغرام، تيك توك، يوتيوب، أيًا كانت. تبقى مغلقة حتى يُسمح لك بالعودة.</string>
+    <string name="intro_page2_title">دائرة، لا كلمة مرور</string>
+    <string name="intro_page2_body">تختار من تثق بهم — شريك، أحد الوالدين، صديق. حين تريد العودة تطلب منهم وهم يقرّرون. لم تعد قوة الإرادة هي الحلقة الأضعف.</string>
+    <string name="intro_page3_title">خاص بحكم التصميم</string>
+    <string name="intro_page3_body">بلا حساب، بلا تسجيل، ولا شيء لإعداده. كل طلب ورسالة مشفّر من طرف إلى طرف — لا أحد في المنتصف يقرأ شيئًا، ولا نحن.</string>
     <string name="intro_get_started">ابدأ</string>
 
     <string name="role_title">لمن هذا الهاتف؟</string>
-    <string name="role_body">لـ Pact جانبان: من يقفل تطبيقاته، ومن يحمل المفتاح.</string>
+    <string name="role_body">لـ Pact جانبان: من يقفل تطبيقاته، والأشخاص الموثوقون الذين يساعدون في حراستها.</string>
     <string name="role_user_title">أريد قفل تطبيقاتي</string>
-    <string name="role_user_body">أريد قفل التطبيقات المشتّتة وتسليم المفتاح لشخص أثق به.</string>
+    <string name="role_user_body">أريد قفل التطبيقات المشتّتة وأن يحتفظ أشخاص أثق بهم بالمفتاح.</string>
     <string name="role_sponsor_title">أنا الكفيل</string>
     <string name="role_sponsor_body">طلب مني شخص عزيز أن أحتفظ برموز فتح تطبيقاته.</string>
 
@@ -65,8 +65,8 @@
     <string name="search_apps">ابحث عن التطبيقات</string>
     <string name="often_locked">يُقفل كثيرًا</string>
 
-    <string name="seal_title">اكتمل ميثاقك</string>
-    <string name="seal_body">تطبيقاتك مقفلة الآن. من الآن فصاعدًا، المفتاح مع %1$s — وهذه هي الفكرة بالضبط.</string>
+    <string name="seal_title">كل شيء جاهز</string>
+    <string name="seal_body">تطبيقاتك مقفلة. من الآن، دائرتك تقرّر متى تعود — وهذا هو المقصود تمامًا.</string>
     <string name="seal_begin">ابدأ</string>
 
     <string name="home_with">مع %1$s</string>
@@ -320,6 +320,15 @@
     <string name="identity_reset">هوية جديدة (متقدّم)…</string>
     <string name="identity_reset_note">يولّد مفاتيح جديدة ويمسح دائرتك. على الجميع مسح رمزك من جديد.</string>
     <string name="no_connection_note">قد يتأخر التسليم لحظة — تُحفظ الرسائل وتُرسَل حين تتوفر الشبكة.</string>
+    <string name="focus_start">ابدأ جلسة تركيز</string>
+    <string name="focus_body">اقفل كل شيء لمدة محددة. بلا طلبات، بلا استراحات — فترة صافية تهديها لنفسك.</string>
+    <string name="focus_active_title">جلسة تركيز</string>
+    <string name="focus_active_sub">يبقى كل شيء مقفلًا لمدة %1$s</string>
+    <string name="focus_pick_title">كم مدة التركيز؟</string>
+    <string name="focus_25m">25 دقيقة</string>
+    <string name="focus_1h">ساعة واحدة</string>
+    <string name="focus_2h">ساعتان</string>
+    <string name="focus_confirm_note">لا يمكن إنهاؤها مبكرًا — وهذا ما يجعلها فعّالة.</string>
     <plurals name="lock_n_apps">
         <item quantity="one">قفل تطبيق واحد</item>
         <item quantity="two">قفل تطبيقين</item>

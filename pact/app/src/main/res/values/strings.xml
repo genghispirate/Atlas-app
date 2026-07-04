@@ -16,18 +16,21 @@
 
     <!-- intro -->
     <string name="intro_page1_title">Lock what pulls you in</string>
-    <string name="intro_page1_body">Pact blocks the apps you can\'t put down — Instagram, TikTok, YouTube, whatever it is for you. They stay locked until someone lets you back in.</string>
-    <string name="intro_page2_title">A person, not a password</string>
-    <string name="intro_page2_body">You choose a sponsor — a partner, a parent, a close friend. Only a fresh 6-digit code from them opens your apps. Willpower stops being the weak link.</string>
-    <string name="intro_page3_title">Private. Offline. Yours.</string>
-    <string name="intro_page3_body">No account, no server, no internet needed — ever. Codes work like 2FA codes, so your sponsor can read one to you over any phone call.</string>
+    <string name="intro_page1_body">Pact quietly blocks the apps you can\'t put down — Instagram, TikTok, YouTube, whatever it is for you. They stay closed until you\'re let back in.</string>
+    <string name="intro_page2_title">A circle, not a password</string>
+    <string name="intro_page2_body">You choose the people you trust — a partner, a parent, a friend. When you want back in, you ask them, and they decide. Willpower stops being the weak link.</string>
+    <string name="intro_page3_title">Private by design</string>
+    <string name="intro_page3_body">No account, no sign-up, nothing to configure. Every request and message is end-to-end encrypted — nobody in between can read a thing, not even us.</string>
+    <string name="intro_welcome_title">Meet Pact</string>
+    <string name="intro_welcome_body">A calmer relationship with your phone, held together by the people who care about you.</string>
+    <string name="intro_welcome_cta">Get started</string>
     <string name="intro_get_started">Get started</string>
 
     <!-- role select -->
     <string name="role_title">Who\'s setting up this phone?</string>
-    <string name="role_body">Pact has two sides: the person locking their apps, and the person holding the key.</string>
+    <string name="role_body">Pact has two sides: the person locking their apps, and the trusted people who help hold them.</string>
     <string name="role_user_title">Block my apps</string>
-    <string name="role_user_body">I want to lock my distracting apps and give the key to someone I trust.</string>
+    <string name="role_user_body">I want to lock distracting apps and let people I trust hold the key.</string>
     <string name="role_sponsor_title">I\'m the sponsor</string>
     <string name="role_sponsor_body">Someone I care about asked me to hold their unlock codes.</string>
 
@@ -75,8 +78,8 @@
     <string name="often_locked">Often locked</string>
 
     <!-- seal -->
-    <string name="seal_title">Your Pact is sealed</string>
-    <string name="seal_body">Your apps are locked. From here on, %1$s holds the key — and that\'s the whole idea.</string>
+    <string name="seal_title">You\'re all set</string>
+    <string name="seal_body">Your apps are locked. From here on, your circle decides when you get back in — and that\'s exactly the point.</string>
     <string name="seal_begin">Begin</string>
 
     <!-- home -->
@@ -267,6 +270,17 @@
     <string name="backup_restored">Backup restored.</string>
     <string name="backup_failed">That didn\'t work — check the file and passphrase.</string>
     <string name="backup_import_note">Restores apps, tiers, and stats. Your current sponsor pairing stays as it is.</string>
+
+    <!-- focus session -->
+    <string name="focus_start">Start a focus session</string>
+    <string name="focus_body">Lock everything for a set time. No requests, no breaks — a clean stretch you give yourself.</string>
+    <string name="focus_active_title">Focus session</string>
+    <string name="focus_active_sub">Everything stays locked for %1$s</string>
+    <string name="focus_pick_title">How long to focus?</string>
+    <string name="focus_25m">25 minutes</string>
+    <string name="focus_1h">1 hour</string>
+    <string name="focus_2h">2 hours</string>
+    <string name="focus_confirm_note">This can\'t be ended early — that\'s what makes it work.</string>
 
     <!-- trust network -->
     <string name="circle_title">Your circle</string>

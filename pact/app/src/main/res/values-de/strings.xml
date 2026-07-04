@@ -13,17 +13,17 @@
     <string name="common_skip">Überspringen</string>
 
     <string name="intro_page1_title">Sperre, was dich fesselt</string>
-    <string name="intro_page1_body">Pact blockiert die Apps, von denen du nicht loskommst — Instagram, TikTok, YouTube, was auch immer. Sie bleiben gesperrt, bis dich jemand wieder hineinlässt.</string>
-    <string name="intro_page2_title">Ein Mensch statt eines Passworts</string>
-    <string name="intro_page2_body">Du wählst eine Vertrauensperson — Partner, Elternteil, enge Freundin. Nur ihr frischer 6-stelliger Code öffnet deine Apps. Willenskraft ist nicht länger die Schwachstelle.</string>
-    <string name="intro_page3_title">Privat. Offline. Deins.</string>
-    <string name="intro_page3_body">Kein Konto, kein Server, kein Internet — niemals. Die Codes funktionieren wie 2FA-Codes: Deine Vertrauensperson kann dir einen am Telefon vorlesen.</string>
+    <string name="intro_page1_body">Pact sperrt still die Apps, von denen du nicht loskommst — Instagram, TikTok, YouTube, was auch immer. Sie bleiben zu, bis du wieder hineingelassen wirst.</string>
+    <string name="intro_page2_title">Ein Kreis statt eines Passworts</string>
+    <string name="intro_page2_body">Du wählst die Menschen, denen du vertraust — Partner, Elternteil, Freundin. Willst du zurück, fragst du sie, und sie entscheiden. Willenskraft ist nicht länger die Schwachstelle.</string>
+    <string name="intro_page3_title">Privat von Grund auf</string>
+    <string name="intro_page3_body">Kein Konto, keine Anmeldung, nichts einzurichten. Jede Anfrage und Nachricht ist Ende-zu-Ende verschlüsselt — niemand dazwischen kann etwas lesen, auch wir nicht.</string>
     <string name="intro_get_started">Los geht\'s</string>
 
     <string name="role_title">Für wen ist dieses Handy?</string>
-    <string name="role_body">Pact hat zwei Seiten: die Person, die ihre Apps sperrt, und die Person, die den Schlüssel hält.</string>
+    <string name="role_body">Pact hat zwei Seiten: die Person, die ihre Apps sperrt, und die Vertrauten, die beim Hüten helfen.</string>
     <string name="role_user_title">Meine Apps sperren</string>
-    <string name="role_user_body">Ich will ablenkende Apps sperren und den Schlüssel jemandem geben, dem ich vertraue.</string>
+    <string name="role_user_body">Ich will ablenkende Apps sperren und Menschen, denen ich vertraue, den Schlüssel halten lassen.</string>
     <string name="role_sponsor_title">Ich halte den Schlüssel</string>
     <string name="role_sponsor_body">Jemand, der mir wichtig ist, hat mich gebeten, die Entsperrcodes zu verwahren.</string>
 
@@ -65,8 +65,8 @@
     <string name="search_apps">Apps suchen</string>
     <string name="often_locked">Oft gesperrt</string>
 
-    <string name="seal_title">Dein Pact ist besiegelt</string>
-    <string name="seal_body">Deine Apps sind gesperrt. Ab jetzt hält %1$s den Schlüssel — und genau das ist der Punkt.</string>
+    <string name="seal_title">Alles bereit</string>
+    <string name="seal_body">Deine Apps sind gesperrt. Ab jetzt entscheidet dein Kreis, wann du wieder hineinkommst — und genau das ist der Punkt.</string>
     <string name="seal_begin">Beginnen</string>
 
     <string name="home_with">mit %1$s</string>
@@ -320,6 +320,15 @@
     <string name="identity_reset">Neue Identität (erweitert)…</string>
     <string name="identity_reset_note">Erzeugt neue Schlüssel und löscht deinen Kreis. Alle müssen deinen Code erneut scannen.</string>
     <string name="no_connection_note">Zustellung kann kurz dauern — Nachrichten warten und gehen raus, sobald das Netz da ist.</string>
+    <string name="focus_start">Fokus-Sitzung starten</string>
+    <string name="focus_body">Sperre alles für eine feste Zeit. Keine Anfragen, keine Pausen — ein sauberer Abschnitt, den du dir schenkst.</string>
+    <string name="focus_active_title">Fokus-Sitzung</string>
+    <string name="focus_active_sub">Alles bleibt %1$s gesperrt</string>
+    <string name="focus_pick_title">Wie lange fokussieren?</string>
+    <string name="focus_25m">25 Minuten</string>
+    <string name="focus_1h">1 Stunde</string>
+    <string name="focus_2h">2 Stunden</string>
+    <string name="focus_confirm_note">Lässt sich nicht früher beenden — genau das macht sie wirksam.</string>
     <plurals name="lock_n_apps">
         <item quantity="one">%1$d App sperren</item>
         <item quantity="other">%1$d Apps sperren</item>

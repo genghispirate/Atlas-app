@@ -13,17 +13,17 @@
     <string name="common_skip">スキップ</string>
 
     <string name="intro_page1_title">つい開くアプリに鍵を</string>
-    <string name="intro_page1_body">Pact は手放せないアプリをブロックします。Instagram、TikTok、YouTube──何でも。誰かが開けてくれるまで、鍵はかかったままです。</string>
-    <string name="intro_page2_title">パスワードではなく、人</string>
-    <string name="intro_page2_body">パートナーや親、親友など「見守り役」を選びます。アプリを開けるのは、その人が持つ最新の6桁コードだけ。意志の力はもう弱点ではありません。</string>
-    <string name="intro_page3_title">プライベート。オフライン。あなたのもの。</string>
-    <string name="intro_page3_body">アカウント不要、サーバー不要、インターネットも一切不要。コードは2段階認証と同じ仕組みなので、電話越しに読み上げてもらえます。</string>
+    <string name="intro_page1_body">Pact は手放せないアプリを静かにブロックします。Instagram、TikTok、YouTube──何でも。戻してもらえるまで閉じたままです。</string>
+    <string name="intro_page2_title">パスワードではなく、サークル</string>
+    <string name="intro_page2_body">信頼できる人を選びます──パートナー、親、友人。戻りたいときは頼み、決めるのは彼らです。意志の力はもう弱点ではありません。</string>
+    <string name="intro_page3_title">設計からしてプライベート</string>
+    <string name="intro_page3_body">アカウント不要、登録不要、設定も不要。すべてのリクエストとメッセージはエンドツーエンドで暗号化──間にいる誰も、私たちさえも中身を読めません。</string>
     <string name="intro_get_started">はじめる</string>
 
     <string name="role_title">このスマホは誰のもの？</string>
-    <string name="role_body">Pact には2つの役割があります。アプリに鍵をかける人と、その鍵を預かる人です。</string>
+    <string name="role_body">Pact には2つの側があります。アプリをロックする人と、それを預かるのを手伝う信頼できる人たちです。</string>
     <string name="role_user_title">自分のアプリをロックする</string>
-    <string name="role_user_body">気が散るアプリに鍵をかけて、信頼できる人に鍵を預けたい。</string>
+    <string name="role_user_body">気が散るアプリをロックして、信頼する人たちに鍵を預けたい。</string>
     <string name="role_sponsor_title">私は見守り役</string>
     <string name="role_sponsor_body">大切な人から、ロック解除コードを預かってほしいと頼まれた。</string>
 
@@ -65,8 +65,8 @@
     <string name="search_apps">アプリを検索</string>
     <string name="often_locked">よくロックされる</string>
 
-    <string name="seal_title">Pact が結ばれました</string>
-    <string name="seal_body">アプリはロックされました。これからは鍵を%1$sが持ちます──それこそが狙いです。</string>
+    <string name="seal_title">準備完了</string>
+    <string name="seal_body">アプリはロックされました。これからは、いつ戻れるかをサークルが決めます──それこそが狙いです。</string>
     <string name="seal_begin">はじめる</string>
 
     <string name="home_with">%1$sと</string>
@@ -320,6 +320,15 @@
     <string name="identity_reset">新しい本人情報（上級）…</string>
     <string name="identity_reset_note">新しい鍵を作り、サークルを消します。全員があなたのコードを再び読み取る必要があります。</string>
     <string name="no_connection_note">配信に少し時間がかかることがあります——メッセージは待機し、通信が戻ると送られます。</string>
+    <string name="focus_start">フォーカスセッションを始める</string>
+    <string name="focus_body">決めた時間、すべてをロック。リクエストも休憩もなし──自分に贈るまっさらな時間です。</string>
+    <string name="focus_active_title">フォーカスセッション</string>
+    <string name="focus_active_sub">あと %1$s、すべてロック中</string>
+    <string name="focus_pick_title">どのくらい集中する？</string>
+    <string name="focus_25m">25分</string>
+    <string name="focus_1h">1時間</string>
+    <string name="focus_2h">2時間</string>
+    <string name="focus_confirm_note">途中で終われません──それが効く理由です。</string>
     <plurals name="lock_n_apps">
         <item quantity="other">%1$d個のアプリをロック</item>
     </plurals>

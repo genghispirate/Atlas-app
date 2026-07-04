@@ -13,17 +13,17 @@
     <string name="common_skip">Пропустить</string>
 
     <string name="intro_page1_title">Заблокируйте то, что затягивает</string>
-    <string name="intro_page1_body">Pact блокирует приложения, от которых вы не можете оторваться — Instagram, TikTok, YouTube, что угодно. Они останутся под замком, пока кто-то не впустит вас обратно.</string>
-    <string name="intro_page2_title">Человек вместо пароля</string>
-    <string name="intro_page2_body">Вы выбираете хранителя — партнёра, родителя, близкого друга. Только его свежий 6-значный код открывает ваши приложения. Сила воли больше не слабое звено.</string>
-    <string name="intro_page3_title">Приватно. Офлайн. Ваше.</string>
-    <string name="intro_page3_body">Без аккаунта, без сервера, без интернета — никогда. Коды работают как коды 2FA: хранитель может продиктовать код по телефону.</string>
+    <string name="intro_page1_body">Pact спокойно блокирует приложения, от которых не оторваться — Instagram, TikTok, YouTube, что угодно. Они закрыты, пока вас не впустят обратно.</string>
+    <string name="intro_page2_title">Круг, а не пароль</string>
+    <string name="intro_page2_body">Вы выбираете тех, кому доверяете — партнёра, родителя, друга. Захотите вернуться — попросите их, и решают они. Сила воли перестаёт быть слабым звеном.</string>
+    <string name="intro_page3_title">Приватность по замыслу</string>
+    <string name="intro_page3_body">Без аккаунта, без регистрации, ничего не настраивать. Каждый запрос и сообщение зашифрованы сквозным шифрованием — посередине никто ничего не прочтёт, даже мы.</string>
     <string name="intro_get_started">Начать</string>
 
     <string name="role_title">Чей это телефон?</string>
-    <string name="role_body">У Pact две стороны: тот, кто блокирует свои приложения, и тот, кто хранит ключ.</string>
+    <string name="role_body">У Pact две стороны: тот, кто блокирует свои приложения, и доверенные люди, которые помогают их хранить.</string>
     <string name="role_user_title">Заблокировать мои приложения</string>
-    <string name="role_user_body">Хочу закрыть отвлекающие приложения и отдать ключ тому, кому доверяю.</string>
+    <string name="role_user_body">Я хочу заблокировать отвлекающие приложения и доверить ключ близким людям.</string>
     <string name="role_sponsor_title">Я хранитель</string>
     <string name="role_sponsor_body">Близкий человек попросил меня хранить коды разблокировки.</string>
 
@@ -65,8 +65,8 @@
     <string name="search_apps">Поиск приложений</string>
     <string name="often_locked">Часто блокируют</string>
 
-    <string name="seal_title">Ваш Pact скреплён</string>
-    <string name="seal_body">Приложения заблокированы. Теперь ключ у %1$s — в этом и весь смысл.</string>
+    <string name="seal_title">Всё готово</string>
+    <string name="seal_body">Ваши приложения заблокированы. Теперь ваш круг решает, когда вы вернётесь — в этом весь смысл.</string>
     <string name="seal_begin">Начать</string>
 
     <string name="home_with">с %1$s</string>
@@ -320,6 +320,15 @@
     <string name="identity_reset">Новая личность (для опытных)…</string>
     <string name="identity_reset_note">Создаёт новые ключи и очищает круг. Всем придётся снова отсканировать ваш код.</string>
     <string name="no_connection_note">Доставка может занять момент — сообщения ждут и уходят, как только появится сеть.</string>
+    <string name="focus_start">Начать сессию фокуса</string>
+    <string name="focus_body">Заблокируйте всё на заданное время. Ни запросов, ни перерывов — чистый отрезок, который вы дарите себе.</string>
+    <string name="focus_active_title">Сессия фокуса</string>
+    <string name="focus_active_sub">Всё заблокировано на %1$s</string>
+    <string name="focus_pick_title">Сколько фокусироваться?</string>
+    <string name="focus_25m">25 минут</string>
+    <string name="focus_1h">1 час</string>
+    <string name="focus_2h">2 часа</string>
+    <string name="focus_confirm_note">Нельзя завершить раньше — именно поэтому это работает.</string>
     <plurals name="lock_n_apps">
         <item quantity="one">Заблокировать %1$d приложение</item>
         <item quantity="few">Заблокировать %1$d приложения</item>

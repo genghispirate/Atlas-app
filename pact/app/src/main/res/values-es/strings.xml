@@ -13,17 +13,17 @@
     <string name="common_skip">Omitir</string>
 
     <string name="intro_page1_title">Bloquea lo que te atrapa</string>
-    <string name="intro_page1_body">Pact bloquea las apps que no puedes soltar: Instagram, TikTok, YouTube, la que sea. Quedan bloqueadas hasta que alguien te deje volver a entrar.</string>
-    <string name="intro_page2_title">Una persona, no una contraseña</string>
-    <string name="intro_page2_body">Eliges un padrino: tu pareja, tu madre, un buen amigo. Solo un código de 6 dígitos suyo abre tus apps. La fuerza de voluntad deja de ser el punto débil.</string>
-    <string name="intro_page3_title">Privado. Sin conexión. Tuyo.</string>
-    <string name="intro_page3_body">Sin cuenta, sin servidor, sin internet — nunca. Los códigos funcionan como los de 2FA: tu padrino puede leerte uno por teléfono.</string>
+    <string name="intro_page1_body">Pact bloquea con calma las apps que no puedes soltar: Instagram, TikTok, YouTube, la que sea. Quedan cerradas hasta que te dejen volver a entrar.</string>
+    <string name="intro_page2_title">Un círculo, no una contraseña</string>
+    <string name="intro_page2_body">Eliges a las personas en quienes confías: pareja, familiar, amigo. Cuando quieras volver a entrar, les pides y ellos deciden. La fuerza de voluntad deja de ser el punto débil.</string>
+    <string name="intro_page3_title">Privado por diseño</string>
+    <string name="intro_page3_body">Sin cuenta, sin registro, nada que configurar. Cada solicitud y mensaje va cifrado de extremo a extremo: nadie en medio puede leer nada, ni siquiera nosotros.</string>
     <string name="intro_get_started">Empezar</string>
 
     <string name="role_title">¿Para quién es este teléfono?</string>
-    <string name="role_body">Pact tiene dos lados: quien bloquea sus apps y quien guarda la llave.</string>
+    <string name="role_body">Pact tiene dos lados: quien bloquea sus apps y las personas de confianza que ayudan a guardarlas.</string>
     <string name="role_user_title">Bloquear mis apps</string>
-    <string name="role_user_body">Quiero bloquear mis apps y darle la llave a alguien de confianza.</string>
+    <string name="role_user_body">Quiero bloquear apps que distraen y dejar que personas de confianza guarden la llave.</string>
     <string name="role_sponsor_title">Soy el padrino</string>
     <string name="role_sponsor_body">Alguien que me importa me pidió guardar sus códigos de desbloqueo.</string>
 
@@ -65,8 +65,8 @@
     <string name="search_apps">Buscar apps</string>
     <string name="often_locked">Se bloquea a menudo</string>
 
-    <string name="seal_title">Tu Pact está sellado</string>
-    <string name="seal_body">Tus apps están bloqueadas. A partir de ahora, %1$s tiene la llave — y esa es justamente la idea.</string>
+    <string name="seal_title">Todo listo</string>
+    <string name="seal_body">Tus apps están bloqueadas. A partir de ahora, tu círculo decide cuándo vuelves a entrar — y ese es justo el objetivo.</string>
     <string name="seal_begin">Empezar</string>
 
     <string name="home_with">con %1$s</string>
@@ -322,6 +322,15 @@ Su teléfono muestra un código durante la configuración. Escanéalo abajo.</st
     <string name="identity_reset">Nueva identidad (avanzado)…</string>
     <string name="identity_reset_note">Genera claves nuevas y borra tu círculo. Todos deben escanear tu código otra vez.</string>
     <string name="no_connection_note">La entrega puede tardar un momento — los mensajes se guardan y se envían cuando hay red.</string>
+    <string name="focus_start">Iniciar una sesión de concentración</string>
+    <string name="focus_body">Bloquea todo por un tiempo. Sin solicitudes, sin pausas — un tramo limpio que te regalas.</string>
+    <string name="focus_active_title">Sesión de concentración</string>
+    <string name="focus_active_sub">Todo queda bloqueado durante %1$s</string>
+    <string name="focus_pick_title">¿Cuánto tiempo de concentración?</string>
+    <string name="focus_25m">25 minutos</string>
+    <string name="focus_1h">1 hora</string>
+    <string name="focus_2h">2 horas</string>
+    <string name="focus_confirm_note">No se puede terminar antes — eso es lo que la hace funcionar.</string>
     <plurals name="lock_n_apps">
         <item quantity="one">Bloquear %1$d app</item>
         <item quantity="other">Bloquear %1$d apps</item>

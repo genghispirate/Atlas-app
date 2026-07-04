@@ -13,17 +13,17 @@
     <string name="common_skip">छोड़ें</string>
 
     <string name="intro_page1_title">जो खींचता है, उसे लॉक करें</string>
-    <string name="intro_page1_body">Pact उन ऐप्स को ब्लॉक करता है जिन्हें आप छोड़ नहीं पाते — Instagram, TikTok, YouTube, जो भी हो। वे तब तक लॉक रहते हैं जब तक कोई आपको वापस अंदर न आने दे।</string>
-    <string name="intro_page2_title">पासवर्ड नहीं, एक इंसान</string>
-    <string name="intro_page2_body">आप एक साथी चुनते हैं — जीवनसाथी, माता-पिता या करीबी दोस्त। सिर्फ़ उनका ताज़ा 6 अंकों का कोड ही आपके ऐप्स खोलता है। अब कमज़ोर कड़ी आपकी इच्छाशक्ति नहीं रही।</string>
-    <string name="intro_page3_title">निजी। ऑफ़लाइन। आपका।</string>
-    <string name="intro_page3_body">कोई खाता नहीं, कोई सर्वर नहीं, इंटरनेट की ज़रूरत नहीं — कभी भी। कोड 2FA कोड की तरह काम करते हैं, इसलिए आपका साथी फ़ोन कॉल पर भी कोड बता सकता है।</string>
+    <string name="intro_page1_body">Pact चुपचाप उन ऐप्स को ब्लॉक करता है जिन्हें आप छोड़ नहीं पाते — Instagram, TikTok, YouTube, जो भी हो। जब तक आपको वापस न आने दिया जाए, वे बंद रहते हैं।</string>
+    <string name="intro_page2_title">एक दायरा, कोई पासवर्ड नहीं</string>
+    <string name="intro_page2_body">आप उन लोगों को चुनते हैं जिन पर भरोसा है — साथी, माता-पिता, दोस्त। वापस जाना हो तो उनसे पूछते हैं और वे तय करते हैं। अब कमज़ोर कड़ी आपकी इच्छाशक्ति नहीं।</string>
+    <string name="intro_page3_title">बुनियाद से निजी</string>
+    <string name="intro_page3_body">कोई खाता नहीं, कोई साइन-अप नहीं, कुछ सेट नहीं करना। हर अनुरोध और संदेश एंड-टू-एंड एन्क्रिप्टेड है — बीच में कोई कुछ नहीं पढ़ सकता, हम भी नहीं।</string>
     <string name="intro_get_started">शुरू करें</string>
 
     <string name="role_title">यह फ़ोन किसका है?</string>
-    <string name="role_body">Pact के दो पहलू हैं: एक जो अपने ऐप्स लॉक करता है, और एक जो चाबी रखता है।</string>
+    <string name="role_body">Pact के दो पहलू हैं: अपने ऐप्स लॉक करने वाला, और वे भरोसेमंद लोग जो उन्हें सँभालने में मदद करते हैं।</string>
     <string name="role_user_title">मेरे ऐप्स लॉक करें</string>
-    <string name="role_user_body">मैं ध्यान भटकाने वाले ऐप्स लॉक करके चाबी किसी भरोसेमंद को देना चाहता/चाहती हूँ।</string>
+    <string name="role_user_body">मैं भटकाने वाले ऐप्स लॉक करके भरोसेमंद लोगों को चाबी सौंपना चाहता/चाहती हूँ।</string>
     <string name="role_sponsor_title">मैं चाबी रखने वाला हूँ</string>
     <string name="role_sponsor_body">मेरे किसी अपने ने मुझसे अनलॉक कोड सँभालने को कहा है।</string>
 
@@ -65,8 +65,8 @@
     <string name="search_apps">ऐप्स खोजें</string>
     <string name="often_locked">अक्सर लॉक किया जाता है</string>
 
-    <string name="seal_title">आपका Pact पक्का हुआ</string>
-    <string name="seal_body">आपके ऐप्स लॉक हैं। अब से चाबी %1$s के पास है — और यही तो मक़सद है।</string>
+    <string name="seal_title">सब तैयार है</string>
+    <string name="seal_body">आपके ऐप्स लॉक हैं। अब से आपका दायरा तय करता है कि आप कब वापस आते हैं — और यही तो मक़सद है।</string>
     <string name="seal_begin">शुरू करें</string>
 
     <string name="home_with">%1$s के साथ</string>
@@ -320,6 +320,15 @@
     <string name="identity_reset">नई पहचान (उन्नत)…</string>
     <string name="identity_reset_note">नई कुंजियाँ बनाता है और आपका दायरा मिटाता है। सबको आपका कोड फिर स्कैन करना होगा।</string>
     <string name="no_connection_note">डिलीवरी में पल भर लग सकता है — संदेश कतार में रहते हैं और नेटवर्क आते ही चले जाते हैं।</string>
+    <string name="focus_start">फ़ोकस सत्र शुरू करें</string>
+    <string name="focus_body">तय समय के लिए सब लॉक करें। न अनुरोध, न ब्रेक — एक साफ़ अवधि जो आप ख़ुद को देते हैं।</string>
+    <string name="focus_active_title">फ़ोकस सत्र</string>
+    <string name="focus_active_sub">%1$s तक सब कुछ लॉक रहेगा</string>
+    <string name="focus_pick_title">कितनी देर फ़ोकस?</string>
+    <string name="focus_25m">25 मिनट</string>
+    <string name="focus_1h">1 घंटा</string>
+    <string name="focus_2h">2 घंटे</string>
+    <string name="focus_confirm_note">इसे जल्दी ख़त्म नहीं किया जा सकता — यही इसे कारगर बनाता है।</string>
     <plurals name="lock_n_apps">
         <item quantity="one">%1$d ऐप लॉक करें</item>
         <item quantity="other">%1$d ऐप्स लॉक करें</item>
