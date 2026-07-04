@@ -29,8 +29,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.BarChart
+import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
@@ -59,6 +59,7 @@ import androidx.core.content.ContextCompat
 import com.pact.app.R
 import com.pact.app.core.Apps
 import com.pact.app.core.PactState
+import com.pact.app.core.TrustNetwork
 import com.pact.app.service.BlockerService
 import com.pact.app.ui.theme.Amber
 import com.pact.app.ui.theme.CardBorder
@@ -78,9 +79,12 @@ fun HomeScreen(
     onAddApps: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenStats: () -> Unit,
+    onOpenCircle: () -> Unit,
 ) {
     val context = LocalContext.current
+    val network = remember { TrustNetwork.get(context) }
     val snapshot by state.snapshot.collectAsState()
+    val netSnap by network.snapshot.collectAsState()
     val now by rememberNow()
     val serviceOn by produceState(initialValue = BlockerService.isEnabled(context)) {
         while (true) {
@@ -89,10 +93,8 @@ fun HomeScreen(
         }
     }
     var appForAction by remember { mutableStateOf<String?>(null) }
-    var verifyingRemoval by remember { mutableStateOf<String?>(null) }
-    var verifyingUnlock by remember { mutableStateOf<String?>(null) }
-    var choosingDuration by remember { mutableStateOf<String?>(null) }
-    var verifyingTierDown by remember { mutableStateOf<String?>(null) }
+    var changeRequested by remember { mutableStateOf(false) }
+    val hasCircle = netSnap.approvers().isNotEmpty()
 
     // Break/shield notifications are optional; ask once on Android 13+.
     val notifPermission = rememberLauncherForActivityResult(
@@ -126,13 +128,14 @@ fun HomeScreen(
             Column(Modifier.weight(1f)) {
                 Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineSmall)
                 Text(
-                    stringResource(R.string.home_with, snapshot.guardianName),
+                    if (hasCircle) stringResource(R.string.circle_members, netSnap.supporters().size)
+                    else stringResource(R.string.app_name),
                     style = MaterialTheme.typography.labelMedium,
                     color = Periwinkle,
                 )
             }
-            IconButton(onClick = onAddApps) {
-                Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.home_add_apps), tint = TextSecondary)
+            IconButton(onClick = onOpenCircle) {
+                Icon(Icons.Rounded.Group, contentDescription = stringResource(R.string.circle_title), tint = TextSecondary)
             }
             IconButton(onClick = onOpenStats) {
                 Icon(Icons.Rounded.BarChart, contentDescription = stringResource(R.string.stats_open), tint = TextSecondary)
@@ -159,6 +162,22 @@ fun HomeScreen(
                         )
                     },
                 )
+            }
+
+            // circle empty → gentle nudge (red locks fall back to a pause)
+            if (!hasCircle) {
+                item {
+                    PactCard(
+                        background = Surface2,
+                        modifier = Modifier.padding(top = 4.dp).clickable(onClick = onOpenCircle),
+                    ) {
+                        Text(
+                            stringResource(R.string.circle_needs_people),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Amber,
+                        )
+                    }
+                }
             }
 
             // reflection: one gentle question after a break ends
@@ -277,32 +296,23 @@ fun HomeScreen(
         }
     }
 
-    // action dialog for a locked app
+    // action dialog for a locked app: tier control + circle-gated changes
     appForAction?.let { pkg ->
+        val tier = snapshot.tierOf(pkg)
         AlertDialog(
             onDismissRequest = { appForAction = null },
             containerColor = MaterialTheme.colorScheme.surface,
             title = { Text(Apps.label(context, pkg), style = MaterialTheme.typography.headlineSmall) },
             text = {
                 Column {
-                    Text(
-                        stringResource(R.string.dialog_locked_body, snapshot.guardianName),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = TextSecondary,
-                    )
-                    Spacer(Modifier.height(14.dp))
                     SectionLabel(stringResource(R.string.tier_label))
                     Spacer(Modifier.height(8.dp))
-                    val tier = snapshot.tierOf(pkg)
                     TierOption(
                         selected = tier == PactState.Tier.RED,
                         dotColor = Rose,
                         title = stringResource(R.string.tier_red),
                         body = stringResource(R.string.tier_red_desc),
-                        onClick = {
-                            // stricter is always free
-                            if (tier != PactState.Tier.RED) state.setTier(pkg, PactState.Tier.RED)
-                        },
+                        onClick = { if (tier != PactState.Tier.RED) state.setTier(pkg, PactState.Tier.RED) },
                     )
                     Spacer(Modifier.height(8.dp))
                     TierOption(
@@ -311,26 +321,44 @@ fun HomeScreen(
                         title = stringResource(R.string.tier_yellow),
                         body = stringResource(R.string.tier_yellow_desc),
                         onClick = {
-                            // relaxing needs a code
-                            if (tier == PactState.Tier.RED) {
-                                verifyingTierDown = pkg
+                            // relaxing a red lock is a change the circle must approve
+                            if (tier == PactState.Tier.RED && hasCircle) {
+                                network.createRequest(
+                                    kind = TrustNetwork.RequestKind.CHANGE,
+                                    changeAction = TrustNetwork.CHANGE_TIER_DOWN,
+                                    pkg = pkg,
+                                    label = Apps.label(context, pkg),
+                                    minutes = 0,
+                                    reason = null,
+                                    usageNote = null,
+                                )
+                                changeRequested = true
                                 appForAction = null
+                            } else if (tier == PactState.Tier.RED && !hasCircle) {
+                                state.setTier(pkg, PactState.Tier.YELLOW)
                             }
                         },
                     )
                 }
             },
             confirmButton = {
-                Column(horizontalAlignment = Alignment.End) {
-                    TextButton(onClick = {
-                        verifyingUnlock = pkg
-                        appForAction = null
-                    }) { Text(stringResource(R.string.action_unlock_a_while), color = Periwinkle) }
-                    TextButton(onClick = {
-                        verifyingRemoval = pkg
-                        appForAction = null
-                    }) { Text(stringResource(R.string.action_remove_from_pact), color = MaterialTheme.colorScheme.error) }
-                }
+                TextButton(onClick = {
+                    if (hasCircle) {
+                        network.createRequest(
+                            kind = TrustNetwork.RequestKind.CHANGE,
+                            changeAction = TrustNetwork.CHANGE_REMOVE_APP,
+                            pkg = pkg,
+                            label = Apps.label(context, pkg),
+                            minutes = 0,
+                            reason = null,
+                            usageNote = null,
+                        )
+                        changeRequested = true
+                    } else {
+                        state.removeBlocked(pkg)
+                    }
+                    appForAction = null
+                }) { Text(stringResource(R.string.action_remove_from_pact), color = MaterialTheme.colorScheme.error) }
             },
             dismissButton = {
                 TextButton(onClick = { appForAction = null }) { Text(stringResource(R.string.common_close)) }
@@ -338,73 +366,20 @@ fun HomeScreen(
         )
     }
 
-    verifyingUnlock?.let { pkg ->
-        VerifyCodeDialog(
-            state = state,
-            title = stringResource(R.string.unlock_q_title, Apps.label(context, pkg)),
-            subtitle = stringResource(R.string.ask_code, snapshot.guardianName),
-            onDismiss = { verifyingUnlock = null },
-            onVerified = {
-                verifyingUnlock = null
-                choosingDuration = pkg
-            },
-        )
-    }
-
-    choosingDuration?.let { pkg ->
+    if (changeRequested) {
         AlertDialog(
-            onDismissRequest = { choosingDuration = null },
+            onDismissRequest = { changeRequested = false },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text(stringResource(R.string.duration_title), style = MaterialTheme.typography.headlineSmall) },
+            title = { Text(stringResource(R.string.request_sent), style = MaterialTheme.typography.headlineSmall) },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    listOf(
-                        R.string.duration_5m to 5 * 60_000L,
-                        R.string.duration_15m to 15 * 60_000L,
-                        R.string.duration_1h to 60 * 60_000L,
-                        R.string.duration_midnight to PactState.untilMidnightMillis(),
-                    ).forEach { (labelRes, duration) ->
-                        PactButton(
-                            stringResource(labelRes),
-                            onClick = {
-                                state.unlockFor(pkg, duration)
-                                choosingDuration = null
-                            },
-                            tonal = true,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                }
+                Text(
+                    stringResource(R.string.request_change_sent),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextSecondary,
+                )
             },
-            confirmButton = {},
-            dismissButton = {
-                TextButton(onClick = { choosingDuration = null }) { Text(stringResource(R.string.common_cancel)) }
-            },
-        )
-    }
-
-    verifyingRemoval?.let { pkg ->
-        VerifyCodeDialog(
-            state = state,
-            title = stringResource(R.string.remove_q_title, Apps.label(context, pkg)),
-            subtitle = stringResource(R.string.remove_q_body, snapshot.guardianName),
-            onDismiss = { verifyingRemoval = null },
-            onVerified = {
-                state.removeBlocked(pkg)
-                verifyingRemoval = null
-            },
-        )
-    }
-
-    verifyingTierDown?.let { pkg ->
-        VerifyCodeDialog(
-            state = state,
-            title = stringResource(R.string.tier_downgrade_title),
-            subtitle = stringResource(R.string.tier_downgrade_body, Apps.label(context, pkg), snapshot.guardianName),
-            onDismiss = { verifyingTierDown = null },
-            onVerified = {
-                state.setTier(pkg, PactState.Tier.YELLOW)
-                verifyingTierDown = null
+            confirmButton = {
+                TextButton(onClick = { changeRequested = false }) { Text(stringResource(R.string.common_done)) }
             },
         )
     }

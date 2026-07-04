@@ -28,9 +28,6 @@ class PactState private constructor(context: Context) {
     /** Why the user reached for the app — logged during yellow unlocks. */
     enum class Trigger { BORED, STRESS, HABIT, ANXIETY, LONELY, PROCRASTINATION, NEEDED }
 
-    /** Someone a sponsor holds the key for. [secretBlob] is Keystore-encrypted. */
-    data class Sponsee(val name: String, val secretBlob: String)
-
     /** One day of aggregate stats. [day] is yyyymmdd. */
     data class DayStats(
         val day: Int,
@@ -64,10 +61,7 @@ class PactState private constructor(context: Context) {
         val unlockUntil: Map<String, Long> = emptyMap(),
         /** Yellow self-unlock rests until this time, per app. */
         val yellowCooldownUntil: Map<String, Long> = emptyMap(),
-        val failedAttempts: Int = 0,
-        val lockoutUntil: Long = 0L,
         val strictMode: Boolean = false,
-        val sponsees: List<Sponsee> = emptyList(),
         /** Rolling daily stats, most recent last. Bounded to [DAYS_KEPT]. */
         val days: List<DayStats> = emptyList(),
         /** Cumulative count of block events per hour of day (24 buckets). */
@@ -101,34 +95,15 @@ class PactState private constructor(context: Context) {
     /** Called after every state change; hosts (widget, etc.) can observe. */
     var onChanged: ((Snapshot) -> Unit)? = null
 
-    sealed class VerifyResult {
-        data object Ok : VerifyResult()
-        data object Wrong : VerifyResult()
-        data class TooManyAttempts(val untilMillis: Long) : VerifyResult()
-    }
-
     // ---------------------------------------------------------------- setup
 
-    fun completeSetup(guardianName: String, secretBase32: String, blocked: Set<String>) {
+    fun completeSetup(myName: String, blocked: Set<String>) {
         prefs.edit()
             .putString(KEY_ROLE, Role.USER.name)
             .putBoolean(KEY_SETUP, true)
-            .putString(KEY_GUARDIAN, guardianName.trim())
-            .putString(KEY_SECRET, Vault.encrypt(secretBase32))
+            .putString(KEY_GUARDIAN, myName.trim())
             .putStringSet(KEY_BLOCKED, blocked)
-            .putLong(KEY_LAST_STEP, Totp.stepAt(System.currentTimeMillis()))
             .putLong(KEY_SETUP_AT, System.currentTimeMillis())
-            .apply()
-        refresh()
-    }
-
-    fun rePair(guardianName: String, newSecretBase32: String) {
-        prefs.edit()
-            .putString(KEY_GUARDIAN, guardianName.trim())
-            .putString(KEY_SECRET, Vault.encrypt(newSecretBase32))
-            .putLong(KEY_LAST_STEP, Totp.stepAt(System.currentTimeMillis()))
-            .putInt(KEY_FAILED, 0)
-            .putLong(KEY_LOCKOUT, 0L)
             .apply()
         refresh()
     }
@@ -138,26 +113,13 @@ class PactState private constructor(context: Context) {
         refresh()
     }
 
-    // -------------------------------------------------------------- sponsor
+    // ----------------------------------------------------- trusted-person role
 
+    /** Mark this install as a trusted person's device (holds others' locks). */
     fun becomeSponsor() {
         prefs.edit().putString(KEY_ROLE, Role.SPONSOR.name).apply()
         refresh()
     }
-
-    fun addSponsee(name: String, secretBase32: String) {
-        val next = _snapshot.value.sponsees + Sponsee(name.trim(), Vault.encrypt(secretBase32))
-        prefs.edit().putString(KEY_SPONSEES, encodeSponsees(next)).apply()
-        refresh()
-    }
-
-    fun removeSponsee(name: String) {
-        val next = _snapshot.value.sponsees.filterNot { it.name == name }
-        prefs.edit().putString(KEY_SPONSEES, encodeSponsees(next)).apply()
-        refresh()
-    }
-
-    fun sponseeSecret(sponsee: Sponsee): String? = Vault.decrypt(sponsee.secretBlob)
 
     // ------------------------------------------------------------- blocking
 
@@ -249,42 +211,6 @@ class PactState private constructor(context: Context) {
         val unlocks = _snapshot.value.unlockUntil - pkg
         prefs.edit().putString(KEY_UNLOCKS, encodeLongMap(unlocks)).apply()
         refresh()
-    }
-
-    // ---------------------------------------------------------- code checks
-
-    fun verifyCode(code: String, nowMillis: Long = System.currentTimeMillis()): VerifyResult {
-        val lockout = prefs.getLong(KEY_LOCKOUT, 0L)
-        if (lockout > nowMillis) return VerifyResult.TooManyAttempts(lockout)
-
-        val secret = prefs.getString(KEY_SECRET, null)?.let(Vault::decrypt)
-            ?: return VerifyResult.Wrong
-
-        val matchedStep = Totp.verify(secret, code, nowMillis)
-        val lastStep = prefs.getLong(KEY_LAST_STEP, 0L)
-
-        if (matchedStep == null || matchedStep <= lastStep) {
-            val failed = prefs.getInt(KEY_FAILED, 0) + 1
-            val edit = prefs.edit().putInt(KEY_FAILED, failed)
-            if (failed >= MAX_ATTEMPTS) {
-                val until = nowMillis + LOCKOUT_MILLIS
-                edit.putLong(KEY_LOCKOUT, until).putInt(KEY_FAILED, 0)
-                edit.apply()
-                refresh()
-                return VerifyResult.TooManyAttempts(until)
-            }
-            edit.apply()
-            refresh()
-            return VerifyResult.Wrong
-        }
-
-        prefs.edit()
-            .putLong(KEY_LAST_STEP, matchedStep)
-            .putInt(KEY_FAILED, 0)
-            .putLong(KEY_LOCKOUT, 0L)
-            .apply()
-        refresh()
-        return VerifyResult.Ok
     }
 
     // ---------------------------------------------------------------- stats
@@ -379,15 +305,12 @@ class PactState private constructor(context: Context) {
     private fun read(): Snapshot = Snapshot(
         role = runCatching { Role.valueOf(prefs.getString(KEY_ROLE, null) ?: "") }
             .getOrElse { if (prefs.getBoolean(KEY_SETUP, false)) Role.USER else Role.UNSET },
-        sponsees = decodeSponsees(prefs.getString(KEY_SPONSEES, "") ?: ""),
         setupComplete = prefs.getBoolean(KEY_SETUP, false),
         guardianName = prefs.getString(KEY_GUARDIAN, "") ?: "",
         blocked = prefs.getStringSet(KEY_BLOCKED, emptySet()) ?: emptySet(),
         tiers = decodeTiers(prefs.getString(KEY_TIERS, "") ?: ""),
         unlockUntil = decodeLongMap(prefs.getString(KEY_UNLOCKS, "") ?: ""),
         yellowCooldownUntil = decodeLongMap(prefs.getString(KEY_COOLDOWNS, "") ?: ""),
-        failedAttempts = prefs.getInt(KEY_FAILED, 0),
-        lockoutUntil = prefs.getLong(KEY_LOCKOUT, 0L),
         strictMode = prefs.getBoolean(KEY_STRICT, false),
         days = decodeDays(prefs.getString(KEY_DAYS, "") ?: ""),
         hourHistogram = decodeHours(prefs.getString(KEY_HOURS, "") ?: ""),
@@ -423,26 +346,6 @@ class PactState private constructor(context: Context) {
             else entry.substring(0, i) to (runCatching { Tier.valueOf(entry.substring(i + 1)) }.getOrNull()
                 ?: return@mapNotNull null)
         }.toMap()
-
-    private fun encodeSponsees(list: List<Sponsee>): String =
-        list.joinToString("|") {
-            android.util.Base64.encodeToString(
-                it.name.toByteArray(Charsets.UTF_8), android.util.Base64.NO_WRAP
-            ) + "," + it.secretBlob
-        }
-
-    private fun decodeSponsees(raw: String): List<Sponsee> =
-        raw.split("|").mapNotNull { entry ->
-            val i = entry.indexOf(',')
-            if (i <= 0) return@mapNotNull null
-            val name = runCatching {
-                String(
-                    android.util.Base64.decode(entry.substring(0, i), android.util.Base64.NO_WRAP),
-                    Charsets.UTF_8
-                )
-            }.getOrNull() ?: return@mapNotNull null
-            Sponsee(name, entry.substring(i + 1))
-        }
 
     private fun encodeDays(days: List<DayStats>): String {
         val arr = JSONArray()
@@ -525,9 +428,6 @@ class PactState private constructor(context: Context) {
             "com.google.android.packageinstaller",
         )
 
-        const val MAX_ATTEMPTS = 5
-        const val LOCKOUT_MILLIS = 5 * 60 * 1000L
-
         /** After a yellow break ends, self-unlock rests this long. */
         const val YELLOW_COOLDOWN_MILLIS = 30 * 60 * 1000L
 
@@ -540,17 +440,12 @@ class PactState private constructor(context: Context) {
         private const val KEY_SETUP = "setup_complete"
         private const val KEY_SETUP_AT = "setup_at"
         private const val KEY_GUARDIAN = "guardian_name"
-        private const val KEY_SECRET = "secret_blob"
         private const val KEY_BLOCKED = "blocked_packages"
         private const val KEY_TIERS = "tiers"
         private const val KEY_UNLOCKS = "unlock_until"
         private const val KEY_COOLDOWNS = "yellow_cooldowns"
-        private const val KEY_FAILED = "failed_attempts"
-        private const val KEY_LOCKOUT = "lockout_until"
-        private const val KEY_LAST_STEP = "last_accepted_step"
         private const val KEY_STRICT = "strict_mode"
         private const val KEY_ROLE = "role"
-        private const val KEY_SPONSEES = "sponsees"
         private const val KEY_DAYS = "stat_days"
         private const val KEY_HOURS = "stat_hours"
         private const val KEY_EVENTS = "unlock_events"

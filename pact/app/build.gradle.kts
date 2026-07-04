@@ -12,8 +12,8 @@ android {
         applicationId = "com.pact.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 6
-        versionName = "3.0"
+        versionCode = 7
+        versionName = "4.0"
     }
 
     signingConfigs {
@@ -60,6 +60,11 @@ dependencies {
     implementation("androidx.savedstate:savedstate-ktx:1.2.1")
     implementation("com.google.zxing:core:3.5.3")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
+    // Trust network: Ed25519/X25519 crypto, relay transport, background sync
+    implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
 
     testImplementation("junit:junit:4.13.2")
 }

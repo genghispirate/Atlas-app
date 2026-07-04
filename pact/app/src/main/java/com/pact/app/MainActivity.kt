@@ -35,12 +35,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pact.app.core.PactState
 import com.pact.app.ui.AppPickerList
+import com.pact.app.ui.ChatScreen
+import com.pact.app.ui.CircleScreen
 import com.pact.app.ui.HomeScreen
 import com.pact.app.ui.OnboardingFlow
 import com.pact.app.ui.PactButton
 import com.pact.app.ui.SettingsScreen
-import com.pact.app.ui.SponsorHome
 import com.pact.app.ui.StatsScreen
+import com.pact.app.ui.TrustedHome
 import com.pact.app.ui.theme.PactTheme
 import com.pact.app.ui.theme.TextSecondary
 
@@ -62,17 +64,38 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    // Fast in-app sync only while a screen is visible.
+    override fun onStart() {
+        super.onStart()
+        (application as? PactApp)?.acquireLiveSync()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (application as? PactApp)?.releaseLiveSync()
+    }
 }
 
-private enum class Screen { Home, AddApps, Settings, Stats }
+private enum class Screen { Home, AddApps, Settings, Stats, Circle, Chat }
 
 @Composable
 private fun PactApp(state: PactState) {
     val snapshot by state.snapshot.collectAsState()
     var screen by rememberSaveable { mutableStateOf(Screen.Home) }
+    var chatContactId by rememberSaveable { mutableStateOf<String?>(null) }
 
     if (snapshot.role == PactState.Role.SPONSOR) {
-        SponsorHome(state)
+        // Trusted-person device: their circle and chats.
+        when (screen) {
+            Screen.Chat -> chatContactId?.let { id ->
+                ChatScreen(contactId = id, onBack = { screen = Screen.Home })
+            } ?: run { screen = Screen.Home }
+            else -> TrustedHome(
+                state = state,
+                onOpenChat = { id -> chatContactId = id; screen = Screen.Chat },
+            )
+        }
         return
     }
     if (!snapshot.setupComplete) {
@@ -86,6 +109,7 @@ private fun PactApp(state: PactState) {
             onAddApps = { screen = Screen.AddApps },
             onOpenSettings = { screen = Screen.Settings },
             onOpenStats = { screen = Screen.Stats },
+            onOpenCircle = { screen = Screen.Circle },
         )
         Screen.AddApps -> AddAppsScreen(
             state = state,
@@ -100,6 +124,14 @@ private fun PactApp(state: PactState) {
             BackHandler { screen = Screen.Home }
             StatsScreen(state = state, onBack = { screen = Screen.Home })
         }
+        Screen.Circle -> CircleScreen(
+            state = state,
+            onBack = { screen = Screen.Home },
+            onOpenChat = { id -> chatContactId = id; screen = Screen.Chat },
+        )
+        Screen.Chat -> chatContactId?.let { id ->
+            ChatScreen(contactId = id, onBack = { screen = Screen.Circle })
+        } ?: run { screen = Screen.Home }
     }
 }
 

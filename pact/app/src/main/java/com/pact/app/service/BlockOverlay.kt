@@ -59,6 +59,7 @@ class BlockOverlay(private val service: AccessibilityService) {
                                 dismiss()
                                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
                             },
+                            onDismissQuietly = { dismiss() },
                             onUnlocked = { durationMillis, tier, trigger ->
                                 com.pact.app.core.PactState.get(service)
                                     .unlockFor(p, durationMillis, tier, trigger)
@@ -84,6 +85,8 @@ class BlockOverlay(private val service: AccessibilityService) {
             lifecycleOwner.resume()
             view = composeView
             owner = lifecycleOwner
+            // Approvals can arrive while the wall is up — sync fast meanwhile.
+            (service.applicationContext as? com.pact.app.PactApp)?.acquireLiveSync()
             true
         }.getOrElse {
             lifecycleOwner.destroy()
@@ -98,6 +101,7 @@ class BlockOverlay(private val service: AccessibilityService) {
         runCatching { service.getSystemService(WindowManager::class.java).removeView(v) }
         owner?.destroy()
         owner = null
+        (service.applicationContext as? com.pact.app.PactApp)?.releaseLiveSync()
     }
 }
 

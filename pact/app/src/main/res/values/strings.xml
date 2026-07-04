@@ -268,6 +268,103 @@
     <string name="backup_failed">That didn\'t work — check the file and passphrase.</string>
     <string name="backup_import_note">Restores apps, tiers, and stats. Your current sponsor pairing stays as it is.</string>
 
+    <!-- trust network -->
+    <string name="circle_title">Your circle</string>
+    <string name="circle_step_title">Build your circle</string>
+    <string name="circle_step_body">Your circle is the people who hold your locks — a partner, a parent, a close friend. When you want back in, they decide. Have them install Pact, choose “I\'m a trusted person”, and scan this code.</string>
+    <string name="circle_your_name_title">What\'s your name?</string>
+    <string name="circle_your_name_body">Your circle sees this name on requests and messages.</string>
+    <string name="my_name_label">Your name</string>
+    <string name="circle_joined">%1$s joined your circle</string>
+    <string name="circle_waiting">Waiting for someone to scan…</string>
+    <string name="circle_members">%1$d in your circle</string>
+    <string name="circle_add_person">Add a person</string>
+    <string name="circle_empty">Nobody yet. Your locks work, but only your circle can open the red ones.</string>
+    <string name="circle_needs_people">Your circle is empty — red locks fall back to a mindful pause until someone joins. Tap to add a person.</string>
+    <string name="role_trusted_title">I\'m a trusted person</string>
+    <string name="role_trusted_body">Someone I care about asked me to hold their locks.</string>
+    <string name="trusted_setup_title">Hold their locks</string>
+    <string name="trusted_setup_body">Someone you care about is locking their distracting apps and wants you in their circle. When they ask for time, you decide — right from this app.\n\nTheir phone shows a code during setup. Scan it below.</string>
+    <string name="trusted_scan">Scan their code</string>
+    <string name="trusted_paired">You\'re in %1$s\'s circle</string>
+    <string name="trusted_home_hint">When they hit a wall, their request lands here. You can also just talk.</string>
+    <string name="trusted_no_wards">Nobody yet. Tap + and scan the code on their phone.</string>
+
+    <!-- approval rules -->
+    <string name="rule_section">Who can open a lock</string>
+    <string name="rule_any">Any one person</string>
+    <string name="rule_any_desc">The first yes wins.</string>
+    <string name="rule_majority">Most of them</string>
+    <string name="rule_majority_desc">More than half must say yes.</string>
+    <string name="rule_all">Everyone</string>
+    <string name="rule_all_desc">One no is a no.</string>
+
+    <!-- permissions -->
+    <string name="perm_can_approve">Can approve requests</string>
+    <string name="perm_can_stats">Can view your stats</string>
+    <string name="perm_chat_only">Chat only</string>
+    <string name="contact_remove">Remove from circle…</string>
+    <string name="contact_remove_note">Removing someone needs your circle\'s approval — that\'s the point.</string>
+
+    <!-- requests -->
+    <string name="request_ask">Ask your circle</string>
+    <string name="request_how_long">How much time?</string>
+    <string name="request_why">Why? (they\'ll see this)</string>
+    <string name="request_send">Send request</string>
+    <string name="request_sent">Request sent</string>
+    <string name="request_waiting">Your circle has been asked. You can wait here or walk away — if they say yes, the time starts automatically.</string>
+    <string name="request_expires_in">Request expires in %1$s</string>
+    <string name="request_approved_banner">%1$s said yes — %2$d minutes granted</string>
+    <string name="request_denied_banner">Your circle said no this time</string>
+    <string name="request_expired_banner">Nobody answered in time</string>
+    <string name="request_pending_banner">Waiting on your circle…</string>
+    <string name="request_usage_note">%1$d blocks today</string>
+    <string name="request_change_sent">Sent to your circle for approval. It applies automatically when they agree.</string>
+    <string name="request_min_generic">+%1$d minutes</string>
+
+    <!-- incoming (trusted person side) -->
+    <string name="incoming_title">%1$s is asking</string>
+    <string name="incoming_unlock">%1$s · +%2$d minutes</string>
+    <string name="incoming_change_remove">Wants to remove %1$s from their locks</string>
+    <string name="incoming_change_tier">Wants to make %1$s easier to open</string>
+    <string name="incoming_change_strict">Wants to turn off strict mode</string>
+    <string name="incoming_change_reset">Wants to end their Pact and reset</string>
+    <string name="incoming_reason">Their reason: %1$s</string>
+    <string name="incoming_approve">Approve</string>
+    <string name="incoming_deny">Not now</string>
+    <string name="incoming_custom">Different amount…</string>
+    <string name="incoming_custom_title">Grant how long?</string>
+    <string name="incoming_message_hint">Add a note (optional)</string>
+    <string name="incoming_none">No open requests. When they hit a wall, it lands here.</string>
+    <string name="incoming_answered_yes">You said yes</string>
+    <string name="incoming_answered_no">You said no</string>
+
+    <!-- chat -->
+    <string name="chat_title">Messages</string>
+    <string name="chat_hint">Message…</string>
+    <string name="chat_send">Send</string>
+    <string name="chat_empty">Say something. Encouragement counts double on hard days.</string>
+    <string name="chat_queued">Sending…</string>
+    <string name="chat_delete">Delete for me</string>
+    <string name="chat_open">Chat</string>
+
+    <!-- notifications (network) -->
+    <string name="notif_channel_network">Your circle</string>
+    <string name="notif_request_title">%1$s is asking for time</string>
+    <string name="notif_request_body">%1$s — open Pact to answer</string>
+    <string name="notif_approved_title">Request approved</string>
+    <string name="notif_approved_body">%1$s said yes to %2$s</string>
+    <string name="notif_denied_title">Not this time</string>
+    <string name="notif_denied_body">%1$s said no to %2$s</string>
+    <string name="notif_message_title">%1$s</string>
+    <string name="notif_paired_title">Your circle grew</string>
+    <string name="notif_paired_body">%1$s joined your circle</string>
+
+    <!-- identity / danger -->
+    <string name="identity_reset">New identity (advanced)…</string>
+    <string name="identity_reset_note">Generates fresh keys and clears your circle. Everyone must scan your code again.</string>
+    <string name="no_connection_note">Delivery may take a moment — messages queue and send when the network allows.</string>
+
     <!-- plurals -->
     <plurals name="lock_n_apps">
         <item quantity="one">Lock %1$d app</item>

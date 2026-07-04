@@ -40,6 +40,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -62,7 +63,7 @@ import androidx.compose.ui.unit.dp
 import com.pact.app.R
 import com.pact.app.core.PactState
 import com.pact.app.core.Qr
-import com.pact.app.core.Totp
+import com.pact.app.core.TrustNetwork
 import com.pact.app.service.BlockerService
 import com.pact.app.ui.theme.Amber
 import com.pact.app.ui.theme.Ink
@@ -77,13 +78,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- * Onboarding: a real introduction first (3 swipeable pages), then a role
- * choice — block my own apps, or hold the keys as a sponsor — then the
- * matching guided setup. The TOTP secret lives only in memory until setup
- * completes.
+ * Onboarding: introduction → role → guided setup. The user never sees a key,
+ * a code, or a protocol — just people. Pairing is one QR scan; the circle
+ * fills in live as trusted people join.
  */
 
-private enum class Phase { Intro, RoleSelect, UserSetup, SponsorSetup }
+private enum class Phase { Intro, RoleSelect, UserSetup, TrustedSetup }
 
 @Composable
 fun OnboardingFlow(state: PactState, onDone: () -> Unit) {
@@ -93,10 +93,10 @@ fun OnboardingFlow(state: PactState, onDone: () -> Unit) {
         Phase.Intro -> IntroPager(onFinished = { phase = Phase.RoleSelect })
         Phase.RoleSelect -> RoleSelect(
             onUser = { phase = Phase.UserSetup },
-            onSponsor = { phase = Phase.SponsorSetup },
+            onTrusted = { phase = Phase.TrustedSetup },
         )
         Phase.UserSetup -> UserSetupFlow(state = state, onDone = onDone)
-        Phase.SponsorSetup -> SponsorSetupFlow(
+        Phase.TrustedSetup -> TrustedSetupFlow(
             state = state,
             onBack = { phase = Phase.RoleSelect },
             onDone = onDone,
@@ -229,7 +229,7 @@ private fun IntroPager(onFinished: () -> Unit) {
 // -------------------------------------------------------------- role select
 
 @Composable
-private fun RoleSelect(onUser: () -> Unit, onSponsor: () -> Unit) {
+private fun RoleSelect(onUser: () -> Unit, onTrusted: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -262,9 +262,9 @@ private fun RoleSelect(onUser: () -> Unit, onSponsor: () -> Unit) {
         RoleCard(
             icon = Icons.Rounded.Key,
             iconOnGradient = false,
-            title = stringResource(R.string.role_sponsor_title),
-            body = stringResource(R.string.role_sponsor_body),
-            onClick = onSponsor,
+            title = stringResource(R.string.role_trusted_title),
+            body = stringResource(R.string.role_trusted_body),
+            onClick = onTrusted,
         )
     }
 }
@@ -315,12 +315,12 @@ private fun RoleCard(
 
 @Composable
 private fun UserSetupFlow(state: PactState, onDone: () -> Unit) {
+    val context = LocalContext.current
+    val network = remember { TrustNetwork.get(context) }
     var step by remember { mutableIntStateOf(0) }
-    var guardianName by remember { mutableStateOf("") }
-    val secret = remember { Totp.generateSecret() }
+    var myName by remember { mutableStateOf(network.myName) }
     var selectedApps by remember { mutableStateOf(setOf<String>()) }
 
-    // system back walks one step backwards through setup
     BackHandler(enabled = step > 0) { step -= 1 }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -330,7 +330,7 @@ private fun UserSetupFlow(state: PactState, onDone: () -> Unit) {
                 .padding(top = 56.dp, bottom = 8.dp),
             horizontalArrangement = Arrangement.Center,
         ) {
-            repeat(6) { i ->
+            repeat(5) { i ->
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
@@ -343,32 +343,25 @@ private fun UserSetupFlow(state: PactState, onDone: () -> Unit) {
 
         Box(Modifier.weight(1f)) {
             when (step) {
-                0 -> GuardianStep(
-                    name = guardianName,
-                    onNameChange = { guardianName = it },
-                    onNext = { step = 1 },
+                0 -> MyNameStep(
+                    name = myName,
+                    onNameChange = { myName = it },
+                    onNext = {
+                        network.myName = myName
+                        step = 1
+                    },
                 )
-                1 -> PairStep(
-                    guardianName = guardianName,
-                    secret = secret,
-                    onNext = { step = 2 },
-                )
-                2 -> ProveStep(
-                    guardianName = guardianName,
-                    secret = secret,
-                    onNext = { step = 3 },
-                    onBack = { step = 1 },
-                )
-                3 -> PermissionStep(onNext = { step = 4 })
-                4 -> PickAppsStep(
+                1 -> CircleStep(network = network, onNext = { step = 2 })
+                2 -> PermissionStep(onNext = { step = 3 })
+                3 -> PickAppsStep(
                     selected = selectedApps,
                     onSelectedChange = { selectedApps = it },
-                    onNext = { step = 5 },
+                    onNext = { step = 4 },
                 )
-                5 -> SealStep(
-                    guardianName = guardianName,
+                4 -> SealStep(
+                    circleCount = network.snapshot.collectAsState().value.supporters().size,
                     onFinish = {
-                        state.completeSetup(guardianName, secret, selectedApps)
+                        state.completeSetup(myName, selectedApps)
                         onDone()
                     },
                 )
@@ -412,15 +405,15 @@ private fun StepScaffold(
 }
 
 @Composable
-private fun GuardianStep(name: String, onNameChange: (String) -> Unit, onNext: () -> Unit) {
+private fun MyNameStep(name: String, onNameChange: (String) -> Unit, onNext: () -> Unit) {
     StepScaffold(
-        title = stringResource(R.string.guardian_title),
-        subtitle = stringResource(R.string.guardian_body),
+        title = stringResource(R.string.circle_your_name_title),
+        subtitle = stringResource(R.string.circle_your_name_body),
     ) {
         OutlinedTextField(
             value = name,
             onValueChange = onNameChange,
-            label = { Text(stringResource(R.string.guardian_name_label)) },
+            label = { Text(stringResource(R.string.my_name_label)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
@@ -433,13 +426,6 @@ private fun GuardianStep(name: String, onNameChange: (String) -> Unit, onNext: (
                 unfocusedBorderColor = Surface2,
             ),
         )
-        Spacer(Modifier.height(12.dp))
-        Text(
-            stringResource(R.string.guardian_hint),
-            style = MaterialTheme.typography.bodyMedium,
-            color = TextTertiary,
-            textAlign = TextAlign.Center,
-        )
         Spacer(Modifier.height(28.dp))
         PactButton(
             stringResource(R.string.common_continue),
@@ -450,14 +436,17 @@ private fun GuardianStep(name: String, onNameChange: (String) -> Unit, onNext: (
     }
 }
 
+/** The pairing step: show the QR, watch the circle fill in live. */
 @Composable
-private fun PairStep(guardianName: String, secret: String, onNext: () -> Unit) {
-    val qr = remember(secret) {
-        Qr.encode(Totp.otpAuthUri(secret, guardianName)).asImageBitmap()
-    }
+fun CircleStep(network: TrustNetwork, onNext: () -> Unit) {
+    val qrContent = remember { network.pairingQrContent() }
+    val qr = remember(qrContent) { Qr.encode(qrContent).asImageBitmap() }
+    val snapshot by network.snapshot.collectAsState()
+    val supporters = snapshot.supporters()
+
     StepScaffold(
-        title = stringResource(R.string.pair_title),
-        subtitle = stringResource(R.string.pair_body, guardianName),
+        title = stringResource(R.string.circle_step_title),
+        subtitle = stringResource(R.string.circle_step_body),
     ) {
         Box(
             modifier = Modifier
@@ -472,86 +461,46 @@ private fun PairStep(guardianName: String, secret: String, onNext: () -> Unit) {
             )
         }
         Spacer(Modifier.height(20.dp))
-        PactCard {
-            Text(
-                stringResource(R.string.pair_on_their_phone, guardianName),
-                style = MaterialTheme.typography.titleSmall,
-            )
-            Spacer(Modifier.height(12.dp))
-            NumberedStep(1, stringResource(R.string.pair_step1))
-            Spacer(Modifier.height(10.dp))
-            NumberedStep(2, stringResource(R.string.pair_step2))
-            Spacer(Modifier.height(10.dp))
-            NumberedStep(3, stringResource(R.string.pair_step3))
-            Spacer(Modifier.height(14.dp))
-            Text(
-                stringResource(R.string.pair_alt_authenticator, Totp.prettySecret(secret)),
-                style = MaterialTheme.typography.bodyMedium,
-                color = TextTertiary,
-            )
-        }
-        Spacer(Modifier.height(16.dp))
-        PactCard(background = Surface2) {
+        if (supporters.isEmpty()) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Rounded.Lock, contentDescription = null, tint = Mint)
-                Spacer(Modifier.width(12.dp))
-                Text(
-                    stringResource(R.string.pair_warning),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextSecondary,
+                androidx.compose.material3.CircularProgressIndicator(
+                    color = Periwinkle,
+                    modifier = Modifier.size(18.dp),
                 )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    stringResource(R.string.circle_waiting),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextTertiary,
+                )
+            }
+        } else {
+            supporters.forEach { contact ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 4.dp),
+                ) {
+                    Icon(Icons.Rounded.Check, contentDescription = null, tint = Mint)
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        stringResource(R.string.circle_joined, contact.name),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Mint,
+                    )
+                }
             }
         }
         Spacer(Modifier.height(24.dp))
-        PactButton(
-            stringResource(R.string.pair_confirm, guardianName),
-            onClick = onNext,
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
-}
-
-@Composable
-private fun ProveStep(
-    guardianName: String,
-    secret: String,
-    onNext: () -> Unit,
-    onBack: () -> Unit,
-) {
-    var code by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf(false) }
-    StepScaffold(
-        title = stringResource(R.string.prove_title),
-        subtitle = stringResource(R.string.prove_body, guardianName),
-    ) {
-        CodeInput(
-            value = code,
-            onValueChange = { entered ->
-                code = entered
-                error = false
-                if (entered.length == 6) {
-                    if (Totp.verify(secret, entered) != null) onNext()
-                    else {
-                        code = ""
-                        error = true
-                    }
-                }
-            },
-            isError = error,
-            autoFocus = true,
-        )
-        if (error) {
-            Spacer(Modifier.height(12.dp))
-            Text(
-                stringResource(R.string.prove_error),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.error,
-                textAlign = TextAlign.Center,
+        if (supporters.isNotEmpty()) {
+            PactButton(
+                stringResource(R.string.common_continue),
+                onClick = onNext,
+                modifier = Modifier.fillMaxWidth(),
             )
-        }
-        Spacer(Modifier.height(20.dp))
-        TextButton(onClick = onBack) {
-            Text(stringResource(R.string.prove_show_qr), color = TextSecondary)
+        } else {
+            TextButton(onClick = onNext) {
+                Text(stringResource(R.string.perm_later), color = TextTertiary)
+            }
         }
     }
 }
@@ -657,13 +606,14 @@ private fun PickAppsStep(
 }
 
 @Composable
-private fun SealStep(guardianName: String, onFinish: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 28.dp, vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+private fun SealStep(circleCount: Int, onFinish: () -> Unit) {
+    StepScaffold(
+        title = stringResource(R.string.seal_title),
+        subtitle = if (circleCount > 0) {
+            stringResource(R.string.circle_members, circleCount)
+        } else {
+            stringResource(R.string.circle_empty)
+        },
     ) {
         Box(
             modifier = Modifier
@@ -679,15 +629,6 @@ private fun SealStep(guardianName: String, onFinish: () -> Unit) {
                 modifier = Modifier.size(52.dp),
             )
         }
-        Spacer(Modifier.height(28.dp))
-        Text(stringResource(R.string.seal_title), style = MaterialTheme.typography.headlineMedium)
-        Spacer(Modifier.height(14.dp))
-        Text(
-            stringResource(R.string.seal_body, guardianName),
-            style = MaterialTheme.typography.bodyLarge,
-            color = TextSecondary,
-            textAlign = TextAlign.Center,
-        )
         Spacer(Modifier.height(40.dp))
         PactButton(
             stringResource(R.string.seal_begin),

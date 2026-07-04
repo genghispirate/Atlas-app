@@ -1,13 +1,12 @@
 # Pact 🛡
 
-**Give the key to someone who cares.**
+**A private, encrypted trust network for beating phone addiction.**
 
-Pact is an Android app for people fighting phone / social-media addiction. It locks the apps
-that pull you in, and the *only* way to unlock them is a 6-digit code from a trusted person
-you chose — your **sponsor**: a partner, parent, or close friend. Willpower stops being the
-weak link.
+Pact locks the apps that pull you in. The only way back in is your **circle** — the people you
+trust — approving your request. There are no passwords, no accounts, no servers, and no codes to
+type. Just people who care, holding your locks.
 
-<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v3.0.apk"><code>release/Pact-v3.0.apk</code></a></em></p>
+<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v4.0.apk"><code>release/Pact-v4.0.apk</code></a></em></p>
 
 ---
 
@@ -17,119 +16,122 @@ Pact has two sides, chosen on first launch:
 
 **If you're locking your apps:**
 
-1. **Choose your sponsor.** During setup you name a trusted person.
-2. **Hand over the key.** Pact generates a standard TOTP secret and shows it **once** as a
-   QR code. Your sponsor scans it on **their** phone — easiest with Pact itself in sponsor
-   mode, or with Google Authenticator / Aegis / any RFC 6238 authenticator. The key never
-   appears again on your phone.
-3. **Pick your apps.** Instagram, TikTok, YouTube… anything installed.
-4. **Raise the shield.** Guided, step-by-step setup of the one Android permission Pact
-   needs. The accessibility service then watches for locked apps reaching the foreground and
-   instantly covers them with the lock wall — drawn as an accessibility overlay by the
-   service itself, so it cannot be suppressed by Android's background-activity restrictions.
-   Code entry uses a built-in PIN pad.
-5. **Want back in?** Every locked app has a difficulty. **Red** (default): a fresh sponsor
-   code, then a break length (5 min / 15 min / 1 h / until midnight). **Yellow**: a
-   30-second mindful pause and a quick "what's pulling you?" — no code, but short breaks
-   only and a 30-minute cooldown between self-unlocks. Apps relock automatically; relocking
-   early is always free, and unlocking also works from Pact's home screen. Making an app
-   stricter is one tap; relaxing it needs a code.
-6. **Learn from it.** After a break ends, one gentle "was it worth it?" question. The
-   Insights screen shows your streak, walls per day, most tempting apps, when cravings
-   peak, what triggers them, and how breaks felt afterwards — only measured numbers,
-   nothing invented.
+1. **Choose your name and build your circle.** Add trusted people — a partner, a parent, a
+   friend, a therapist — by having them install Pact, pick "I'm a trusted person", and scan
+   your code. One scan pairs you. Add as many as you like.
+2. **Pick your apps and raise the shield.** A guided, one-permission setup; the accessibility
+   service then covers any locked app with a full-screen wall the moment it opens.
+3. **Want back in?** Each app has a difficulty:
+   - **Red** (default): the wall sends a request to your circle. They see the app, how long
+     you asked for, and why. If they approve — per your rule — the time starts automatically,
+     even if you walked away.
+   - **Yellow**: a 30-second mindful pause and a quick "what's pulling you?", then a short
+     break — no approval needed, but a cooldown stops back-to-back unlocks.
+   - (Green is simply an app you never added.)
+4. **The circle decides the hard stuff too.** Removing an app, relaxing a red lock to yellow,
+   turning off strict mode, or ending your Pact are all requests your circle approves.
 
-**If you're the sponsor:**
+**If you're a trusted person:**
 
-Install the same APK, choose **"I'm the sponsor"** during setup, and scan the QR from their
-phone with the built-in portrait scanner (torch included). Pact then shows the live 6-digit
-code with a 30-second countdown ring — no separate 2FA app needed. One sponsor phone can
-hold keys for several people.
+Install the same app, pick "I'm a trusted person", scan their code. Their requests land on your
+home screen — Approve, Not now, or grant a custom amount with a note. You can also just message
+them. One device can hold the trust of several people.
 
-**Also included:** a home-screen widget (shield status, streak, blocks today), quiet
-notifications (active break with a relock button, shield-down alert — never spam), and
-encrypted backup/restore (passphrase-protected; the unlock key is deliberately excluded so
-a backup can never open your own locks) plus a stats CSV export.
+## The trust model — public-key cryptography, zero setup
 
-### Why TOTP means it works offline
+There is **no shared secret and no TOTP**. Instead, every device generates an **Ed25519**
+signing key and an **X25519** encryption key on first launch, wrapped by the hardware-backed
+Android Keystore. Public keys are exchanged once, by QR. From then on:
 
-Unlock codes are the same technology as 2FA codes: both phones derive the same 6-digit code
-from a shared secret plus the clock. **Neither phone needs internet — ever.** Your sponsor
-can read you a code over a phone call, SMS, or across the kitchen table.
+- Every request, approval, and message is **signed** by its author and **sealed** (encrypted)
+  to the recipient's public key. The transport only ever carries opaque ciphertext.
+- Incoming messages are rejected unless they decrypt, carry a valid signature from a **pinned**
+  key you actually trust, haven't expired, and use a **nonce** never seen before.
 
-## Design principles
+You never see a key, a code, or a protocol name. You see people, messages, and requests.
 
-- **Asymmetric friction.** Locking more apps is one tap. Unlocking, removing an app, changing
-  sponsor, or resetting all require a fresh code from your sponsor.
-- **Calm, not punitive.** The block screen is a quiet dark gradient with an encouraging line,
-  not a red alarm. The app is dark-only, low-stimulation by design.
-- **Private by architecture.** No account, no server, no analytics. The TOTP secret is stored
-  encrypted with an AES-256-GCM key in the Android Keystore.
+### Approval rules
 
-## Anti-cheat measures
+Configurable per circle: **any one** person can approve, a **majority** must, or **everyone**
+must. The rule engine is a pure, unit-tested function — approvals are deterministic.
+
+### Permissions
+
+Each trusted person is scoped: approve requests, view your stats, or **chat only**. You can
+change this, or remove someone, any time.
+
+## Security properties
 
 | Threat | Defense |
 |---|---|
-| Guessing codes | 5 wrong attempts → 5-minute cooldown |
-| Reusing an overheard code | Each 30-second code slot is accepted only once (replay protection) |
-| Reading the secret from storage | Encrypted via Android Keystore; plaintext shown only once at setup |
-| Quietly disabling the accessibility service | Optional **Strict mode** also locks system Settings behind a code |
-| Chaining self-unlocks | Yellow tier has a 30-minute cooldown after each break |
-| Turning the clock back to reuse a code | Accepted time steps are monotonic — old codes stay dead |
-| Uninstalling Pact | Strict mode also locks the system package installer, so the uninstall dialog hits a wall. Honest limitation: a determined user can still remove a sideloaded app from safe mode. Pact is a commitment device, not a prison. |
+| Forged approval | Every payload is Ed25519-signed; a signature from anyone but a pinned key is rejected |
+| Replay / duplicate approval | Per-sender nonce ledger + one-decision-per-approver + short request expiry |
+| Tampering | AES-256-GCM authenticated encryption; any bit-flip fails to open |
+| Eavesdropping | Sealed to the recipient's X25519 key; the relay sees only ciphertext on a random inbox |
+| Key substitution | Keys are pinned at pairing; only the initial pair-accept may come from an unpinned key |
+| Reading keys at rest | Private keys wrapped by the Android Keystore; chat history encrypted at rest |
+| Chaining self-unlocks | Yellow tier has a 30-minute cooldown |
+| Quietly disabling the shield | Strict mode also locks system Settings and the package installer |
+| Losing a trusted person's device | Revoke them — their key is unpinned and everything from it is rejected |
+
+## Offline & delivery
+
+Messages queue locally and drain with exponential backoff, so nothing is lost when you're
+offline. Delivery is **instant while either app is open** (a fast in-app sync loop) and syncs
+on a ~15-minute schedule in the background via WorkManager. Honest limitation: with no
+app-owned servers there is no push, so background delivery isn't instantaneous.
+
+## Transport is pluggable
+
+Business logic talks only to a `Transport` interface, so the carrier can be swapped —
+public relay → Nostr → custom — **without touching the crypto, the approval engine, or the UI**.
+The default is an open public relay (no accounts) that carries only end-to-end-encrypted
+payloads on unguessable inbox topics.
+
+## Also included
+
+Difficulty tiers · urge tracking · post-break reflection · an Insights screen (streak, walls
+per day, most tempting apps, craving hours, triggers) · a home-screen widget · quiet,
+actionable notifications (requests, approvals, messages) · encrypted passphrase backup + stats
+CSV.
 
 ## Install
 
-1. Copy `release/Pact-v3.0.apk` to **both** phones (yours and your sponsor's), or download it
-   from this repo.
-2. Open it and allow "install from unknown sources" when prompted.
-3. Follow the in-app introduction — each phone picks its role during setup.
-
-Requires Android 8.0+ (API 26). No Google services needed.
+Copy `release/Pact-v4.0.apk` to **both** phones — yours and each trusted person's — allow
+"install from unknown sources", and follow the in-app setup. Requires Android 8.0+ (API 26).
+No Google services needed.
 
 ## Build from source
 
 ```bash
 cd pact
 # Point local.properties at your Android SDK, then:
-./gradlew assembleRelease
-# → app/build/outputs/apk/release/app-release.apk
+./gradlew assembleRelease   # → app/build/outputs/apk/release/app-release.apk
+./gradlew test              # crypto + approval-policy unit tests
 ```
 
 The release build is signed with the checked-in keystore (`keystore/pact-release.keystore`,
-passwords in `app/build.gradle.kts`) so anyone can produce an installable build. **This
-keystore is intentionally public — do not reuse it for anything else**, and generate your own
-if you plan to distribute.
+passwords in `app/build.gradle.kts`) so anyone can produce an installable build. **This keystore
+is intentionally public — generate your own to distribute.**
 
-Unit tests (`./gradlew test`) verify the TOTP engine against the official RFC 6238 test
-vectors, guaranteeing compatibility with Pact's sponsor mode and every standard
-authenticator app.
-
-## Project structure
+## Architecture
 
 ```
 app/src/main/java/com/pact/app/
-├── MainActivity.kt          # routing: onboarding / user home / sponsor home
+├── MainActivity.kt / PactApp.kt   # navigation, live-sync lifecycle
 ├── core/
-│   ├── Totp.kt              # RFC 6238 TOTP + Base32 + otpauth parsing (pure JVM, tested)
-│   ├── Vault.kt             # Android Keystore AES-GCM encryption for secrets
-│   ├── PactState.kt         # persisted state, roles, rate limiting, replay protection
-│   ├── Apps.kt              # installed-app listing, labels, icons
-│   └── Qr.kt                # offline QR rendering (ZXing)
-├── service/
-│   ├── BlockerService.kt    # accessibility service — the shield
-│   └── BlockOverlay.kt      # the lock wall as a service-drawn overlay window
-└── ui/                       # Compose: illustrated intro, role select, setup flows,
-                              #   sponsor codes, QR scanner, lock wall + PIN pad,
-                              #   home dashboard, app picker, settings
+│   ├── CryptoBox.kt      # Ed25519 sign/verify + X25519 sealed boxes (pure JVM, tested)
+│   ├── Wire.kt           # signed+sealed payload protocol, inbound verification
+│   ├── Transport.kt      # swappable transport interface + relay impl + offline outbox
+│   ├── TrustNetwork.kt   # contacts, chat, request/approval engine, policy (tested)
+│   ├── SyncWorker.kt     # WorkManager background sync
+│   ├── PactState.kt      # blocking state, tiers, stats
+│   ├── Notifications.kt / Backup.kt / Apps.kt / Qr.kt / Vault.kt
+├── service/              # accessibility shield + service-drawn lock overlay
+├── PactWidget.kt         # home-screen widget
+└── ui/                   # Compose: onboarding, home, circle, chat, requests,
+                          #   lock wall, insights, settings, scanner
 ```
 
-## Languages
-
-Pact follows your phone’s system language. Included: English, Spanish, French, German,
-Portuguese, Arabic (RTL), Hindi, Russian, Japanese, and Chinese (Simplified).
-
-## Tech
-
-Kotlin · Jetpack Compose · Material 3 · ZXing (offline QR render + camera scan) ·
-all user-facing text in string resources · min SDK 26, target SDK 35.
+Kotlin · Jetpack Compose · Material 3 · BouncyCastle · OkHttp · WorkManager · StateFlow ·
+10 languages · min SDK 26, target SDK 35.

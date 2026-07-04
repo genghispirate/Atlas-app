@@ -40,32 +40,49 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.pact.app.R
 import com.pact.app.core.Backup
 import com.pact.app.core.PactState
-import com.pact.app.core.Qr
-import com.pact.app.core.Totp
+import com.pact.app.core.TrustNetwork
 import com.pact.app.ui.theme.Mint
 import com.pact.app.ui.theme.Periwinkle
 import com.pact.app.ui.theme.Surface2
 import com.pact.app.ui.theme.TextSecondary
 import com.pact.app.ui.theme.TextTertiary
 
-private enum class Gate { None, StrictOff, RePair, Reset }
-
+/**
+ * Settings for the person locking their apps. Anything that loosens the Pact
+ * — turning off strict mode, ending the Pact — is a change the circle must
+ * approve, sent as a signed request. No codes, no secrets: just people.
+ */
 @Composable
 fun SettingsScreen(state: PactState, onBack: () -> Unit) {
+    val context = LocalContext.current
+    val network = remember { TrustNetwork.get(context) }
     val snapshot by state.snapshot.collectAsState()
-    var gate by remember { mutableStateOf(Gate.None) }
-    var showRePairFlow by remember { mutableStateOf(false) }
+    val netSnap by network.snapshot.collectAsState()
+    val hasCircle = netSnap.approvers().isNotEmpty()
+    var requested by remember { mutableStateOf(false) }
+    var confirmIdentity by remember { mutableStateOf(false) }
+
+    fun requestChange(action: String, label: String) {
+        if (hasCircle) {
+            network.createRequest(
+                kind = TrustNetwork.RequestKind.CHANGE,
+                changeAction = action,
+                pkg = null,
+                label = label,
+                minutes = 0,
+                reason = null,
+                usageNote = null,
+            )
+            requested = true
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -89,27 +106,7 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
             Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall)
         }
 
-        SectionLabel(stringResource(R.string.settings_sponsor_section))
-        Spacer(Modifier.height(8.dp))
-        PactCard {
-            Text(snapshot.guardianName, style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.settings_paired),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Mint,
-            )
-            Spacer(Modifier.height(12.dp))
-            TextButton(onClick = { gate = Gate.RePair }) {
-                Text(stringResource(R.string.settings_change_sponsor), color = Periwinkle)
-            }
-            Text(
-                stringResource(R.string.settings_change_sponsor_hint),
-                style = MaterialTheme.typography.bodyMedium,
-                color = TextTertiary,
-            )
-        }
-
-        Spacer(Modifier.height(20.dp))
+        // strict mode
         SectionLabel(stringResource(R.string.settings_strict_section))
         Spacer(Modifier.height(8.dp))
         PactCard {
@@ -126,7 +123,10 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
                 Switch(
                     checked = snapshot.strictMode,
                     onCheckedChange = { wantOn ->
-                        if (wantOn) state.setStrictMode(true) else gate = Gate.StrictOff
+                        // Turning ON is free; turning OFF asks the circle.
+                        if (wantOn) state.setStrictMode(true)
+                        else if (hasCircle) requestChange(TrustNetwork.CHANGE_STRICT_OFF, context.getString(R.string.strict_title))
+                        else state.setStrictMode(false)
                     },
                     colors = SwitchDefaults.colors(
                         checkedTrackColor = Periwinkle,
@@ -136,6 +136,7 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
             }
         }
 
+        // how it works
         Spacer(Modifier.height(20.dp))
         SectionLabel(stringResource(R.string.settings_how_section))
         Spacer(Modifier.height(8.dp))
@@ -147,20 +148,34 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
             )
         }
 
+        // backup
         Spacer(Modifier.height(20.dp))
         SectionLabel(stringResource(R.string.backup_section))
         Spacer(Modifier.height(8.dp))
         BackupCard(state = state)
 
+        // danger zone
         Spacer(Modifier.height(20.dp))
         SectionLabel(stringResource(R.string.settings_danger))
         Spacer(Modifier.height(8.dp))
         PactCard {
-            TextButton(onClick = { gate = Gate.Reset }) {
+            TextButton(onClick = {
+                if (hasCircle) requestChange(TrustNetwork.CHANGE_RESET, context.getString(R.string.reset_action))
+                else state.reset()
+            }) {
                 Text(stringResource(R.string.reset_action), color = MaterialTheme.colorScheme.error)
             }
             Text(
-                stringResource(R.string.reset_hint, snapshot.guardianName),
+                stringResource(R.string.reset_hint, netSnap.approvers().firstOrNull()?.name ?: ""),
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextTertiary,
+            )
+            Spacer(Modifier.height(10.dp))
+            TextButton(onClick = { confirmIdentity = true }) {
+                Text(stringResource(R.string.identity_reset), color = TextTertiary)
+            }
+            Text(
+                stringResource(R.string.identity_reset_note),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextTertiary,
             )
@@ -168,44 +183,49 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
         Spacer(Modifier.height(32.dp))
     }
 
-    when (gate) {
-        Gate.None -> Unit
-        Gate.StrictOff -> VerifyCodeDialog(
-            state = state,
-            title = stringResource(R.string.strict_off_title),
-            subtitle = stringResource(R.string.ask_code, snapshot.guardianName),
-            onDismiss = { gate = Gate.None },
-            onVerified = {
-                state.setStrictMode(false)
-                gate = Gate.None
+    if (requested) {
+        AlertDialog(
+            onDismissRequest = { requested = false },
+            containerColor = MaterialTheme.colorScheme.surface,
+            title = { Text(stringResource(R.string.request_sent), style = MaterialTheme.typography.headlineSmall) },
+            text = {
+                Text(
+                    stringResource(R.string.request_change_sent),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextSecondary,
+                )
             },
-        )
-        Gate.RePair -> VerifyCodeDialog(
-            state = state,
-            title = stringResource(R.string.change_sponsor_title),
-            subtitle = stringResource(R.string.change_sponsor_body, snapshot.guardianName),
-            onDismiss = { gate = Gate.None },
-            onVerified = {
-                gate = Gate.None
-                showRePairFlow = true
-            },
-        )
-        Gate.Reset -> VerifyCodeDialog(
-            state = state,
-            title = stringResource(R.string.end_pact_title),
-            subtitle = stringResource(R.string.end_pact_body, snapshot.guardianName),
-            onDismiss = { gate = Gate.None },
-            onVerified = {
-                state.reset()
-                gate = Gate.None
+            confirmButton = {
+                TextButton(onClick = { requested = false }) { Text(stringResource(R.string.common_done)) }
             },
         )
     }
 
-    if (showRePairFlow) {
-        RePairDialog(state = state, onDismiss = { showRePairFlow = false })
+    if (confirmIdentity) {
+        AlertDialog(
+            onDismissRequest = { confirmIdentity = false },
+            containerColor = MaterialTheme.colorScheme.surface,
+            title = { Text(stringResource(R.string.identity_reset), style = MaterialTheme.typography.headlineSmall) },
+            text = {
+                Text(
+                    stringResource(R.string.identity_reset_note),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextSecondary,
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    state.reset()
+                    confirmIdentity = false
+                }) { Text(stringResource(R.string.common_remove), color = MaterialTheme.colorScheme.error) }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmIdentity = false }) { Text(stringResource(R.string.common_cancel)) }
+            },
+        )
     }
 }
+
 
 /** Encrypted export/import plus a stats-only CSV. All through the system file picker. */
 @Composable
@@ -357,127 +377,3 @@ private fun BackupCard(state: PactState) {
 }
 
 private enum class BackupAction { EXPORT, IMPORT }
-
-/** Pair a new sponsor: name → QR → verify a code from the new device. */
-@Composable
-private fun RePairDialog(state: PactState, onDismiss: () -> Unit) {
-    var name by remember { mutableStateOf("") }
-    var stage by remember { mutableStateOf(0) }
-    val newSecret = remember { Totp.generateSecret() }
-    var code by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf(false) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface,
-        title = {
-            Text(
-                stringResource(
-                    when (stage) {
-                        0 -> R.string.repair_new_sponsor
-                        1 -> R.string.repair_scan_title
-                        else -> R.string.prove_title
-                    }
-                ),
-                style = MaterialTheme.typography.headlineSmall,
-            )
-        },
-        text = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(14.dp),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                when (stage) {
-                    0 -> {
-                        OutlinedTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            label = { Text(stringResource(R.string.guardian_name_label)) },
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(14.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Periwinkle,
-                                unfocusedBorderColor = Surface2,
-                            ),
-                        )
-                    }
-                    1 -> {
-                        val qr = remember(newSecret, name) {
-                            Qr.encode(Totp.otpAuthUri(newSecret, name)).asImageBitmap()
-                        }
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(18.dp))
-                                .background(Color.White)
-                                .padding(12.dp),
-                        ) {
-                            Image(
-                                bitmap = qr,
-                                contentDescription = stringResource(R.string.pair_qr_desc),
-                                modifier = Modifier.size(200.dp),
-                            )
-                        }
-                        Text(
-                            stringResource(R.string.repair_body_qr, name, Totp.prettySecret(newSecret)),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = TextSecondary,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                    else -> {
-                        Text(
-                            stringResource(R.string.repair_enter_code, name),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = TextSecondary,
-                            textAlign = TextAlign.Center,
-                        )
-                        CodeInput(
-                            value = code,
-                            onValueChange = { entered ->
-                                code = entered
-                                error = false
-                                if (entered.length == 6) {
-                                    if (Totp.verify(newSecret, entered) != null) {
-                                        state.rePair(name, newSecret)
-                                        onDismiss()
-                                    } else {
-                                        code = ""
-                                        error = true
-                                    }
-                                }
-                            },
-                            isError = error,
-                            autoFocus = true,
-                        )
-                        if (error) {
-                            Text(
-                                stringResource(R.string.repair_wrong),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.error,
-                            )
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            if (stage < 2) {
-                TextButton(
-                    onClick = { stage += 1 },
-                    enabled = stage != 0 || name.trim().length >= 2,
-                ) {
-                    Text(
-                        stringResource(
-                            if (stage == 0) R.string.common_next else R.string.they_added_it
-                        )
-                    )
-                }
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
-        },
-    )
-}

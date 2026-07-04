@@ -24,6 +24,7 @@ object Notifications {
 
     private const val CHANNEL_BREAKS = "breaks"
     private const val CHANNEL_SHIELD = "shield"
+    private const val CHANNEL_NETWORK = "network"
     private const val ID_SHIELD_DOWN = 1
     const val EXTRA_PKG = "pkg"
 
@@ -48,6 +49,51 @@ object Notifications {
                 NotificationManager.IMPORTANCE_DEFAULT,
             )
         )
+        nm.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_NETWORK,
+                context.getString(R.string.notif_channel_network),
+                NotificationManager.IMPORTANCE_HIGH,
+            )
+        )
+    }
+
+    /** Trust-network events: new request, approval, denial, message, new pairing. */
+    fun showNetworkEvent(context: Context, event: String, name: String, detail: String) {
+        if (!canPost(context)) return
+        ensureChannels(context)
+        val (title, text) = when (event) {
+            TrustNetwork.EVENT_REQUEST ->
+                context.getString(R.string.notif_request_title, name) to
+                    context.getString(R.string.notif_request_body, detail)
+            TrustNetwork.EVENT_APPROVED ->
+                context.getString(R.string.notif_approved_title) to
+                    context.getString(R.string.notif_approved_body, name, detail)
+            TrustNetwork.EVENT_DENIED ->
+                context.getString(R.string.notif_denied_title) to
+                    context.getString(R.string.notif_denied_body, name, detail)
+            TrustNetwork.EVENT_MESSAGE ->
+                context.getString(R.string.notif_message_title, name) to detail
+            TrustNetwork.EVENT_PAIRED ->
+                context.getString(R.string.notif_paired_title) to
+                    context.getString(R.string.notif_paired_body, name)
+            else -> return
+        }
+        val open = PendingIntent.getActivity(
+            context,
+            event.hashCode(),
+            context.packageManager.getLaunchIntentForPackage(context.packageName),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        val notification = NotificationCompat.Builder(context, CHANNEL_NETWORK)
+            .setSmallIcon(R.drawable.ic_notif_shield)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setContentIntent(open)
+            .setAutoCancel(true)
+            .build()
+        context.getSystemService(NotificationManager::class.java)
+            .notify((event + name).hashCode(), notification)
     }
 
     fun showBreak(context: Context, pkg: String, durationMillis: Long) {

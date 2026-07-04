@@ -19,14 +19,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.Backspace
 import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,7 +40,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.pact.app.R
@@ -47,6 +47,7 @@ import com.pact.app.core.Apps
 import com.pact.app.core.PactState
 import com.pact.app.core.PactState.Tier
 import com.pact.app.core.PactState.Trigger
+import com.pact.app.core.TrustNetwork
 import com.pact.app.ui.theme.Amber
 import com.pact.app.ui.theme.CardBorder
 import com.pact.app.ui.theme.Ink
@@ -64,32 +65,43 @@ import kotlinx.coroutines.delay
  * The wall, rendered inside the service-drawn accessibility overlay.
  *
  * Two difficulties:
- *  - RED: a fresh sponsor code, then a break length.
- *  - YELLOW: a 30-second mindful pause (with optional urge logging), then a
- *    short break — no code, but a cooldown stops back-to-back self-unlocks.
- *    A sponsor code always works as an override.
+ *  - RED: ask your circle. A signed, encrypted request goes to your trusted
+ *    people; the wall shows a calm waiting state, and if anyone (per your
+ *    rule) says yes the break starts automatically — even if you walked away.
+ *  - YELLOW: a 30-second mindful pause with optional urge logging, then a
+ *    short break — plus a cooldown so self-unlocks can't be chained.
+ *
+ * If the circle is empty, red falls back to the yellow flow — the app never
+ * strands its user.
  */
 @Composable
 fun BlockWall(
     pkg: String,
     onGoHome: () -> Unit,
+    onDismissQuietly: () -> Unit,
     onUnlocked: (durationMillis: Long, tier: Tier, trigger: Trigger?) -> Unit,
 ) {
     val context = LocalContext.current
     val state = remember { PactState.get(context) }
-    val snapshot = state.snapshot.value
-    val guardian = snapshot.guardianName
-    val tier = snapshot.tierOf(pkg)
+    val network = remember { TrustNetwork.get(context) }
+    val pactSnap by state.snapshot.collectAsState()
+    val netSnap by network.snapshot.collectAsState()
+    val tier = pactSnap.tierOf(pkg)
     val label = remember(pkg) { Apps.label(context, pkg) }
     val icon = remember(pkg) { Apps.icon(context, pkg) }
     val encouragements = stringArrayResource(R.array.encouragements)
     val encouragement = remember(pkg) { encouragements.random() }
     val now by rememberNow()
 
-    val cooldownUntil = snapshot.yellowCooldownUntil[pkg] ?: 0L
-    val yellowResting = tier == Tier.YELLOW && cooldownUntil > now
-    var forceCode by remember(pkg) { mutableStateOf(false) }
-    val useCodeFlow = tier == Tier.RED || yellowResting && forceCode || tier == Tier.YELLOW && forceCode
+    // If an approval lands (or anything else unlocks this app), step aside.
+    val unlockedNow = (pactSnap.unlockUntil[pkg] ?: 0L) > now
+    LaunchedEffect(unlockedNow) {
+        if (unlockedNow) onDismissQuietly()
+    }
+
+    val hasApprovers = netSnap.approvers().isNotEmpty()
+    val cooldownUntil = pactSnap.yellowCooldownUntil[pkg] ?: 0L
+    val yellowResting = cooldownUntil > now
 
     Box(
         modifier = Modifier
@@ -148,32 +160,25 @@ fun BlockWall(
             Spacer(Modifier.height(28.dp))
 
             when {
-                useCodeFlow -> CodeFlow(
+                tier == Tier.RED && hasApprovers -> AskCircleFlow(
+                    network = network,
                     state = state,
-                    guardian = guardian,
-                    onUnlocked = { duration -> onUnlocked(duration, Tier.RED, null) },
+                    pkg = pkg,
+                    label = label,
                 )
                 yellowResting -> {
                     Text(
                         stringResource(
                             R.string.wall_cooldown,
                             formatCountdown(cooldownUntil - now),
-                            guardian,
+                            netSnap.approvers().firstOrNull()?.name ?: "",
                         ),
                         style = MaterialTheme.typography.bodyLarge,
                         color = Amber,
                         textAlign = TextAlign.Center,
                     )
-                    Spacer(Modifier.height(16.dp))
-                    PactButton(
-                        stringResource(R.string.wall_use_code_instead),
-                        onClick = { forceCode = true },
-                        tonal = true,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
                 }
                 else -> YellowFlow(
-                    onUseCode = { forceCode = true },
                     onUnlocked = { duration, trigger -> onUnlocked(duration, Tier.YELLOW, trigger) },
                 )
             }
@@ -186,11 +191,125 @@ fun BlockWall(
     }
 }
 
+// -------------------------------------------------------- ask-circle (red)
+
+@Composable
+private fun AskCircleFlow(
+    network: TrustNetwork,
+    state: PactState,
+    pkg: String,
+    label: String,
+) {
+    val netSnap by network.snapshot.collectAsState()
+    val now by rememberNow()
+    val myRequest = netSnap.requests.lastOrNull {
+        it.pkg == pkg && it.kind == TrustNetwork.RequestKind.UNLOCK
+    }
+    val pending = myRequest?.takeIf {
+        it.state == TrustNetwork.RequestState.PENDING && it.exp > now
+    }
+
+    var minutes by remember { mutableIntStateOf(15) }
+    var trigger by remember { mutableStateOf<Trigger?>(null) }
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+        when {
+            pending != null -> {
+                CircularProgressIndicator(color = Periwinkle, modifier = Modifier.size(36.dp))
+                Spacer(Modifier.height(14.dp))
+                Text(
+                    stringResource(R.string.request_waiting),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = TextSecondary,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    stringResource(R.string.request_expires_in, formatCountdown(pending.exp - now)),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = TextTertiary,
+                )
+            }
+            myRequest != null && myRequest.state == TrustNetwork.RequestState.DENIED &&
+                now - myRequest.createdAt < Wire_REQUEST_TTL -> {
+                Text(
+                    stringResource(R.string.request_denied_banner),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Amber,
+                    textAlign = TextAlign.Center,
+                )
+            }
+            else -> {
+                Text(
+                    stringResource(R.string.request_ask),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Periwinkle,
+                )
+                Spacer(Modifier.height(14.dp))
+                Text(
+                    stringResource(R.string.request_how_long),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextTertiary,
+                )
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(5, 15, 60).forEach { m ->
+                        val selected = minutes == m
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(if (selected) PactGradient else androidx.compose.ui.graphics.SolidColor(Surface2))
+                                .border(1.dp, if (selected) Periwinkle else CardBorder, RoundedCornerShape(12.dp))
+                                .clickable { minutes = m }
+                                .padding(horizontal = 16.dp, vertical = 10.dp),
+                        ) {
+                            Text(
+                                stringResource(R.string.request_min_generic, m),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = if (selected) Ink else TextSecondary,
+                            )
+                        }
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    stringResource(R.string.wall_whats_pulling),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextTertiary,
+                )
+                Spacer(Modifier.height(8.dp))
+                TriggerChips(selected = trigger, onSelect = { trigger = it })
+                Spacer(Modifier.height(18.dp))
+                val context = LocalContext.current
+                PactButton(
+                    stringResource(R.string.request_send),
+                    onClick = {
+                        val reason = trigger?.let { context.getString(triggerLabel(it)) }
+                        network.createRequest(
+                            kind = TrustNetwork.RequestKind.UNLOCK,
+                            pkg = pkg,
+                            label = label,
+                            minutes = minutes,
+                            reason = reason,
+                            usageNote = context.getString(
+                                R.string.request_usage_note,
+                                state.snapshot.value.today.blocksPerApp[pkg] ?: 0,
+                            ),
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
+    }
+}
+
+private const val Wire_REQUEST_TTL = 15 * 60 * 1000L
+
 // ------------------------------------------------------------- yellow flow
 
 @Composable
 private fun YellowFlow(
-    onUseCode: () -> Unit,
     onUnlocked: (durationMillis: Long, trigger: Trigger?) -> Unit,
 ) {
     var secondsLeft by remember { mutableIntStateOf(PactState.YELLOW_WAIT_SECONDS) }
@@ -265,10 +384,6 @@ private fun YellowFlow(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
-            Spacer(Modifier.height(6.dp))
-            TextButton(onClick = onUseCode) {
-                Text(stringResource(R.string.wall_use_code_instead), color = TextTertiary)
-            }
         }
     }
 }
@@ -313,187 +428,5 @@ fun TriggerChips(selected: Trigger?, onSelect: (Trigger?) -> Unit) {
                 }
             }
         }
-    }
-}
-
-// ---------------------------------------------------------------- red flow
-
-@Composable
-private fun CodeFlow(
-    state: PactState,
-    guardian: String,
-    onUnlocked: (durationMillis: Long) -> Unit,
-) {
-    var code by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf<String?>(null) }
-    var lockedUntil by remember { mutableStateOf(state.snapshot.value.lockoutUntil) }
-    var verified by remember { mutableStateOf(false) }
-    val now by rememberNow()
-    val isLockedOut = lockedUntil > now
-    val wrongMessage = stringResource(R.string.verify_wrong)
-
-    fun submit(entered: String) {
-        when (val result = state.verifyCode(entered)) {
-            is PactState.VerifyResult.Ok -> verified = true
-            is PactState.VerifyResult.Wrong -> {
-                code = ""
-                error = wrongMessage
-            }
-            is PactState.VerifyResult.TooManyAttempts -> {
-                code = ""
-                lockedUntil = result.untilMillis
-            }
-        }
-    }
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-        if (!verified) {
-            Text(
-                stringResource(R.string.wall_ask, guardian),
-                style = MaterialTheme.typography.titleSmall,
-                color = Periwinkle,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(16.dp))
-            CodeDots(length = code.length, isError = error != null)
-            Spacer(Modifier.height(10.dp))
-            if (isLockedOut) {
-                Text(
-                    stringResource(R.string.verify_too_many, formatCountdown(lockedUntil - now)),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center,
-                )
-            } else {
-                Text(
-                    error ?: " ",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center,
-                )
-            }
-            Spacer(Modifier.height(14.dp))
-            PinPad(
-                enabled = !isLockedOut,
-                onDigit = { digit ->
-                    if (code.length < 6) {
-                        error = null
-                        code += digit
-                        if (code.length == 6) submit(code)
-                    }
-                },
-                onBackspace = {
-                    error = null
-                    code = code.dropLast(1)
-                },
-            )
-        } else {
-            Text(
-                stringResource(R.string.wall_accepted),
-                style = MaterialTheme.typography.titleSmall,
-                color = Mint,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(18.dp))
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
-                PactButton(stringResource(R.string.duration_5m), onClick = { onUnlocked(5 * 60_000L) }, tonal = true, modifier = Modifier.fillMaxWidth())
-                PactButton(stringResource(R.string.duration_15m), onClick = { onUnlocked(15 * 60_000L) }, tonal = true, modifier = Modifier.fillMaxWidth())
-                PactButton(stringResource(R.string.duration_1h), onClick = { onUnlocked(60 * 60_000L) }, tonal = true, modifier = Modifier.fillMaxWidth())
-                PactButton(
-                    stringResource(R.string.duration_midnight),
-                    onClick = { onUnlocked(PactState.untilMidnightMillis()) },
-                    tonal = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        }
-    }
-}
-
-/** Six dots that fill as digits are entered — PIN-screen style. */
-@Composable
-fun CodeDots(length: Int, isError: Boolean) {
-    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-        repeat(6) { i ->
-            val filled = i < length
-            Box(
-                modifier = Modifier
-                    .size(16.dp)
-                    .clip(CircleShape)
-                    .then(
-                        when {
-                            isError -> Modifier.background(MaterialTheme.colorScheme.error)
-                            filled -> Modifier.background(PactGradient)
-                            else -> Modifier
-                                .background(Surface2)
-                                .border(1.dp, CardBorder, CircleShape)
-                        }
-                    )
-            )
-        }
-    }
-}
-
-/** On-screen numeric pad — works everywhere, including service overlays. */
-@Composable
-fun PinPad(
-    enabled: Boolean,
-    onDigit: (Char) -> Unit,
-    onBackspace: () -> Unit,
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        listOf("123", "456", "789").forEach { rowDigits ->
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                rowDigits.forEach { d ->
-                    PadKey(enabled = enabled, onClick = { onDigit(d) }) {
-                        Text(
-                            d.toString(),
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                }
-            }
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            Spacer(Modifier.size(72.dp))
-            PadKey(enabled = enabled, onClick = { onDigit('0') }) {
-                Text(
-                    "0",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-            PadKey(enabled = enabled, onClick = onBackspace) {
-                Icon(
-                    Icons.AutoMirrored.Rounded.Backspace,
-                    contentDescription = stringResource(R.string.cd_delete),
-                    tint = TextSecondary,
-                    modifier = Modifier.size(26.dp),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun PadKey(
-    enabled: Boolean,
-    onClick: () -> Unit,
-    content: @Composable () -> Unit,
-) {
-    Box(
-        modifier = Modifier
-            .size(72.dp)
-            .clip(CircleShape)
-            .background(Surface2)
-            .border(1.dp, CardBorder, CircleShape)
-            .clickable(enabled = enabled, onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        content()
     }
 }

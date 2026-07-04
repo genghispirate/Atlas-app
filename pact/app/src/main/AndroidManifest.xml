@@ -17,6 +17,10 @@
     <!-- Quiet break/shield notifications (optional; app works without). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Carrying end-to-end-encrypted payloads to trusted people via the relay. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".PactApp"
         android:allowBackup="false"
