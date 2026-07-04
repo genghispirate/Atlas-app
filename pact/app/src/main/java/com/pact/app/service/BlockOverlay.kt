@@ -55,11 +55,14 @@ class BlockOverlay(private val service: AccessibilityService) {
                         BlockWall(
                             pkg = p,
                             onGoHome = {
+                                com.pact.app.core.PactState.get(service).recordWalkAway(p)
                                 dismiss()
                                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
                             },
-                            onUnlocked = { durationMillis ->
-                                com.pact.app.core.PactState.get(service).unlockFor(p, durationMillis)
+                            onUnlocked = { durationMillis, tier, trigger ->
+                                com.pact.app.core.PactState.get(service)
+                                    .unlockFor(p, durationMillis, tier, trigger)
+                                com.pact.app.core.Notifications.showBreak(service, p, durationMillis)
                                 dismiss()
                             },
                         )

@@ -65,6 +65,10 @@ class BlockerService : AccessibilityService() {
 
     override fun onUnbind(intent: Intent?): Boolean {
         overlay.dismiss()
+        // Graceful handling of permission loss: tell the user instead of
+        // failing silently. (Also fires on reboot; the service re-binds and
+        // Home shows green again.)
+        com.pact.app.core.Notifications.showShieldDown(this)
         return super.onUnbind(intent)
     }
 

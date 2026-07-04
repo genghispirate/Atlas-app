@@ -183,6 +183,91 @@
     <string name="scan_perm">Pact needs the camera to scan the QR code.\nAllow camera access, or go back and type the key instead.</string>
     <string name="cd_torch">Flashlight</string>
 
+    <!-- tiers -->
+    <string name="tier_red">Red · sponsor code</string>
+    <string name="tier_yellow">Yellow · mindful pause</string>
+    <string name="tier_label">Difficulty</string>
+    <string name="tier_red_desc">Opening needs a fresh code from your sponsor.</string>
+    <string name="tier_yellow_desc">Opening needs a 30-second pause and a short reflection — no code.</string>
+    <string name="tier_downgrade_title">Relax to yellow?</string>
+    <string name="tier_downgrade_body">Making %1$s easier to open needs a code from %2$s.</string>
+
+    <!-- yellow unlock flow -->
+    <string name="wall_pause_title">Take a breath</string>
+    <string name="wall_pause_body">%1$d seconds. If you still want in after the pause, it\'s yours — for a short while.</string>
+    <string name="wall_whats_pulling">What brought you here?</string>
+    <string name="trigger_bored">Bored</string>
+    <string name="trigger_stress">Stress</string>
+    <string name="trigger_habit">Habit</string>
+    <string name="trigger_anxiety">Anxiety</string>
+    <string name="trigger_lonely">Lonely</string>
+    <string name="trigger_procrastination">Putting something off</string>
+    <string name="trigger_needed">I actually need it</string>
+    <string name="wall_pause_done">Still want in?</string>
+    <string name="wall_open_5m">Open for 5 minutes</string>
+    <string name="wall_open_15m">Open for 15 minutes</string>
+    <string name="wall_cooldown">Self-unlock is resting for %1$s. A code from %2$s still works.</string>
+    <string name="wall_use_code_instead">Use a sponsor code instead</string>
+
+    <!-- reflection -->
+    <string name="reflect_title">Was your %1$s break worth it?</string>
+    <string name="reflect_body">One honest tap. It sharpens your stats — nobody else sees it.</string>
+    <string name="reflect_yes">Worth it</string>
+    <string name="reflect_no">Not really</string>
+    <string name="reflect_skip">Skip</string>
+
+    <!-- stats -->
+    <string name="stats_title">Insights</string>
+    <string name="stats_open">Insights</string>
+    <string name="stats_streak_value">%1$d</string>
+    <string name="stats_streak_label">days since your last unlock</string>
+    <string name="stats_streak_longest">Longest: %1$d days</string>
+    <string name="stats_week_section">Last 7 days</string>
+    <string name="stats_blocks_7d">walls shown</string>
+    <string name="stats_walkaways_7d">times you turned back</string>
+    <string name="stats_unlocks_7d">unlocks</string>
+    <string name="stats_minutes_7d">minutes unlocked</string>
+    <string name="stats_chart_blocks_title">Walls per day</string>
+    <string name="stats_tempting_section">Most tempting</string>
+    <string name="stats_hours_section">When cravings hit</string>
+    <string name="stats_hours_peak">Your pull is strongest around %1$s</string>
+    <string name="stats_triggers_section">What drives it</string>
+    <string name="stats_worth_section">Looking back</string>
+    <string name="stats_worth_ratio">%1$d%% of reflected breaks felt worth it (%2$d answered)</string>
+    <string name="stats_empty">Not enough data yet. Live with your Pact for a few days and check back.</string>
+    <string name="stats_no_triggers">No urges logged yet — yellow-tier unlocks ask what\'s pulling you.</string>
+
+    <!-- notifications -->
+    <string name="notif_channel_breaks">Breaks</string>
+    <string name="notif_channel_shield">Shield status</string>
+    <string name="notif_break_title">%1$s is unlocked</string>
+    <string name="notif_break_body">Relocks automatically at %1$s</string>
+    <string name="notif_relock_now">Relock now</string>
+    <string name="notif_shield_down_title">The shield is down</string>
+    <string name="notif_shield_down_body">Pact\'s accessibility service was turned off. Nothing is being blocked.</string>
+
+    <!-- widget -->
+    <string name="widget_description">Shield status, streak, and today\'s blocks at a glance.</string>
+    <string name="widget_streak">%1$dd streak</string>
+    <string name="widget_blocks_today">%1$d blocks today</string>
+    <string name="widget_shield_on">Protected</string>
+    <string name="widget_shield_off">Shield off</string>
+
+    <!-- backup -->
+    <string name="backup_section">Backup</string>
+    <string name="backup_export">Export encrypted backup…</string>
+    <string name="backup_export_hint">Settings, tiers, and stats — encrypted with a passphrase you choose. The unlock key is deliberately never included.</string>
+    <string name="backup_export_csv">Export statistics (CSV)…</string>
+    <string name="backup_import">Import backup…</string>
+    <string name="backup_passphrase">Passphrase</string>
+    <string name="backup_passphrase_hint">You\'ll need it to restore. There is no recovery.</string>
+    <string name="backup_encrypt_and_save">Encrypt &amp; save</string>
+    <string name="backup_decrypt_and_restore">Decrypt &amp; restore</string>
+    <string name="backup_done">Backup saved.</string>
+    <string name="backup_restored">Backup restored.</string>
+    <string name="backup_failed">That didn\'t work — check the file and passphrase.</string>
+    <string name="backup_import_note">Restores apps, tiers, and stats. Your current sponsor pairing stays as it is.</string>
+
     <!-- plurals -->
     <plurals name="lock_n_apps">
         <item quantity="one">Lock %1$d app</item>

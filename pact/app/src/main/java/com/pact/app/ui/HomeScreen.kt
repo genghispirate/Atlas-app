@@ -1,7 +1,12 @@
 package com.pact.app.ui
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,6 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
@@ -35,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +55,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.pact.app.R
 import com.pact.app.core.Apps
 import com.pact.app.core.PactState
@@ -56,6 +64,7 @@ import com.pact.app.ui.theme.Amber
 import com.pact.app.ui.theme.CardBorder
 import com.pact.app.ui.theme.Mint
 import com.pact.app.ui.theme.Periwinkle
+import com.pact.app.ui.theme.Rose
 import com.pact.app.ui.theme.Surface1
 import com.pact.app.ui.theme.Surface2
 import com.pact.app.ui.theme.TextSecondary
@@ -68,6 +77,7 @@ fun HomeScreen(
     state: PactState,
     onAddApps: () -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenStats: () -> Unit,
 ) {
     val context = LocalContext.current
     val snapshot by state.snapshot.collectAsState()
@@ -82,6 +92,20 @@ fun HomeScreen(
     var verifyingRemoval by remember { mutableStateOf<String?>(null) }
     var verifyingUnlock by remember { mutableStateOf<String?>(null) }
     var choosingDuration by remember { mutableStateOf<String?>(null) }
+    var verifyingTierDown by remember { mutableStateOf<String?>(null) }
+
+    // Break/shield notifications are optional; ask once on Android 13+.
+    val notifPermission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { }
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -110,6 +134,9 @@ fun HomeScreen(
             IconButton(onClick = onAddApps) {
                 Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.home_add_apps), tint = TextSecondary)
             }
+            IconButton(onClick = onOpenStats) {
+                Icon(Icons.Rounded.BarChart, contentDescription = stringResource(R.string.stats_open), tint = TextSecondary)
+            }
             IconButton(onClick = onOpenSettings) {
                 Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.home_settings), tint = TextSecondary)
             }
@@ -124,7 +151,7 @@ fun HomeScreen(
                 HeroCard(
                     serviceOn = serviceOn,
                     lockedCount = snapshot.blocked.size,
-                    interventionsToday = snapshot.blocksToday.values.sum(),
+                    interventionsToday = snapshot.today.blocks,
                     onEnable = {
                         context.startActivity(
                             Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
@@ -132,6 +159,42 @@ fun HomeScreen(
                         )
                     },
                 )
+            }
+
+            // reflection: one gentle question after a break ends
+            val pending = snapshot.pendingReflection(now)
+            if (pending != null) {
+                item {
+                    PactCard(background = Surface2) {
+                        Text(
+                            stringResource(R.string.reflect_title, Apps.label(context, pending.pkg)),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                        Text(
+                            stringResource(R.string.reflect_body),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = TextSecondary,
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            PactButton(
+                                stringResource(R.string.reflect_yes),
+                                onClick = { state.setWorthIt(pending.at, true) },
+                                tonal = true,
+                                modifier = Modifier.weight(1f),
+                            )
+                            PactButton(
+                                stringResource(R.string.reflect_no),
+                                onClick = { state.setWorthIt(pending.at, false) },
+                                tonal = true,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                        TextButton(onClick = { state.setWorthIt(pending.at, null) }) {
+                            Text(stringResource(R.string.reflect_skip), color = TextTertiary)
+                        }
+                    }
+                }
             }
 
             // currently unlocked
@@ -182,7 +245,8 @@ fun HomeScreen(
                 }
             }
             items(locked, key = { "l_$it" }) { pkg ->
-                val blocksToday = snapshot.blocksToday[pkg] ?: 0
+                val blocksToday = snapshot.today.blocksPerApp[pkg] ?: 0
+                val tier = snapshot.tierOf(pkg)
                 AppRow(
                     pkg = pkg,
                     subtitle = when {
@@ -193,6 +257,13 @@ fun HomeScreen(
                     subtitleColor = TextTertiary,
                     onClick = { appForAction = pkg },
                     trailing = {
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .clip(CircleShape)
+                                .background(if (tier == PactState.Tier.RED) Rose else Amber)
+                        )
+                        Spacer(Modifier.width(10.dp))
                         Icon(
                             Icons.Rounded.Lock,
                             contentDescription = stringResource(R.string.cd_locked),
@@ -213,11 +284,41 @@ fun HomeScreen(
             containerColor = MaterialTheme.colorScheme.surface,
             title = { Text(Apps.label(context, pkg), style = MaterialTheme.typography.headlineSmall) },
             text = {
-                Text(
-                    stringResource(R.string.dialog_locked_body, snapshot.guardianName),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextSecondary,
-                )
+                Column {
+                    Text(
+                        stringResource(R.string.dialog_locked_body, snapshot.guardianName),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextSecondary,
+                    )
+                    Spacer(Modifier.height(14.dp))
+                    SectionLabel(stringResource(R.string.tier_label))
+                    Spacer(Modifier.height(8.dp))
+                    val tier = snapshot.tierOf(pkg)
+                    TierOption(
+                        selected = tier == PactState.Tier.RED,
+                        dotColor = Rose,
+                        title = stringResource(R.string.tier_red),
+                        body = stringResource(R.string.tier_red_desc),
+                        onClick = {
+                            // stricter is always free
+                            if (tier != PactState.Tier.RED) state.setTier(pkg, PactState.Tier.RED)
+                        },
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    TierOption(
+                        selected = tier == PactState.Tier.YELLOW,
+                        dotColor = Amber,
+                        title = stringResource(R.string.tier_yellow),
+                        body = stringResource(R.string.tier_yellow_desc),
+                        onClick = {
+                            // relaxing needs a code
+                            if (tier == PactState.Tier.RED) {
+                                verifyingTierDown = pkg
+                                appForAction = null
+                            }
+                        },
+                    )
+                }
             },
             confirmButton = {
                 Column(horizontalAlignment = Alignment.End) {
@@ -293,6 +394,52 @@ fun HomeScreen(
                 verifyingRemoval = null
             },
         )
+    }
+
+    verifyingTierDown?.let { pkg ->
+        VerifyCodeDialog(
+            state = state,
+            title = stringResource(R.string.tier_downgrade_title),
+            subtitle = stringResource(R.string.tier_downgrade_body, Apps.label(context, pkg), snapshot.guardianName),
+            onDismiss = { verifyingTierDown = null },
+            onVerified = {
+                state.setTier(pkg, PactState.Tier.YELLOW)
+                verifyingTierDown = null
+            },
+        )
+    }
+}
+
+@Composable
+private fun TierOption(
+    selected: Boolean,
+    dotColor: androidx.compose.ui.graphics.Color,
+    title: String,
+    body: String,
+    onClick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(14.dp)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(if (selected) Surface2 else MaterialTheme.colorScheme.surface)
+            .border(1.dp, if (selected) dotColor.copy(alpha = 0.6f) else CardBorder, shape)
+            .clickable(onClick = onClick)
+            .padding(12.dp),
+    ) {
+        Box(
+            Modifier
+                .size(12.dp)
+                .clip(CircleShape)
+                .background(dotColor)
+        )
+        Spacer(Modifier.width(10.dp))
+        Column {
+            Text(title, style = MaterialTheme.typography.titleSmall)
+            Text(body, style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+        }
     }
 }
 

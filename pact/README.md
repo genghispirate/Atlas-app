@@ -7,7 +7,7 @@ that pull you in, and the *only* way to unlock them is a 6-digit code from a tru
 you chose — your **sponsor**: a partner, parent, or close friend. Willpower stops being the
 weak link.
 
-<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v2.2.apk"><code>release/Pact-v2.2.apk</code></a></em></p>
+<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v3.0.apk"><code>release/Pact-v3.0.apk</code></a></em></p>
 
 ---
 
@@ -28,10 +28,16 @@ Pact has two sides, chosen on first launch:
    instantly covers them with the lock wall — drawn as an accessibility overlay by the
    service itself, so it cannot be suppressed by Android's background-activity restrictions.
    Code entry uses a built-in PIN pad.
-5. **Want back in?** Ask your sponsor for the current code. Enter it, choose a break length
-   (5 min / 15 min / 1 h / until midnight), and the app relocks automatically afterwards.
-   Ending a break early is always free — and you can also unlock straight from Pact's home
-   screen without opening the blocked app.
+5. **Want back in?** Every locked app has a difficulty. **Red** (default): a fresh sponsor
+   code, then a break length (5 min / 15 min / 1 h / until midnight). **Yellow**: a
+   30-second mindful pause and a quick "what's pulling you?" — no code, but short breaks
+   only and a 30-minute cooldown between self-unlocks. Apps relock automatically; relocking
+   early is always free, and unlocking also works from Pact's home screen. Making an app
+   stricter is one tap; relaxing it needs a code.
+6. **Learn from it.** After a break ends, one gentle "was it worth it?" question. The
+   Insights screen shows your streak, walls per day, most tempting apps, when cravings
+   peak, what triggers them, and how breaks felt afterwards — only measured numbers,
+   nothing invented.
 
 **If you're the sponsor:**
 
@@ -39,6 +45,11 @@ Install the same APK, choose **"I'm the sponsor"** during setup, and scan the QR
 phone with the built-in portrait scanner (torch included). Pact then shows the live 6-digit
 code with a 30-second countdown ring — no separate 2FA app needed. One sponsor phone can
 hold keys for several people.
+
+**Also included:** a home-screen widget (shield status, streak, blocks today), quiet
+notifications (active break with a relock button, shield-down alert — never spam), and
+encrypted backup/restore (passphrase-protected; the unlock key is deliberately excluded so
+a backup can never open your own locks) plus a stats CSV export.
 
 ### Why TOTP means it works offline
 
@@ -63,11 +74,13 @@ can read you a code over a phone call, SMS, or across the kitchen table.
 | Reusing an overheard code | Each 30-second code slot is accepted only once (replay protection) |
 | Reading the secret from storage | Encrypted via Android Keystore; plaintext shown only once at setup |
 | Quietly disabling the accessibility service | Optional **Strict mode** also locks system Settings behind a code |
-| Uninstalling Pact | Honest limitation: sideloaded apps can be uninstalled. Strict mode adds friction (uninstall confirmation lives in Settings), but a determined user can remove the app. Pact is a commitment device, not a prison. |
+| Chaining self-unlocks | Yellow tier has a 30-minute cooldown after each break |
+| Turning the clock back to reuse a code | Accepted time steps are monotonic — old codes stay dead |
+| Uninstalling Pact | Strict mode also locks the system package installer, so the uninstall dialog hits a wall. Honest limitation: a determined user can still remove a sideloaded app from safe mode. Pact is a commitment device, not a prison. |
 
 ## Install
 
-1. Copy `release/Pact-v2.2.apk` to **both** phones (yours and your sponsor's), or download it
+1. Copy `release/Pact-v3.0.apk` to **both** phones (yours and your sponsor's), or download it
    from this repo.
 2. Open it and allow "install from unknown sources" when prompted.
 3. Follow the in-app introduction — each phone picks its role during setup.

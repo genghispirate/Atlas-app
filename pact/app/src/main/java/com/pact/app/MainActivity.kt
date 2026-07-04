@@ -40,6 +40,7 @@ import com.pact.app.ui.OnboardingFlow
 import com.pact.app.ui.PactButton
 import com.pact.app.ui.SettingsScreen
 import com.pact.app.ui.SponsorHome
+import com.pact.app.ui.StatsScreen
 import com.pact.app.ui.theme.PactTheme
 import com.pact.app.ui.theme.TextSecondary
 
@@ -63,7 +64,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Screen { Home, AddApps, Settings }
+private enum class Screen { Home, AddApps, Settings, Stats }
 
 @Composable
 private fun PactApp(state: PactState) {
@@ -84,6 +85,7 @@ private fun PactApp(state: PactState) {
             state = state,
             onAddApps = { screen = Screen.AddApps },
             onOpenSettings = { screen = Screen.Settings },
+            onOpenStats = { screen = Screen.Stats },
         )
         Screen.AddApps -> AddAppsScreen(
             state = state,
@@ -93,6 +95,10 @@ private fun PactApp(state: PactState) {
         Screen.Settings -> {
             BackHandler { screen = Screen.Home }
             SettingsScreen(state = state, onBack = { screen = Screen.Home })
+        }
+        Screen.Stats -> {
+            BackHandler { screen = Screen.Home }
+            StatsScreen(state = state, onBack = { screen = Screen.Home })
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.pact.app.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -41,10 +43,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.pact.app.R
+import com.pact.app.core.Backup
 import com.pact.app.core.PactState
 import com.pact.app.core.Qr
 import com.pact.app.core.Totp
@@ -143,6 +148,11 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
         }
 
         Spacer(Modifier.height(20.dp))
+        SectionLabel(stringResource(R.string.backup_section))
+        Spacer(Modifier.height(8.dp))
+        BackupCard(state = state)
+
+        Spacer(Modifier.height(20.dp))
         SectionLabel(stringResource(R.string.settings_danger))
         Spacer(Modifier.height(8.dp))
         PactCard {
@@ -196,6 +206,157 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
         RePairDialog(state = state, onDismiss = { showRePairFlow = false })
     }
 }
+
+/** Encrypted export/import plus a stats-only CSV. All through the system file picker. */
+@Composable
+private fun BackupCard(state: PactState) {
+    val context = LocalContext.current
+    var passphraseFor by remember { mutableStateOf<BackupAction?>(null) }
+    var passphrase by remember { mutableStateOf("") }
+    var pendingImport by remember { mutableStateOf<android.net.Uri?>(null) }
+
+    fun toast(resId: Int) =
+        android.widget.Toast.makeText(context, context.getString(resId), android.widget.Toast.LENGTH_LONG).show()
+
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/octet-stream")
+    ) { uri ->
+        if (uri != null && passphrase.isNotEmpty()) {
+            runCatching {
+                val json = Backup.export(state.snapshot.value).toString()
+                val blob = Backup.encrypt(json, passphrase.toCharArray())
+                context.contentResolver.openOutputStream(uri)?.use { it.write(blob.toByteArray()) }
+                toast(R.string.backup_done)
+            }.onFailure { toast(R.string.backup_failed) }
+        }
+        passphrase = ""
+    }
+
+    val csvLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("text/csv")
+    ) { uri ->
+        if (uri != null) {
+            runCatching {
+                context.contentResolver.openOutputStream(uri)
+                    ?.use { it.write(Backup.statsCsv(state.snapshot.value).toByteArray()) }
+                toast(R.string.backup_done)
+            }.onFailure { toast(R.string.backup_failed) }
+        }
+    }
+
+    val importLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            pendingImport = uri
+            passphraseFor = BackupAction.IMPORT
+        }
+    }
+
+    PactCard {
+        TextButton(onClick = { passphraseFor = BackupAction.EXPORT }) {
+            Text(stringResource(R.string.backup_export), color = Periwinkle)
+        }
+        Text(
+            stringResource(R.string.backup_export_hint),
+            style = MaterialTheme.typography.bodyMedium,
+            color = TextTertiary,
+        )
+        Spacer(Modifier.height(8.dp))
+        TextButton(onClick = { csvLauncher.launch("pact-stats.csv") }) {
+            Text(stringResource(R.string.backup_export_csv), color = Periwinkle)
+        }
+        TextButton(onClick = { importLauncher.launch(arrayOf("*/*")) }) {
+            Text(stringResource(R.string.backup_import), color = Periwinkle)
+        }
+        Text(
+            stringResource(R.string.backup_import_note),
+            style = MaterialTheme.typography.bodyMedium,
+            color = TextTertiary,
+        )
+    }
+
+    passphraseFor?.let { action ->
+        AlertDialog(
+            onDismissRequest = {
+                passphraseFor = null
+                passphrase = ""
+            },
+            containerColor = MaterialTheme.colorScheme.surface,
+            title = { Text(stringResource(R.string.backup_passphrase), style = MaterialTheme.typography.headlineSmall) },
+            text = {
+                Column {
+                    Text(
+                        stringResource(R.string.backup_passphrase_hint),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextSecondary,
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = passphrase,
+                        onValueChange = { passphrase = it },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Periwinkle,
+                            unfocusedBorderColor = Surface2,
+                        ),
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = passphrase.length >= 4,
+                    onClick = {
+                        when (action) {
+                            BackupAction.EXPORT -> {
+                                passphraseFor = null
+                                exportLauncher.launch("pact-backup.pact")
+                            }
+                            BackupAction.IMPORT -> {
+                                val uri = pendingImport
+                                passphraseFor = null
+                                if (uri != null) {
+                                    runCatching {
+                                        val blob = context.contentResolver.openInputStream(uri)
+                                            ?.use { it.readBytes().toString(Charsets.UTF_8) }
+                                            ?: error("empty")
+                                        val json = Backup.decrypt(blob, passphrase.toCharArray())
+                                            ?: error("bad passphrase")
+                                        if (state.applyBackup(org.json.JSONObject(json))) {
+                                            toast(R.string.backup_restored)
+                                        } else {
+                                            toast(R.string.backup_failed)
+                                        }
+                                    }.onFailure { toast(R.string.backup_failed) }
+                                    passphrase = ""
+                                    pendingImport = null
+                                }
+                            }
+                        }
+                    },
+                ) {
+                    Text(
+                        stringResource(
+                            if (action == BackupAction.EXPORT) R.string.backup_encrypt_and_save
+                            else R.string.backup_decrypt_and_restore
+                        )
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    passphraseFor = null
+                    passphrase = ""
+                }) { Text(stringResource(R.string.common_cancel)) }
+            },
+        )
+    }
+}
+
+private enum class BackupAction { EXPORT, IMPORT }
 
 /** Pair a new sponsor: name → QR → verify a code from the new device. */
 @Composable
