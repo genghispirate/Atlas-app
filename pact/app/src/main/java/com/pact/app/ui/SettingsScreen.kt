@@ -41,8 +41,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.pact.app.R
 import com.pact.app.core.PactState
 import com.pact.app.core.Qr
 import com.pact.app.core.Totp
@@ -73,36 +75,44 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
             modifier = Modifier.padding(top = 12.dp, bottom = 16.dp),
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", tint = TextSecondary)
+                Icon(
+                    Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = stringResource(R.string.common_back),
+                    tint = TextSecondary,
+                )
             }
-            Text("Settings", style = MaterialTheme.typography.headlineSmall)
+            Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall)
         }
 
-        SectionLabel("Your sponsor")
+        SectionLabel(stringResource(R.string.settings_sponsor_section))
         Spacer(Modifier.height(8.dp))
         PactCard {
             Text(snapshot.guardianName, style = MaterialTheme.typography.titleMedium)
-            Text("Paired · holds your unlock codes", style = MaterialTheme.typography.bodyMedium, color = Mint)
+            Text(
+                stringResource(R.string.settings_paired),
+                style = MaterialTheme.typography.bodyMedium,
+                color = Mint,
+            )
             Spacer(Modifier.height(12.dp))
             TextButton(onClick = { gate = Gate.RePair }) {
-                Text("Change sponsor…", color = Periwinkle)
+                Text(stringResource(R.string.settings_change_sponsor), color = Periwinkle)
             }
             Text(
-                "Changing your sponsor needs a code from your current one, then pairs a brand-new key.",
+                stringResource(R.string.settings_change_sponsor_hint),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextTertiary,
             )
         }
 
         Spacer(Modifier.height(20.dp))
-        SectionLabel("Strict mode")
+        SectionLabel(stringResource(R.string.settings_strict_section))
         Spacer(Modifier.height(8.dp))
         PactCard {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("Lock system Settings too", style = MaterialTheme.typography.titleSmall)
+                    Text(stringResource(R.string.strict_title), style = MaterialTheme.typography.titleSmall)
                     Text(
-                        "Stops the shield from being switched off quietly — opening Android Settings will also ask for a code. Turning strict mode ON is free; turning it OFF needs a code.",
+                        stringResource(R.string.strict_body),
                         style = MaterialTheme.typography.bodyMedium,
                         color = TextSecondary,
                     )
@@ -122,30 +132,25 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
         }
 
         Spacer(Modifier.height(20.dp))
-        SectionLabel("How Pact works")
+        SectionLabel(stringResource(R.string.settings_how_section))
         Spacer(Modifier.height(8.dp))
         PactCard {
             Text(
-                "Pact runs entirely on this phone — no account, no server, no internet needed. " +
-                    "Unlock codes are standard authenticator codes (TOTP): your sponsor's phone " +
-                    "and yours each compute the same 6-digit code from a shared key and the clock, " +
-                    "so codes work even when both phones are offline.\n\n" +
-                    "The key was shown exactly once, during setup, and only your sponsor has it. " +
-                    "It is stored on this phone encrypted inside the Android Keystore.",
+                stringResource(R.string.how_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
             )
         }
 
         Spacer(Modifier.height(20.dp))
-        SectionLabel("Danger zone")
+        SectionLabel(stringResource(R.string.settings_danger))
         Spacer(Modifier.height(8.dp))
         PactCard {
             TextButton(onClick = { gate = Gate.Reset }) {
-                Text("End the Pact & reset everything…", color = MaterialTheme.colorScheme.error)
+                Text(stringResource(R.string.reset_action), color = MaterialTheme.colorScheme.error)
             }
             Text(
-                "Removes all locks and returns to setup. Needs a code from ${snapshot.guardianName}.",
+                stringResource(R.string.reset_hint, snapshot.guardianName),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextTertiary,
             )
@@ -157,8 +162,8 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
         Gate.None -> Unit
         Gate.StrictOff -> VerifyCodeDialog(
             state = state,
-            title = "Turn off strict mode?",
-            subtitle = "Ask ${snapshot.guardianName} for the current code.",
+            title = stringResource(R.string.strict_off_title),
+            subtitle = stringResource(R.string.ask_code, snapshot.guardianName),
             onDismiss = { gate = Gate.None },
             onVerified = {
                 state.setStrictMode(false)
@@ -167,8 +172,8 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
         )
         Gate.RePair -> VerifyCodeDialog(
             state = state,
-            title = "Change sponsor?",
-            subtitle = "First, a code from ${snapshot.guardianName} to unlock the change.",
+            title = stringResource(R.string.change_sponsor_title),
+            subtitle = stringResource(R.string.change_sponsor_body, snapshot.guardianName),
             onDismiss = { gate = Gate.None },
             onVerified = {
                 gate = Gate.None
@@ -177,8 +182,8 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
         )
         Gate.Reset -> VerifyCodeDialog(
             state = state,
-            title = "End the Pact?",
-            subtitle = "Ask ${snapshot.guardianName} for the current code to remove all locks and reset.",
+            title = stringResource(R.string.end_pact_title),
+            subtitle = stringResource(R.string.end_pact_body, snapshot.guardianName),
             onDismiss = { gate = Gate.None },
             onVerified = {
                 state.reset()
@@ -206,11 +211,13 @@ private fun RePairDialog(state: PactState, onDismiss: () -> Unit) {
         containerColor = MaterialTheme.colorScheme.surface,
         title = {
             Text(
-                when (stage) {
-                    0 -> "New sponsor"
-                    1 -> "Scan on their phone"
-                    else -> "Prove it works"
-                },
+                stringResource(
+                    when (stage) {
+                        0 -> R.string.repair_new_sponsor
+                        1 -> R.string.repair_scan_title
+                        else -> R.string.prove_title
+                    }
+                ),
                 style = MaterialTheme.typography.headlineSmall,
             )
         },
@@ -225,7 +232,7 @@ private fun RePairDialog(state: PactState, onDismiss: () -> Unit) {
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
-                            label = { Text("Their name") },
+                            label = { Text(stringResource(R.string.guardian_name_label)) },
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(14.dp),
@@ -245,10 +252,14 @@ private fun RePairDialog(state: PactState, onDismiss: () -> Unit) {
                                 .background(Color.White)
                                 .padding(12.dp),
                         ) {
-                            Image(bitmap = qr, contentDescription = "Pairing QR code", modifier = Modifier.size(200.dp))
+                            Image(
+                                bitmap = qr,
+                                contentDescription = stringResource(R.string.pair_qr_desc),
+                                modifier = Modifier.size(200.dp),
+                            )
                         }
                         Text(
-                            "On $name's phone: install Pact and choose “I'm the sponsor” to scan this — or scan it with Google Authenticator. Manual key:\n${Totp.prettySecret(newSecret)}",
+                            stringResource(R.string.repair_body_qr, name, Totp.prettySecret(newSecret)),
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextSecondary,
                             textAlign = TextAlign.Center,
@@ -256,7 +267,7 @@ private fun RePairDialog(state: PactState, onDismiss: () -> Unit) {
                     }
                     else -> {
                         Text(
-                            "Enter the current code from $name's authenticator to seal the new Pact.",
+                            stringResource(R.string.repair_enter_code, name),
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextSecondary,
                             textAlign = TextAlign.Center,
@@ -281,7 +292,7 @@ private fun RePairDialog(state: PactState, onDismiss: () -> Unit) {
                         )
                         if (error) {
                             Text(
-                                "That didn't match — try the current code.",
+                                stringResource(R.string.repair_wrong),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.error,
                             )
@@ -295,11 +306,17 @@ private fun RePairDialog(state: PactState, onDismiss: () -> Unit) {
                 TextButton(
                     onClick = { stage += 1 },
                     enabled = stage != 0 || name.trim().length >= 2,
-                ) { Text(if (stage == 0) "Next" else "They've added it") }
+                ) {
+                    Text(
+                        stringResource(
+                            if (stage == 0) R.string.common_next else R.string.they_added_it
+                        )
+                    )
+                }
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }

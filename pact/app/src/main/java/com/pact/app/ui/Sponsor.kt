@@ -51,9 +51,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pact.app.R
 import com.pact.app.core.PactState
 import com.pact.app.core.Totp
 import com.pact.app.ui.theme.Amber
@@ -71,11 +73,7 @@ import com.pact.app.ui.theme.TextTertiary
  */
 
 private fun notAPactKey(context: Context) {
-    Toast.makeText(
-        context,
-        "That QR isn't a Pact key — make sure their phone is on the pairing screen.",
-        Toast.LENGTH_LONG,
-    ).show()
+    Toast.makeText(context, context.getString(R.string.scan_not_pact), Toast.LENGTH_LONG).show()
 }
 
 // -------------------------------------------------------------- setup flow
@@ -88,7 +86,7 @@ fun SponsorSetupFlow(state: PactState, onBack: () -> Unit, onDone: () -> Unit) {
 
     if (scanning) {
         ScanScreen(
-            title = "Scan their pairing QR",
+            title = stringResource(R.string.scan_title),
             onResult = { content ->
                 scanning = false
                 val secret = Totp.extractSecret(content)
@@ -110,14 +108,18 @@ fun SponsorSetupFlow(state: PactState, onBack: () -> Unit, onDone: () -> Unit) {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 12.dp)) {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", tint = TextSecondary)
+                Icon(
+                    Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = stringResource(R.string.common_back),
+                    tint = TextSecondary,
+                )
             }
         }
         Spacer(Modifier.height(8.dp))
-        Text("You hold the key", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.sponsor_setup_title), style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(12.dp))
         Text(
-            "Someone you care about is locking their distracting apps, and they've chosen you as their sponsor. When they want back in, they'll ask you for the 6-digit code shown here.\n\nTheir phone shows a QR code during setup — scan it below.",
+            stringResource(R.string.sponsor_setup_body),
             style = MaterialTheme.typography.bodyLarge,
             color = TextSecondary,
         )
@@ -154,23 +156,27 @@ fun AddKeyContent(onScan: () -> Unit, onCaptured: (String) -> Unit) {
                 Icon(Icons.Rounded.QrCodeScanner, contentDescription = null, tint = Periwinkle)
                 Spacer(Modifier.width(12.dp))
                 Text(
-                    "Point your camera at the QR code on their phone. It's shown during their setup, at the “Hand over the key” step.",
+                    stringResource(R.string.sponsor_scan_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                 )
             }
             Spacer(Modifier.height(16.dp))
-            PactButton("Scan their QR code", onClick = onScan, modifier = Modifier.fillMaxWidth())
+            PactButton(
+                stringResource(R.string.sponsor_scan_button),
+                onClick = onScan,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
         Spacer(Modifier.height(12.dp))
         if (!showManual) {
             TextButton(onClick = { showManual = true }) {
-                Text("Camera not working? Type the key instead", color = TextTertiary)
+                Text(stringResource(R.string.sponsor_manual_toggle), color = TextTertiary)
             }
         } else {
             PactCard {
                 Text(
-                    "Their pairing screen also shows the key as letters — type or paste it here.",
+                    stringResource(R.string.sponsor_manual_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                 )
@@ -181,7 +187,7 @@ fun AddKeyContent(onScan: () -> Unit, onCaptured: (String) -> Unit) {
                         manualKey = it
                         manualError = false
                     },
-                    label = { Text("Key (e.g. ABCD EFGH …)") },
+                    label = { Text(stringResource(R.string.sponsor_key_label)) },
                     singleLine = true,
                     isError = manualError,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -199,14 +205,14 @@ fun AddKeyContent(onScan: () -> Unit, onCaptured: (String) -> Unit) {
                 if (manualError) {
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        "That doesn't look like a valid key — it's 32 letters and digits.",
+                        stringResource(R.string.sponsor_key_invalid),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
                 Spacer(Modifier.height(12.dp))
                 PactButton(
-                    "Add key",
+                    stringResource(R.string.sponsor_add_key),
                     onClick = {
                         val secret = Totp.extractSecret(manualKey)
                         if (secret != null) onCaptured(secret) else manualError = true
@@ -225,11 +231,11 @@ private fun NameSponseeDialog(onDismiss: () -> Unit, onNamed: (String) -> Unit) 
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.surface,
-        title = { Text("Key added ✓", style = MaterialTheme.typography.headlineSmall) },
+        title = { Text(stringResource(R.string.sponsor_key_added), style = MaterialTheme.typography.headlineSmall) },
         text = {
             Column {
                 Text(
-                    "Whose apps does this key unlock?",
+                    stringResource(R.string.sponsor_whose),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                 )
@@ -237,7 +243,7 @@ private fun NameSponseeDialog(onDismiss: () -> Unit, onNamed: (String) -> Unit) 
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Their name") },
+                    label = { Text(stringResource(R.string.guardian_name_label)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(14.dp),
@@ -252,10 +258,10 @@ private fun NameSponseeDialog(onDismiss: () -> Unit, onNamed: (String) -> Unit) 
             TextButton(
                 onClick = { onNamed(name) },
                 enabled = name.trim().length >= 2,
-            ) { Text("Done") }
+            ) { Text(stringResource(R.string.common_done)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }
@@ -273,7 +279,7 @@ fun SponsorHome(state: PactState) {
 
     if (scanning) {
         ScanScreen(
-            title = "Scan their pairing QR",
+            title = stringResource(R.string.scan_title),
             onResult = { content ->
                 scanning = false
                 val secret = Totp.extractSecret(content)
@@ -302,9 +308,13 @@ fun SponsorHome(state: PactState) {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 12.dp)) {
                 IconButton(onClick = { adding = false }) {
-                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", tint = TextSecondary)
+                    Icon(
+                        Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = stringResource(R.string.common_back),
+                        tint = TextSecondary,
+                    )
                 }
-                Text("Add a person", style = MaterialTheme.typography.headlineSmall)
+                Text(stringResource(R.string.sponsor_add_person), style = MaterialTheme.typography.headlineSmall)
             }
             Spacer(Modifier.height(16.dp))
             AddKeyContent(
@@ -333,15 +343,23 @@ fun SponsorHome(state: PactState) {
                 PactLogo(36)
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
-                    Text("Pact", style = MaterialTheme.typography.headlineSmall)
-                    Text("Sponsor", style = MaterialTheme.typography.labelMedium, color = Periwinkle)
+                    Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        stringResource(R.string.sponsor_badge),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Periwinkle,
+                    )
                 }
                 IconButton(onClick = { adding = true }) {
-                    Icon(Icons.Rounded.Add, contentDescription = "Add a person", tint = TextSecondary)
+                    Icon(
+                        Icons.Rounded.Add,
+                        contentDescription = stringResource(R.string.sponsor_add_person),
+                        tint = TextSecondary,
+                    )
                 }
             }
             Text(
-                "When they ask to unlock, read them the code. It changes every 30 seconds and works without internet.",
+                stringResource(R.string.sponsor_hint_codes),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextTertiary,
                 modifier = Modifier.padding(bottom = 16.dp),
@@ -359,7 +377,7 @@ fun SponsorHome(state: PactState) {
                     item {
                         PactCard {
                             Text(
-                                "No keys yet. Tap + to scan a pairing QR from someone's phone.",
+                                stringResource(R.string.sponsor_empty),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = TextSecondary,
                             )
@@ -385,10 +403,15 @@ fun SponsorHome(state: PactState) {
         AlertDialog(
             onDismissRequest = { removing = null },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("Remove ${sponsee.name}?", style = MaterialTheme.typography.headlineSmall) },
+            title = {
+                Text(
+                    stringResource(R.string.sponsor_remove_title, sponsee.name),
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+            },
             text = {
                 Text(
-                    "You'll no longer be able to give ${sponsee.name} unlock codes. They would need to re-pair with a sponsor to change anything.",
+                    stringResource(R.string.sponsor_remove_body, sponsee.name),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                 )
@@ -397,10 +420,10 @@ fun SponsorHome(state: PactState) {
                 TextButton(onClick = {
                     state.removeSponsee(sponsee.name)
                     removing = null
-                }) { Text("Remove", color = MaterialTheme.colorScheme.error) }
+                }) { Text(stringResource(R.string.common_remove), color = MaterialTheme.colorScheme.error) }
             },
             dismissButton = {
-                TextButton(onClick = { removing = null }) { Text("Cancel") }
+                TextButton(onClick = { removing = null }) { Text(stringResource(R.string.common_cancel)) }
             },
         )
     }
@@ -421,13 +444,18 @@ private fun SponseeCodeCard(
             Spacer(Modifier.width(8.dp))
             Text(sponsee.name, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
             IconButton(onClick = onRemove, modifier = Modifier.size(28.dp)) {
-                Icon(Icons.Rounded.Close, contentDescription = "Remove", tint = TextTertiary, modifier = Modifier.size(18.dp))
+                Icon(
+                    Icons.Rounded.Close,
+                    contentDescription = stringResource(R.string.common_remove),
+                    tint = TextTertiary,
+                    modifier = Modifier.size(18.dp),
+                )
             }
         }
         Spacer(Modifier.height(14.dp))
         if (secret == null) {
             Text(
-                "Couldn't read this key from secure storage.",
+                stringResource(R.string.sponsor_key_error),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
             )

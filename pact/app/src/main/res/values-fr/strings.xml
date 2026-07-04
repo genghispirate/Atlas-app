@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_label">Bouclier Pact</string>
+    <string name="accessibility_service_description">Pact utilise cette autorisation pour une seule chose : détecter qu\'une appli verrouillée passe au premier plan afin d\'afficher l\'écran de verrouillage. Il ne lit jamais le contenu de votre écran, ne collecte rien et fonctionne entièrement hors ligne.</string>
+
+    <string name="common_continue">Continuer</string>
+    <string name="common_cancel">Annuler</string>
+    <string name="common_close">Fermer</string>
+    <string name="common_done">Terminé</string>
+    <string name="common_next">Suivant</string>
+    <string name="common_back">Retour</string>
+    <string name="common_remove">Retirer</string>
+    <string name="common_skip">Passer</string>
+
+    <string name="intro_page1_title">Verrouillez ce qui vous aspire</string>
+    <string name="intro_page1_body">Pact bloque les applis que vous n\'arrivez pas à lâcher — Instagram, TikTok, YouTube, peu importe. Elles restent verrouillées jusqu\'à ce que quelqu\'un vous rouvre la porte.</string>
+    <string name="intro_page2_title">Une personne, pas un mot de passe</string>
+    <string name="intro_page2_body">Vous choisissez un parrain : un proche, un parent, un ami de confiance. Seul son code à 6 chiffres ouvre vos applis. La volonté cesse d\'être le maillon faible.</string>
+    <string name="intro_page3_title">Privé. Hors ligne. À vous.</string>
+    <string name="intro_page3_body">Pas de compte, pas de serveur, pas d\'internet — jamais. Les codes fonctionnent comme des codes 2FA : votre parrain peut vous en lire un au téléphone.</string>
+    <string name="intro_get_started">Commencer</string>
+
+    <string name="role_title">Ce téléphone est pour qui ?</string>
+    <string name="role_body">Pact a deux côtés : la personne qui verrouille ses applis, et celle qui garde la clé.</string>
+    <string name="role_user_title">Bloquer mes applis</string>
+    <string name="role_user_body">Je veux verrouiller mes applis et confier la clé à quelqu\'un de confiance.</string>
+    <string name="role_sponsor_title">Je suis le parrain</string>
+    <string name="role_sponsor_body">Un proche m\'a demandé de garder ses codes de déverrouillage.</string>
+
+    <string name="guardian_title">Choisissez votre parrain</string>
+    <string name="guardian_body">Choisissez quelqu\'un qui veut vous voir réussir : un proche, un parent, un ami intime. Il détiendra les codes, donc chaque déverrouillage commencera par le lui demander.</string>
+    <string name="guardian_name_label">Son prénom</string>
+    <string name="guardian_hint">Choisissez quelqu\'un de facile à joindre : il vous faudra à chaque fois.</string>
+
+    <string name="pair_title">Remettez la clé</string>
+    <string name="pair_body">Ce code QR est la clé de vos verrous. Il s\'affiche une seule fois — maintenant — et il appartient à %1$s, pas à vous.</string>
+    <string name="pair_qr_desc">Code QR d\'appairage</string>
+    <string name="pair_on_their_phone">Sur le téléphone de %1$s :</string>
+    <string name="pair_step1">Installez Pact — cette même appli</string>
+    <string name="pair_step2">Pendant la configuration, choisissez « Je suis le parrain »</string>
+    <string name="pair_step3">Scannez ce QR avec le bouton de scan</string>
+    <string name="pair_alt_authenticator">Pas envie d\'installer quoi que ce soit ? Google Authenticator ou toute appli 2FA peut aussi scanner ce code. Clé manuelle : %1$s</string>
+    <string name="pair_warning">Ne le scannez pas sur votre propre téléphone : vous garderiez la clé de votre propre verrou.</string>
+    <string name="pair_confirm">%1$s a la clé</string>
+
+    <string name="prove_title">Vérifions que ça marche</string>
+    <string name="prove_body">Demandez à %1$s le code à 6 chiffres affiché sur son écran en ce moment.</string>
+    <string name="prove_error">Ça ne correspond pas. Vérifiez qu\'il a bien scanné le QR de l\'étape précédente, puis essayez le code affiché maintenant.</string>
+    <string name="prove_show_qr">Réafficher le QR</string>
+
+    <string name="perm_title">Activez le bouclier</string>
+    <string name="perm_body">Une autorisation Android permet à Pact de repérer l\'ouverture d\'une appli verrouillée pour s\'interposer. Voici exactement comment l\'accorder :</string>
+    <string name="perm_step1">Touchez « Ouvrir les paramètres » ci-dessous</string>
+    <string name="perm_step2">Trouvez « Bouclier Pact » dans la liste — parfois sous « Applis installées » ou « Applis téléchargées »</string>
+    <string name="perm_step3">Touchez-le et activez-le</string>
+    <string name="perm_step4">Android affichera un avertissement — c\'est normal. Pact voit seulement quelle appli s\'ouvre, jamais votre écran. Touchez « Autoriser »</string>
+    <string name="perm_step5">Revenez ici : cette page devient verte quand c\'est bon</string>
+    <string name="perm_status_on">Le bouclier est levé. Vous êtes protégé.</string>
+    <string name="perm_status_waiting">En attente du bouclier…</string>
+    <string name="perm_open_settings">Ouvrir les paramètres</string>
+    <string name="perm_later">Je le ferai plus tard</string>
+
+    <string name="pick_title">Qu\'est-ce qui vous aspire ?</string>
+    <string name="pick_min_one">Choisissez au moins une appli</string>
+    <string name="search_apps">Rechercher des applis</string>
+    <string name="often_locked">Souvent verrouillée</string>
+
+    <string name="seal_title">Votre Pact est scellé</string>
+    <string name="seal_body">Vos applis sont verrouillées. Désormais, %1$s détient la clé — et c\'est exactement le but.</string>
+    <string name="seal_begin">Commencer</string>
+
+    <string name="home_with">avec %1$s</string>
+    <string name="home_add_apps">Ajouter des applis</string>
+    <string name="home_settings">Paramètres</string>
+    <string name="hero_active_title">Protection active</string>
+    <string name="hero_active_sub">Votre Pact tient bon</string>
+    <string name="hero_down_title">Le bouclier est éteint</string>
+    <string name="hero_down_sub">Rien n\'est bloqué pour le moment. Réactivez le bouclier dans les paramètres d\'accessibilité.</string>
+    <string name="hero_enable">Activer le bouclier</string>
+    <string name="stat_locked_label">sous clé</string>
+    <string name="stat_saves_label">blocages aujourd\'hui</string>
+    <string name="section_on_break">En pause</string>
+    <string name="row_relocks_in">Se reverrouille dans %1$s</string>
+    <string name="action_relock">Reverrouiller</string>
+    <string name="section_locked">Verrouillées</string>
+    <string name="home_empty">Rien pour l\'instant. Touchez + et choisissez les applis qui dévorent votre temps.</string>
+    <string name="home_all_on_break">Tout est en pause en ce moment.</string>
+    <string name="row_blocked_once">Bloquée une fois aujourd\'hui</string>
+    <string name="row_blocked_times">Bloquée %1$d fois aujourd\'hui</string>
+    <string name="dialog_locked_body">Cette appli est verrouillée par votre Pact. Les deux actions demandent un code récent de %1$s.</string>
+    <string name="action_unlock_a_while">Déverrouiller un moment…</string>
+    <string name="action_remove_from_pact">Retirer du Pact…</string>
+    <string name="unlock_q_title">Déverrouiller %1$s ?</string>
+    <string name="ask_code">Demandez à %1$s le code affiché sur son téléphone en ce moment.</string>
+    <string name="duration_title">Il vous faut combien de temps ?</string>
+    <string name="duration_5m">5 minutes</string>
+    <string name="duration_15m">15 minutes</string>
+    <string name="duration_1h">1 heure</string>
+    <string name="duration_midnight">Jusqu\'à minuit</string>
+    <string name="remove_q_title">Retirer %1$s ?</string>
+    <string name="remove_q_body">Demandez à %1$s le code actuel pour sortir cette appli de votre Pact.</string>
+
+    <string name="verify_wrong">Ce code ne correspond pas. Ils changent toutes les 30 secondes : demandez-en un nouveau.</string>
+    <string name="verify_too_many">Trop d\'essais. Verrouillé pendant %1$s.</string>
+
+    <string name="wall_locked_title">%1$s est verrouillée</string>
+    <string name="wall_ask">Demandez le code actuel à %1$s</string>
+    <string name="wall_accepted">Code accepté. Il vous faut combien de temps ?</string>
+    <string name="wall_go_home">Laissez tomber — retour à l\'accueil</string>
+    <string name="cd_delete">Effacer</string>
+    <string name="cd_locked">Verrouillée</string>
+    <string-array name="encouragements">
+        <item>Cette pause, c\'est justement le but.</item>
+        <item>Vous avez demandé ce mur un jour où vous voyiez clair.</item>
+        <item>L\'envie passe, qu\'on la nourrisse ou non.</item>
+        <item>Dans cinq minutes, vous serez content d\'avoir arrêté.</item>
+        <item>Vous ne ratez rien d\'important.</item>
+    </string-array>
+
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_sponsor_section">Votre parrain</string>
+    <string name="settings_paired">Appairé — il détient vos codes de déverrouillage</string>
+    <string name="settings_change_sponsor">Changer de parrain…</string>
+    <string name="settings_change_sponsor_hint">Changer de parrain demande un code de l\'actuel, puis génère une clé toute neuve.</string>
+    <string name="settings_strict_section">Mode strict</string>
+    <string name="strict_title">Verrouiller aussi les Paramètres système</string>
+    <string name="strict_body">Empêche d\'éteindre le bouclier en douce : ouvrir les Paramètres Android demandera aussi un code. L\'activer est libre ; le désactiver demande un code.</string>
+    <string name="settings_how_section">Comment Pact fonctionne</string>
+    <string name="how_body">Pact tourne entièrement sur ce téléphone : pas de compte, pas de serveur, pas d\'internet. Les codes de déverrouillage sont des codes d\'authentification standard (TOTP) : le téléphone de votre parrain et le vôtre calculent le même nombre à 6 chiffres à partir d\'une clé partagée et de l\'horloge, donc ils marchent même hors ligne.\n\nLa clé est apparue exactement une fois, pendant la configuration, et seul votre parrain la possède. Sur ce téléphone, elle est chiffrée dans le Keystore Android.</string>
+    <string name="settings_danger">Zone sensible</string>
+    <string name="reset_action">Mettre fin au Pact et réinitialiser…</string>
+    <string name="reset_hint">Supprime tous les verrous et repart de zéro. Demande un code de %1$s.</string>
+    <string name="strict_off_title">Désactiver le mode strict ?</string>
+    <string name="change_sponsor_title">Changer de parrain ?</string>
+    <string name="change_sponsor_body">D\'abord, un code de %1$s pour approuver le changement.</string>
+    <string name="end_pact_title">Mettre fin au Pact ?</string>
+    <string name="end_pact_body">Demandez à %1$s le code actuel pour retirer tous les verrous et réinitialiser.</string>
+    <string name="repair_new_sponsor">Nouveau parrain</string>
+    <string name="repair_scan_title">À scanner sur son téléphone</string>
+    <string name="repair_body_qr">Sur le téléphone de %1$s : installez Pact et choisissez « Je suis le parrain », ou scannez avec Google Authenticator. Clé manuelle :\n%2$s</string>
+    <string name="repair_enter_code">Saisissez le code actuel de %1$s pour sceller le nouveau Pact.</string>
+    <string name="repair_wrong">Ça ne correspond pas : essayez le code affiché en ce moment.</string>
+    <string name="they_added_it">C\'est ajouté</string>
+
+    <string name="sponsor_setup_title">Vous gardez la clé</string>
+    <string name="sponsor_setup_body">Un proche verrouille ses applis les plus envahissantes et vous a choisi comme parrain. Quand il voudra y retourner, il vous demandera le code à 6 chiffres affiché ici.\n\nSon téléphone affiche un code QR pendant la configuration : scannez-le ci-dessous.</string>
+    <string name="sponsor_badge">Parrain</string>
+    <string name="sponsor_hint_codes">Quand on vous demande un déverrouillage, lisez le code. Il change toutes les 30 secondes et se passe d\'internet.</string>
+    <string name="sponsor_scan_hint">Pointez l\'appareil photo vers le code QR de son téléphone — il se trouve à l\'étape « Remettez la clé » de sa configuration.</string>
+    <string name="sponsor_scan_button">Scanner son code QR</string>
+    <string name="sponsor_manual_toggle">Souci de caméra ? Saisissez la clé</string>
+    <string name="sponsor_manual_hint">Son écran d\'appairage affiche aussi la clé en lettres. Saisissez-la ou collez-la ici.</string>
+    <string name="sponsor_key_label">Clé (ABCD EFGH …)</string>
+    <string name="sponsor_key_invalid">Ça ne ressemble pas à une clé : elle fait 32 lettres et chiffres.</string>
+    <string name="sponsor_add_key">Ajouter la clé</string>
+    <string name="sponsor_key_added">Clé ajoutée</string>
+    <string name="sponsor_whose">Cette clé ouvre les applis de qui ?</string>
+    <string name="sponsor_empty">Aucune clé pour l\'instant. Touchez + et scannez le code QR sur son téléphone.</string>
+    <string name="sponsor_add_person">Ajouter une personne</string>
+    <string name="sponsor_remove_title">Retirer %1$s ?</string>
+    <string name="sponsor_remove_body">Vous ne pourrez plus donner de codes à %1$s. Il devrait se réappairer avec un parrain pour changer quoi que ce soit.</string>
+    <string name="sponsor_key_error">Impossible de lire cette clé depuis le stockage sécurisé.</string>
+    <string name="scan_not_pact">Ce code QR n\'est pas une clé Pact. Vérifiez que son téléphone affiche l\'écran d\'appairage.</string>
+
+    <string name="scan_title">Scanner son QR d\'appairage</string>
+    <string name="scan_hint">Alignez le code dans le cadre</string>
+    <string name="scan_perm">Pact a besoin de la caméra pour scanner le code QR.\nAutorisez l\'accès, ou revenez en arrière et saisissez la clé.</string>
+    <string name="cd_torch">Lampe torche</string>
+
+    <plurals name="lock_n_apps">
+        <item quantity="one">Verrouiller %1$d appli</item>
+        <item quantity="other">Verrouiller %1$d applis</item>
+    </plurals>
+    <plurals name="n_apps">
+        <item quantity="one">%1$d appli</item>
+        <item quantity="other">%1$d applis</item>
+    </plurals>
+</resources>

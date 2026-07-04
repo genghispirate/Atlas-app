@@ -33,9 +33,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.pact.app.R
 import com.pact.app.core.Apps
 import com.pact.app.core.PactState
 import com.pact.app.ui.theme.CardBorder
@@ -56,14 +59,6 @@ import com.pact.app.ui.theme.Violet
  * built-in PIN pad — no reliance on the system keyboard inside an overlay.
  */
 
-private val ENCOURAGEMENTS = listOf(
-    "This pause is the whole point.",
-    "You asked for this wall when your head was clear.",
-    "The urge passes whether or not you feed it.",
-    "Five minutes from now you'll be glad you stopped.",
-    "You're not missing anything that matters.",
-)
-
 @Composable
 fun BlockWall(
     pkg: String,
@@ -75,7 +70,8 @@ fun BlockWall(
     val guardian = state.snapshot.value.guardianName
     val label = remember(pkg) { Apps.label(context, pkg) }
     val icon = remember(pkg) { Apps.icon(context, pkg) }
-    val encouragement = remember(pkg) { ENCOURAGEMENTS.random() }
+    val encouragements = stringArrayResource(R.array.encouragements)
+    val encouragement = remember(pkg) { encouragements.random() }
 
     var code by remember(pkg) { mutableStateOf("") }
     var error by remember(pkg) { mutableStateOf<String?>(null) }
@@ -84,12 +80,13 @@ fun BlockWall(
     val now by rememberNow()
     val isLockedOut = lockedUntil > now
 
+    val wrongMessage = stringResource(R.string.verify_wrong)
     fun submit(entered: String) {
         when (val result = state.verifyCode(entered)) {
             is PactState.VerifyResult.Ok -> verified = true
             is PactState.VerifyResult.Wrong -> {
                 code = ""
-                error = "Not quite — codes change every 30 seconds. Ask for a fresh one."
+                error = wrongMessage
             }
             is PactState.VerifyResult.TooManyAttempts -> {
                 code = ""
@@ -140,7 +137,11 @@ fun BlockWall(
                 }
             }
             Spacer(Modifier.height(20.dp))
-            Text("$label is locked", style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
+            Text(
+                stringResource(R.string.wall_locked_title, label),
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center,
+            )
             Spacer(Modifier.height(8.dp))
             Text(
                 encouragement,
@@ -152,7 +153,7 @@ fun BlockWall(
 
             if (!verified) {
                 Text(
-                    "Ask $guardian for the current code",
+                    stringResource(R.string.wall_ask, guardian),
                     style = MaterialTheme.typography.titleSmall,
                     color = Periwinkle,
                     textAlign = TextAlign.Center,
@@ -162,7 +163,7 @@ fun BlockWall(
                 Spacer(Modifier.height(10.dp))
                 if (isLockedOut) {
                     Text(
-                        "Too many attempts. The lock rests for ${formatCountdown(lockedUntil - now)}.",
+                        stringResource(R.string.verify_too_many, formatCountdown(lockedUntil - now)),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center,
@@ -192,7 +193,7 @@ fun BlockWall(
                 )
             } else {
                 Text(
-                    "Code accepted — how long do you need?",
+                    stringResource(R.string.wall_accepted),
                     style = MaterialTheme.typography.titleSmall,
                     color = Mint,
                     textAlign = TextAlign.Center,
@@ -202,11 +203,11 @@ fun BlockWall(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    PactButton("5 minutes", onClick = { onUnlocked(5 * 60_000L) }, tonal = true, modifier = Modifier.fillMaxWidth())
-                    PactButton("15 minutes", onClick = { onUnlocked(15 * 60_000L) }, tonal = true, modifier = Modifier.fillMaxWidth())
-                    PactButton("1 hour", onClick = { onUnlocked(60 * 60_000L) }, tonal = true, modifier = Modifier.fillMaxWidth())
+                    PactButton(stringResource(R.string.duration_5m), onClick = { onUnlocked(5 * 60_000L) }, tonal = true, modifier = Modifier.fillMaxWidth())
+                    PactButton(stringResource(R.string.duration_15m), onClick = { onUnlocked(15 * 60_000L) }, tonal = true, modifier = Modifier.fillMaxWidth())
+                    PactButton(stringResource(R.string.duration_1h), onClick = { onUnlocked(60 * 60_000L) }, tonal = true, modifier = Modifier.fillMaxWidth())
                     PactButton(
-                        "Until midnight",
+                        stringResource(R.string.duration_midnight),
                         onClick = { onUnlocked(PactState.untilMidnightMillis()) },
                         tonal = true,
                         modifier = Modifier.fillMaxWidth(),
@@ -216,7 +217,7 @@ fun BlockWall(
 
             Spacer(Modifier.height(24.dp))
             TextButton(onClick = onGoHome) {
-                Text("Never mind — take me home", color = TextTertiary)
+                Text(stringResource(R.string.wall_go_home), color = TextTertiary)
             }
         }
     }
@@ -282,7 +283,7 @@ fun PinPad(
             PadKey(enabled = enabled, onClick = onBackspace) {
                 Icon(
                     Icons.AutoMirrored.Rounded.Backspace,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(R.string.cd_delete),
                     tint = TextSecondary,
                     modifier = Modifier.size(26.dp),
                 )

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_label">Pact ऐप शील्ड</string>
+    <string name="accessibility_service_description">Pact इस अनुमति का इस्तेमाल सिर्फ़ एक काम के लिए करता है: यह पहचानने के लिए कि कोई लॉक किया गया ऐप सामने आया है, ताकि लॉक स्क्रीन दिखाई जा सके। यह आपकी स्क्रीन की सामग्री कभी नहीं पढ़ता, कोई डेटा इकट्ठा नहीं करता और पूरी तरह ऑफ़लाइन काम करता है।</string>
+
+    <string name="common_continue">आगे बढ़ें</string>
+    <string name="common_cancel">रद्द करें</string>
+    <string name="common_close">बंद करें</string>
+    <string name="common_done">हो गया</string>
+    <string name="common_next">अगला</string>
+    <string name="common_back">वापस</string>
+    <string name="common_remove">हटाएँ</string>
+    <string name="common_skip">छोड़ें</string>
+
+    <string name="intro_page1_title">जो खींचता है, उसे लॉक करें</string>
+    <string name="intro_page1_body">Pact उन ऐप्स को ब्लॉक करता है जिन्हें आप छोड़ नहीं पाते — Instagram, TikTok, YouTube, जो भी हो। वे तब तक लॉक रहते हैं जब तक कोई आपको वापस अंदर न आने दे।</string>
+    <string name="intro_page2_title">पासवर्ड नहीं, एक इंसान</string>
+    <string name="intro_page2_body">आप एक साथी चुनते हैं — जीवनसाथी, माता-पिता या करीबी दोस्त। सिर्फ़ उनका ताज़ा 6 अंकों का कोड ही आपके ऐप्स खोलता है। अब कमज़ोर कड़ी आपकी इच्छाशक्ति नहीं रही।</string>
+    <string name="intro_page3_title">निजी। ऑफ़लाइन। आपका।</string>
+    <string name="intro_page3_body">कोई खाता नहीं, कोई सर्वर नहीं, इंटरनेट की ज़रूरत नहीं — कभी भी। कोड 2FA कोड की तरह काम करते हैं, इसलिए आपका साथी फ़ोन कॉल पर भी कोड बता सकता है।</string>
+    <string name="intro_get_started">शुरू करें</string>
+
+    <string name="role_title">यह फ़ोन किसका है?</string>
+    <string name="role_body">Pact के दो पहलू हैं: एक जो अपने ऐप्स लॉक करता है, और एक जो चाबी रखता है।</string>
+    <string name="role_user_title">मेरे ऐप्स लॉक करें</string>
+    <string name="role_user_body">मैं ध्यान भटकाने वाले ऐप्स लॉक करके चाबी किसी भरोसेमंद को देना चाहता/चाहती हूँ।</string>
+    <string name="role_sponsor_title">मैं चाबी रखने वाला हूँ</string>
+    <string name="role_sponsor_body">मेरे किसी अपने ने मुझसे अनलॉक कोड सँभालने को कहा है।</string>
+
+    <string name="guardian_title">अपना साथी चुनें</string>
+    <string name="guardian_body">ऐसा कोई चुनें जो आपकी कामयाबी चाहता हो — जीवनसाथी, माता-पिता, करीबी दोस्त। अनलॉक कोड उन्हीं के पास रहेंगे, इसलिए हर अनलॉक उनसे पूछकर ही शुरू होगा।</string>
+    <string name="guardian_name_label">उनका नाम</string>
+    <string name="guardian_hint">ऐसा कोई चुनें जिससे संपर्क आसान हो — हर बार अंदर जाने के लिए उनकी ज़रूरत पड़ेगी।</string>
+
+    <string name="pair_title">चाबी सौंप दें</string>
+    <string name="pair_body">यह QR कोड आपके तालों की चाबी है। यह सिर्फ़ एक बार दिखता है — अभी — और यह %1$s का है, आपका नहीं।</string>
+    <string name="pair_qr_desc">पेयरिंग QR कोड</string>
+    <string name="pair_on_their_phone">%1$s के फ़ोन पर:</string>
+    <string name="pair_step1">Pact इंस्टॉल करें — यही ऐप</string>
+    <string name="pair_step2">सेटअप के दौरान «मैं चाबी रखने वाला हूँ» चुनें</string>
+    <string name="pair_step3">वहाँ स्कैन बटन से यह QR स्कैन करें</string>
+    <string name="pair_alt_authenticator">कुछ इंस्टॉल नहीं करना? Google Authenticator या कोई भी 2FA ऐप भी यह कोड स्कैन कर सकता है। मैनुअल कुंजी: %1$s</string>
+    <string name="pair_warning">इसे अपने फ़ोन पर स्कैन न करें — वरना अपने ही ताले की चाबी आपके पास रह जाएगी।</string>
+    <string name="pair_confirm">चाबी %1$s के पास है</string>
+
+    <string name="prove_title">परख कर देखें</string>
+    <string name="prove_body">%1$s से पूछें कि उनकी स्क्रीन पर अभी कौन-सा 6 अंकों का कोड दिख रहा है।</string>
+    <string name="prove_error">मेल नहीं खाया। पक्का करें कि पिछले चरण का QR स्कैन हुआ है, फिर अभी दिख रहा कोड आज़माएँ।</string>
+    <string name="prove_show_qr">QR फिर दिखाएँ</string>
+
+    <string name="perm_title">शील्ड चालू करें</string>
+    <string name="perm_body">Android की एक अनुमति से Pact जान पाता है कि कोई लॉक किया ऐप खुला है, ताकि वह सामने आ सके। इसे देने का तरीका:</string>
+    <string name="perm_step1">नीचे «सेटिंग खोलें» दबाएँ</string>
+    <string name="perm_step2">सूची में «Pact ऐप शील्ड» ढूँढें — कभी-कभी «इंस्टॉल किए ऐप्स» या «डाउनलोड किए ऐप्स» के नीचे मिलता है</string>
+    <string name="perm_step3">उस पर टैप करके चालू करें</string>
+    <string name="perm_step4">Android एक चेतावनी दिखाएगा — यह सामान्य है। Pact सिर्फ़ देखता है कि कौन-सा ऐप खुला, आपकी स्क्रीन कभी नहीं। «अनुमति दें» दबाएँ</string>
+    <string name="perm_step5">यहाँ वापस आएँ — काम बनते ही यह पेज हरा हो जाएगा</string>
+    <string name="perm_status_on">शील्ड तैयार है। आप सुरक्षित हैं।</string>
+    <string name="perm_status_waiting">शील्ड का इंतज़ार…</string>
+    <string name="perm_open_settings">सेटिंग खोलें</string>
+    <string name="perm_later">बाद में करूँगा</string>
+
+    <string name="pick_title">क्या खींचता है आपको?</string>
+    <string name="pick_min_one">कम से कम एक ऐप चुनें</string>
+    <string name="search_apps">ऐप्स खोजें</string>
+    <string name="often_locked">अक्सर लॉक किया जाता है</string>
+
+    <string name="seal_title">आपका Pact पक्का हुआ</string>
+    <string name="seal_body">आपके ऐप्स लॉक हैं। अब से चाबी %1$s के पास है — और यही तो मक़सद है।</string>
+    <string name="seal_begin">शुरू करें</string>
+
+    <string name="home_with">%1$s के साथ</string>
+    <string name="home_add_apps">ऐप्स जोड़ें</string>
+    <string name="home_settings">सेटिंग</string>
+    <string name="hero_active_title">सुरक्षा चालू है</string>
+    <string name="hero_active_sub">आपका Pact मज़बूती से टिका है</string>
+    <string name="hero_down_title">शील्ड बंद है</string>
+    <string name="hero_down_sub">अभी कुछ भी ब्लॉक नहीं हो रहा। एक्सेसिबिलिटी सेटिंग में शील्ड फिर चालू करें।</string>
+    <string name="hero_enable">शील्ड चालू करें</string>
+    <string name="stat_locked_label">ताले में</string>
+    <string name="stat_saves_label">आज रोका गया</string>
+    <string name="section_on_break">ब्रेक पर</string>
+    <string name="row_relocks_in">%1$s में फिर लॉक होगा</string>
+    <string name="action_relock">अभी लॉक करें</string>
+    <string name="section_locked">लॉक हैं</string>
+    <string name="home_empty">अभी यहाँ कुछ नहीं। + दबाकर वे ऐप्स चुनें जो आपका समय खा जाते हैं।</string>
+    <string name="home_all_on_break">अभी सब कुछ ब्रेक पर है।</string>
+    <string name="row_blocked_once">आज एक बार रोका गया</string>
+    <string name="row_blocked_times">आज %1$d बार रोका गया</string>
+    <string name="dialog_locked_body">यह ऐप आपके Pact से लॉक है। दोनों कामों के लिए %1$s से ताज़ा कोड चाहिए।</string>
+    <string name="action_unlock_a_while">कुछ देर के लिए खोलें…</string>
+    <string name="action_remove_from_pact">Pact से हटाएँ…</string>
+    <string name="unlock_q_title">%1$s खोलें?</string>
+    <string name="ask_code">%1$s से पूछें कि उनके फ़ोन पर अभी कौन-सा कोड दिख रहा है।</string>
+    <string name="duration_title">कितना समय चाहिए?</string>
+    <string name="duration_5m">5 मिनट</string>
+    <string name="duration_15m">15 मिनट</string>
+    <string name="duration_1h">1 घंटा</string>
+    <string name="duration_midnight">आधी रात तक</string>
+    <string name="remove_q_title">%1$s हटाएँ?</string>
+    <string name="remove_q_body">इस ऐप को Pact से निकालने के लिए %1$s से मौजूदा कोड पूछें।</string>
+
+    <string name="verify_wrong">कोड मेल नहीं खाया। कोड हर 30 सेकंड में बदलते हैं — नया कोड पूछें।</string>
+    <string name="verify_too_many">बहुत ज़्यादा कोशिशें। %1$s के लिए लॉक है।</string>
+
+    <string name="wall_locked_title">%1$s लॉक है</string>
+    <string name="wall_ask">%1$s से मौजूदा कोड पूछें</string>
+    <string name="wall_accepted">कोड सही है। कितना समय चाहिए?</string>
+    <string name="wall_go_home">रहने दो — होम पर ले चलो</string>
+    <string name="cd_delete">मिटाएँ</string>
+    <string name="cd_locked">लॉक</string>
+    <string-array name="encouragements">
+        <item>यही रुकना तो असली मक़सद है।</item>
+        <item>यह दीवार आपने खुद माँगी थी, जब मन साफ़ था।</item>
+        <item>तलब गुज़र जाती है, चाहे उसे पूरा करो या नहीं।</item>
+        <item>पाँच मिनट बाद आपको रुकने की खुशी होगी।</item>
+        <item>ऐसा कुछ नहीं छूट रहा जो मायने रखता हो।</item>
+    </string-array>
+
+    <string name="settings_title">सेटिंग</string>
+    <string name="settings_sponsor_section">आपका साथी</string>
+    <string name="settings_paired">जुड़ा हुआ — अनलॉक कोड उन्हीं के पास हैं</string>
+    <string name="settings_change_sponsor">साथी बदलें…</string>
+    <string name="settings_change_sponsor_hint">साथी बदलने के लिए मौजूदा साथी का कोड चाहिए, फिर बिल्कुल नई कुंजी बनती है।</string>
+    <string name="settings_strict_section">सख़्त मोड</string>
+    <string name="strict_title">सिस्टम सेटिंग भी लॉक करें</string>
+    <string name="strict_body">शील्ड को चुपचाप बंद होने से रोकता है — Android सेटिंग खोलने पर भी कोड पूछा जाएगा। चालू करना मुफ़्त है; बंद करने के लिए कोड चाहिए।</string>
+    <string name="settings_how_section">Pact कैसे काम करता है</string>
+    <string name="how_body">Pact पूरी तरह इसी फ़ोन पर चलता है — न खाता, न सर्वर, न इंटरनेट। अनलॉक कोड मानक ऑथेंटिकेटर कोड (TOTP) हैं: आपके साथी का फ़ोन और आपका फ़ोन साझा कुंजी और घड़ी से एक ही 6 अंकों की संख्या निकालते हैं, इसलिए कोड ऑफ़लाइन भी चलते हैं।\n\nकुंजी सेटअप के दौरान सिर्फ़ एक बार दिखी थी और सिर्फ़ आपके साथी के पास है। इस फ़ोन पर वह Android Keystore में एन्क्रिप्ट होकर रखी है।</string>
+    <string name="settings_danger">ख़तरे का क्षेत्र</string>
+    <string name="reset_action">Pact ख़त्म करें और रीसेट करें…</string>
+    <string name="reset_hint">हर ताला हटाकर नए सिरे से शुरुआत। %1$s का कोड चाहिए।</string>
+    <string name="strict_off_title">सख़्त मोड बंद करें?</string>
+    <string name="change_sponsor_title">साथी बदलें?</string>
+    <string name="change_sponsor_body">पहले, बदलाव की मंज़ूरी के लिए %1$s का कोड।</string>
+    <string name="end_pact_title">Pact ख़त्म करें?</string>
+    <string name="end_pact_body">सारे ताले हटाकर रीसेट करने के लिए %1$s से मौजूदा कोड पूछें।</string>
+    <string name="repair_new_sponsor">नया साथी</string>
+    <string name="repair_scan_title">उनके फ़ोन पर स्कैन करें</string>
+    <string name="repair_body_qr">%1$s के फ़ोन पर: Pact इंस्टॉल करके «मैं चाबी रखने वाला हूँ» चुनें, या Google Authenticator से स्कैन करें। मैनुअल कुंजी:\n%2$s</string>
+    <string name="repair_enter_code">नया Pact पक्का करने के लिए %1$s का मौजूदा कोड डालें।</string>
+    <string name="repair_wrong">मेल नहीं खाया — अभी दिख रहा कोड आज़माएँ।</string>
+    <string name="they_added_it">उन्होंने जोड़ लिया</string>
+
+    <string name="sponsor_setup_title">चाबी आपके पास है</string>
+    <string name="sponsor_setup_body">आपका कोई अपना अपने सबसे भटकाने वाले ऐप्स लॉक कर रहा है — और उसने आपको चाबी रखने के लिए चुना है। वापस जाना होगा तो वह आपसे यहाँ दिख रहा 6 अंकों का कोड पूछेगा।\n\nसेटअप के दौरान उसके फ़ोन पर QR कोड दिखता है — नीचे से स्कैन करें।</string>
+    <string name="sponsor_badge">चाबी रखने वाला</string>
+    <string name="sponsor_hint_codes">जब वे अनलॉक माँगें, कोड पढ़कर बता दें। यह हर 30 सेकंड में बदलता है और इंटरनेट नहीं माँगता।</string>
+    <string name="sponsor_scan_hint">कैमरा उनके फ़ोन के QR कोड पर रखें — यह उनके सेटअप के «चाबी सौंप दें» चरण में है।</string>
+    <string name="sponsor_scan_button">उनका QR कोड स्कैन करें</string>
+    <string name="sponsor_manual_toggle">कैमरा नहीं चल रहा? कुंजी टाइप करें</string>
+    <string name="sponsor_manual_hint">उनकी पेयरिंग स्क्रीन कुंजी को अक्षरों में भी दिखाती है। यहाँ टाइप करें या चिपकाएँ।</string>
+    <string name="sponsor_key_label">कुंजी (ABCD EFGH …)</string>
+    <string name="sponsor_key_invalid">यह सही नहीं लगती — कुंजी 32 अक्षरों-अंकों की होती है।</string>
+    <string name="sponsor_add_key">कुंजी जोड़ें</string>
+    <string name="sponsor_key_added">कुंजी जुड़ गई</string>
+    <string name="sponsor_whose">यह कुंजी किसके ऐप्स खोलती है?</string>
+    <string name="sponsor_empty">अभी कोई कुंजी नहीं। + दबाएँ और उनके फ़ोन का QR कोड स्कैन करें।</string>
+    <string name="sponsor_add_person">व्यक्ति जोड़ें</string>
+    <string name="sponsor_remove_title">%1$s को हटाएँ?</string>
+    <string name="sponsor_remove_body">आप %1$s को अनलॉक कोड नहीं दे पाएँगे। कुछ भी बदलने के लिए उन्हें फिर से किसी साथी से जुड़ना होगा।</string>
+    <string name="sponsor_key_error">यह कुंजी सुरक्षित स्टोरेज से नहीं पढ़ी जा सकी।</string>
+    <string name="scan_not_pact">यह QR कोड Pact कुंजी नहीं है। देखें कि उनके फ़ोन पर पेयरिंग स्क्रीन खुली हो।</string>
+
+    <string name="scan_title">पेयरिंग QR स्कैन करें</string>
+    <string name="scan_hint">कोड को फ्रेम के अंदर रखें</string>
+    <string name="scan_perm">QR कोड स्कैन करने के लिए Pact को कैमरा चाहिए।\nकैमरे की अनुमति दें, या वापस जाकर कुंजी टाइप करें।</string>
+    <string name="cd_torch">टॉर्च</string>
+
+    <plurals name="lock_n_apps">
+        <item quantity="one">%1$d ऐप लॉक करें</item>
+        <item quantity="other">%1$d ऐप्स लॉक करें</item>
+    </plurals>
+    <plurals name="n_apps">
+        <item quantity="one">%1$d ऐप</item>
+        <item quantity="other">%1$d ऐप्स</item>
+    </plurals>
+</resources>

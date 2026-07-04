@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_label">درع Pact</string>
+    <string name="accessibility_service_description">يستخدم Pact هذا الإذن لغرض واحد فقط: ملاحظة ظهور تطبيق مقفل في المقدمة لعرض شاشة القفل. لا يقرأ محتوى شاشتك أبدًا، ولا يجمع أي بيانات، ويعمل دون اتصال بالإنترنت تمامًا.</string>
+
+    <string name="common_continue">متابعة</string>
+    <string name="common_cancel">إلغاء</string>
+    <string name="common_close">إغلاق</string>
+    <string name="common_done">تم</string>
+    <string name="common_next">التالي</string>
+    <string name="common_back">رجوع</string>
+    <string name="common_remove">إزالة</string>
+    <string name="common_skip">تخطي</string>
+
+    <string name="intro_page1_title">اقفل ما يشدّك إليه</string>
+    <string name="intro_page1_body">يحجب Pact التطبيقات التي لا تستطيع تركها — إنستغرام، تيك توك، يوتيوب، أيًا كانت. تبقى مقفلة حتى يسمح لك أحدهم بالعودة.</string>
+    <string name="intro_page2_title">إنسان، لا كلمة مرور</string>
+    <string name="intro_page2_body">تختار كفيلًا — شريك حياتك، أحد والديك، صديقًا مقرّبًا. رمزه المكوّن من 6 أرقام هو الوحيد الذي يفتح تطبيقاتك. لم تعد قوة الإرادة هي الحلقة الأضعف.</string>
+    <string name="intro_page3_title">خاص. بلا إنترنت. ملكك.</string>
+    <string name="intro_page3_body">بلا حساب، بلا خادم، بلا إنترنت — أبدًا. تعمل الرموز مثل رموز التحقق الثنائي، فيستطيع كفيلك قراءة الرمز لك عبر أي مكالمة هاتفية.</string>
+    <string name="intro_get_started">ابدأ</string>
+
+    <string name="role_title">لمن هذا الهاتف؟</string>
+    <string name="role_body">لـ Pact جانبان: من يقفل تطبيقاته، ومن يحمل المفتاح.</string>
+    <string name="role_user_title">أريد قفل تطبيقاتي</string>
+    <string name="role_user_body">أريد قفل التطبيقات المشتّتة وتسليم المفتاح لشخص أثق به.</string>
+    <string name="role_sponsor_title">أنا الكفيل</string>
+    <string name="role_sponsor_body">طلب مني شخص عزيز أن أحتفظ برموز فتح تطبيقاته.</string>
+
+    <string name="guardian_title">اختر كفيلك</string>
+    <string name="guardian_body">اختر شخصًا يتمنى لك النجاح — شريك حياة، أحد الوالدين، صديق مقرّب. سيحمل رموز الفتح، فكل فتح يبدأ بسؤاله.</string>
+    <string name="guardian_name_label">اسمه</string>
+    <string name="guardian_hint">اختر شخصًا يسهل الوصول إليه — ستحتاجه في كل مرة تريد العودة.</string>
+
+    <string name="pair_title">سلّم المفتاح</string>
+    <string name="pair_body">رمز QR هذا هو مفتاح أقفالك. يظهر مرة واحدة فقط — الآن — وهو ملك %1$s، لا أنت.</string>
+    <string name="pair_qr_desc">رمز QR للاقتران</string>
+    <string name="pair_on_their_phone">على هاتف %1$s:</string>
+    <string name="pair_step1">ثبّت Pact — التطبيق نفسه الذي تستخدمه الآن</string>
+    <string name="pair_step2">أثناء الإعداد، اختر «أنا الكفيل»</string>
+    <string name="pair_step3">امسح رمز QR هذا بزر المسح هناك</string>
+    <string name="pair_alt_authenticator">لا يريد تثبيت شيء؟ يمكن لـ Google Authenticator أو أي تطبيق تحقق ثنائي مسح هذا الرمز أيضًا. المفتاح اليدوي: %1$s</string>
+    <string name="pair_warning">لا تمسحه على هاتفك أنت — ستكون حينها ممسكًا بمفتاح قفلك بنفسك.</string>
+    <string name="pair_confirm">المفتاح مع %1$s</string>
+
+    <string name="prove_title">تأكد أنه يعمل</string>
+    <string name="prove_body">اطلب من %1$s الرمز المكوّن من 6 أرقام الظاهر على شاشته الآن.</string>
+    <string name="prove_error">لم يتطابق. تأكد من مسح رمز QR في الخطوة السابقة، ثم جرّب الرمز الظاهر الآن.</string>
+    <string name="prove_show_qr">أظهر رمز QR مجددًا</string>
+
+    <string name="perm_title">فعّل الدرع</string>
+    <string name="perm_body">إذن واحد في أندرويد يتيح لـ Pact ملاحظة فتح تطبيق مقفل ليقف في وجهه. إليك خطوات منحه بالضبط:</string>
+    <string name="perm_step1">اضغط «فتح الإعدادات» بالأسفل</string>
+    <string name="perm_step2">ابحث عن «درع Pact» في القائمة — أحيانًا تحت «التطبيقات المثبتة» أو «التطبيقات التي نزّلتها»</string>
+    <string name="perm_step3">اضغط عليه وفعّله</string>
+    <string name="perm_step4">سيعرض أندرويد تحذيرًا — هذا طبيعي. يرى Pact أي تطبيق يُفتح فقط، ولا يرى شاشتك أبدًا. اضغط «سماح»</string>
+    <string name="perm_step5">عد إلى هنا — تتحول هذه الصفحة إلى الأخضر عند النجاح</string>
+    <string name="perm_status_on">الدرع مرفوع. أنت محمي.</string>
+    <string name="perm_status_waiting">بانتظار الدرع…</string>
+    <string name="perm_open_settings">فتح الإعدادات</string>
+    <string name="perm_later">سأفعل ذلك لاحقًا</string>
+
+    <string name="pick_title">ما الذي يشدّك؟</string>
+    <string name="pick_min_one">اختر تطبيقًا واحدًا على الأقل</string>
+    <string name="search_apps">ابحث عن التطبيقات</string>
+    <string name="often_locked">يُقفل كثيرًا</string>
+
+    <string name="seal_title">اكتمل ميثاقك</string>
+    <string name="seal_body">تطبيقاتك مقفلة الآن. من الآن فصاعدًا، المفتاح مع %1$s — وهذه هي الفكرة بالضبط.</string>
+    <string name="seal_begin">ابدأ</string>
+
+    <string name="home_with">مع %1$s</string>
+    <string name="home_add_apps">إضافة تطبيقات</string>
+    <string name="home_settings">الإعدادات</string>
+    <string name="hero_active_title">الحماية مفعّلة</string>
+    <string name="hero_active_sub">ميثاقك صامد</string>
+    <string name="hero_down_title">الدرع متوقف</string>
+    <string name="hero_down_sub">لا يُحجب أي شيء حاليًا. أعد تفعيل الدرع من إعدادات إمكانية الوصول.</string>
+    <string name="hero_enable">تفعيل الدرع</string>
+    <string name="stat_locked_label">تحت القفل</string>
+    <string name="stat_saves_label">مرات الحجب اليوم</string>
+    <string name="section_on_break">في استراحة</string>
+    <string name="row_relocks_in">يُقفل مجددًا بعد %1$s</string>
+    <string name="action_relock">أقفل الآن</string>
+    <string name="section_locked">مقفلة</string>
+    <string name="home_empty">لا شيء هنا بعد. اضغط + واختر التطبيقات التي تلتهم وقتك.</string>
+    <string name="home_all_on_break">كل شيء في استراحة الآن.</string>
+    <string name="row_blocked_once">حُجب مرة اليوم</string>
+    <string name="row_blocked_times">حُجب %1$d مرات اليوم</string>
+    <string name="dialog_locked_body">هذا التطبيق مقفل بميثاقك. كلا الإجراءين يحتاج رمزًا جديدًا من %1$s.</string>
+    <string name="action_unlock_a_while">فتح لفترة…</string>
+    <string name="action_remove_from_pact">إزالة من الميثاق…</string>
+    <string name="unlock_q_title">فتح %1$s؟</string>
+    <string name="ask_code">اطلب من %1$s الرمز الظاهر على هاتفه الآن.</string>
+    <string name="duration_title">كم من الوقت تحتاج؟</string>
+    <string name="duration_5m">5 دقائق</string>
+    <string name="duration_15m">15 دقيقة</string>
+    <string name="duration_1h">ساعة واحدة</string>
+    <string name="duration_midnight">حتى منتصف الليل</string>
+    <string name="remove_q_title">إزالة %1$s؟</string>
+    <string name="remove_q_body">اطلب من %1$s الرمز الحالي لإخراج هذا التطبيق من ميثاقك.</string>
+
+    <string name="verify_wrong">لم يتطابق الرمز. الرموز تتغير كل 30 ثانية — اطلب رمزًا جديدًا.</string>
+    <string name="verify_too_many">محاولات كثيرة جدًا. مقفل لمدة %1$s.</string>
+
+    <string name="wall_locked_title">%1$s مقفل</string>
+    <string name="wall_ask">اطلب من %1$s الرمز الحالي</string>
+    <string name="wall_accepted">قُبل الرمز. كم من الوقت تحتاج؟</string>
+    <string name="wall_go_home">لا عليك — خذني إلى الشاشة الرئيسية</string>
+    <string name="cd_delete">حذف</string>
+    <string name="cd_locked">مقفل</string>
+    <string-array name="encouragements">
+        <item>هذه الوقفة هي الهدف كله.</item>
+        <item>أنت من طلب هذا الجدار في يومٍ كان ذهنك فيه صافيًا.</item>
+        <item>الرغبة تمرّ سواء أشبعتها أم لا.</item>
+        <item>بعد خمس دقائق ستفرح أنك توقفت.</item>
+        <item>لن يفوتك شيء يستحق.</item>
+    </string-array>
+
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_sponsor_section">كفيلك</string>
+    <string name="settings_paired">مقترن — يحمل رموز الفتح الخاصة بك</string>
+    <string name="settings_change_sponsor">تغيير الكفيل…</string>
+    <string name="settings_change_sponsor_hint">تغيير الكفيل يتطلب رمزًا من كفيلك الحالي ثم يُنشئ مفتاحًا جديدًا كليًا.</string>
+    <string name="settings_strict_section">الوضع الصارم</string>
+    <string name="strict_title">قفل إعدادات النظام أيضًا</string>
+    <string name="strict_body">يمنع إيقاف الدرع خلسة — سيطلب فتح إعدادات أندرويد رمزًا أيضًا. التفعيل مجاني؛ الإيقاف يحتاج رمزًا.</string>
+    <string name="settings_how_section">كيف يعمل Pact</string>
+    <string name="how_body">يعمل Pact بالكامل على هذا الهاتف — بلا حساب، بلا خادم، بلا إنترنت. رموز الفتح هي رموز مصادقة قياسية (TOTP): يحسب هاتفك وهاتف كفيلك الرقم نفسه المكوّن من 6 أرقام من مفتاح مشترك والساعة، لذا تعمل الرموز حتى دون اتصال.\n\nظهر المفتاح مرة واحدة فقط أثناء الإعداد، وكفيلك وحده يملكه. وهو مخزّن على هذا الهاتف مشفّرًا داخل Android Keystore.</string>
+    <string name="settings_danger">منطقة الخطر</string>
+    <string name="reset_action">إنهاء الميثاق وإعادة الضبط…</string>
+    <string name="reset_hint">يزيل كل الأقفال ويبدأ من جديد. يحتاج رمزًا من %1$s.</string>
+    <string name="strict_off_title">إيقاف الوضع الصارم؟</string>
+    <string name="change_sponsor_title">تغيير الكفيل؟</string>
+    <string name="change_sponsor_body">أولًا، رمز من %1$s للموافقة على التغيير.</string>
+    <string name="end_pact_title">إنهاء الميثاق؟</string>
+    <string name="end_pact_body">اطلب من %1$s الرمز الحالي لإزالة كل الأقفال وإعادة الضبط.</string>
+    <string name="repair_new_sponsor">كفيل جديد</string>
+    <string name="repair_scan_title">امسح على هاتفه</string>
+    <string name="repair_body_qr">على هاتف %1$s: ثبّت Pact واختر «أنا الكفيل»، أو امسح بواسطة Google Authenticator. المفتاح اليدوي:\n%2$s</string>
+    <string name="repair_enter_code">أدخل الرمز الحالي من %1$s لإتمام الميثاق الجديد.</string>
+    <string name="repair_wrong">لم يتطابق — جرّب الرمز الظاهر الآن.</string>
+    <string name="they_added_it">تمت الإضافة عنده</string>
+
+    <string name="sponsor_setup_title">أنت تحمل المفتاح</string>
+    <string name="sponsor_setup_body">شخص عزيز عليك يقفل تطبيقاته الأكثر تشتيتًا — واختارك كفيلًا له. عندما يريد العودة، سيطلب منك الرمز المكوّن من 6 أرقام الظاهر هنا.\n\nهاتفه يعرض رمز QR أثناء الإعداد — امسحه بالأسفل.</string>
+    <string name="sponsor_badge">كفيل</string>
+    <string name="sponsor_hint_codes">عندما يطلب الفتح، اقرأ له الرمز. يتغيّر كل 30 ثانية ولا يحتاج إنترنت.</string>
+    <string name="sponsor_scan_hint">وجّه الكاميرا نحو رمز QR على هاتفه — تجده في خطوة «سلّم المفتاح» من إعداده.</string>
+    <string name="sponsor_scan_button">امسح رمز QR الخاص به</string>
+    <string name="sponsor_manual_toggle">مشكلة في الكاميرا؟ اكتب المفتاح</string>
+    <string name="sponsor_manual_hint">شاشة الاقتران لديه تعرض المفتاح كحروف أيضًا. اكتبه أو الصقه هنا.</string>
+    <string name="sponsor_key_label">المفتاح (ABCD EFGH …)</string>
+    <string name="sponsor_key_invalid">لا يبدو صحيحًا — المفتاح 32 حرفًا ورقمًا.</string>
+    <string name="sponsor_add_key">إضافة المفتاح</string>
+    <string name="sponsor_key_added">أُضيف المفتاح</string>
+    <string name="sponsor_whose">تطبيقات من يفتحها هذا المفتاح؟</string>
+    <string name="sponsor_empty">لا مفاتيح بعد. اضغط + وامسح رمز QR على هاتفه.</string>
+    <string name="sponsor_add_person">إضافة شخص</string>
+    <string name="sponsor_remove_title">إزالة %1$s؟</string>
+    <string name="sponsor_remove_body">لن تستطيع إعطاء %1$s رموز فتح بعد الآن. سيحتاج إلى الاقتران بكفيل من جديد لتغيير أي شيء.</string>
+    <string name="sponsor_key_error">تعذّرت قراءة هذا المفتاح من التخزين الآمن.</string>
+    <string name="scan_not_pact">رمز QR هذا ليس مفتاح Pact. تأكد أن هاتفه يعرض شاشة الاقتران.</string>
+
+    <string name="scan_title">مسح رمز QR للاقتران</string>
+    <string name="scan_hint">ضع الرمز داخل الإطار</string>
+    <string name="scan_perm">يحتاج Pact إلى الكاميرا لمسح رمز QR.\nاسمح بالوصول، أو ارجع واكتب المفتاح يدويًا.</string>
+    <string name="cd_torch">المصباح</string>
+
+    <plurals name="lock_n_apps">
+        <item quantity="one">قفل تطبيق واحد</item>
+        <item quantity="two">قفل تطبيقين</item>
+        <item quantity="few">قفل %1$d تطبيقات</item>
+        <item quantity="many">قفل %1$d تطبيقًا</item>
+        <item quantity="other">قفل %1$d تطبيق</item>
+    </plurals>
+    <plurals name="n_apps">
+        <item quantity="one">تطبيق واحد</item>
+        <item quantity="two">تطبيقان</item>
+        <item quantity="few">%1$d تطبيقات</item>
+        <item quantity="many">%1$d تطبيقًا</item>
+        <item quantity="other">%1$d تطبيق</item>
+    </plurals>
+</resources>

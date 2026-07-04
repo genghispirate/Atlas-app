@@ -30,6 +30,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pact.app.core.PactState
 import com.pact.app.ui.AppPickerList
@@ -117,9 +119,13 @@ private fun AddAppsScreen(
             modifier = Modifier.padding(top = 12.dp, bottom = 12.dp),
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", tint = TextSecondary)
+                Icon(
+                    Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = stringResource(R.string.common_back),
+                    tint = TextSecondary,
+                )
             }
-            Text("Add to your Pact", style = MaterialTheme.typography.headlineSmall)
+            Text(stringResource(R.string.home_add_apps), style = MaterialTheme.typography.headlineSmall)
         }
         Box(Modifier.weight(1f)) {
             AppPickerList(
@@ -129,8 +135,8 @@ private fun AddAppsScreen(
             )
         }
         PactButton(
-            text = if (selected.isEmpty()) "Select apps to lock"
-            else "Lock ${selected.size} ${if (selected.size == 1) "app" else "apps"}",
+            text = if (selected.isEmpty()) stringResource(R.string.pick_min_one)
+            else pluralStringResource(R.plurals.lock_n_apps, selected.size, selected.size),
             onClick = {
                 state.addBlocked(selected)
                 onBack()

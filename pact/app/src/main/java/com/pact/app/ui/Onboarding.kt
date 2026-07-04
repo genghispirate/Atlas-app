@@ -15,23 +15,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.CloudOff
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Shield
@@ -56,19 +54,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.pact.app.R
 import com.pact.app.core.PactState
 import com.pact.app.core.Qr
 import com.pact.app.core.Totp
 import com.pact.app.service.BlockerService
 import com.pact.app.ui.theme.Amber
-import com.pact.app.ui.theme.CardBorder
 import com.pact.app.ui.theme.Ink
 import com.pact.app.ui.theme.Mint
 import com.pact.app.ui.theme.PactGradient
@@ -81,7 +77,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- * v1.1 flow: a real introduction first (3 swipeable pages), then a role
+ * Onboarding: a real introduction first (3 swipeable pages), then a role
  * choice — block my own apps, or hold the keys as a sponsor — then the
  * matching guided setup. The TOTP secret lives only in memory until setup
  * completes.
@@ -139,28 +135,16 @@ fun PactLogo(sizeDp: Int, modifier: Modifier = Modifier) {
 
 private data class IntroPage(
     val art: @Composable () -> Unit,
-    val title: String,
-    val body: String,
+    val title: Int,
+    val body: Int,
 )
 
 @Composable
 private fun IntroPager(onFinished: () -> Unit) {
     val pages = listOf(
-        IntroPage(
-            { ArtLockedPhone() },
-            "Lock what pulls you in",
-            "Pact blocks the apps you can't put down — Instagram, TikTok, YouTube, anything you choose. They stay locked until someone lets you back in.",
-        ),
-        IntroPage(
-            { ArtTwoPeople() },
-            "A person, not a password",
-            "You pick a sponsor — a partner, parent, or close friend. Only a fresh 6-digit code from them can unlock your apps. Willpower stops being the weak link.",
-        ),
-        IntroPage(
-            { ArtOfflineShield() },
-            "Private, offline, yours",
-            "No account. No internet needed — ever. Codes work like 2FA codes, so your sponsor can read one out over any phone call. Nothing leaves your phone.",
-        ),
+        IntroPage({ ArtLockedPhone() }, R.string.intro_page1_title, R.string.intro_page1_body),
+        IntroPage({ ArtTwoPeople() }, R.string.intro_page2_title, R.string.intro_page2_body),
+        IntroPage({ ArtOfflineShield() }, R.string.intro_page3_title, R.string.intro_page3_body),
     )
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
@@ -174,10 +158,12 @@ private fun IntroPager(onFinished: () -> Unit) {
         ) {
             PactLogo(40)
             Spacer(Modifier.width(12.dp))
-            Text("Pact", style = MaterialTheme.typography.headlineSmall)
+            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineSmall)
             Spacer(Modifier.weight(1f))
             if (pagerState.currentPage < pages.size - 1) {
-                TextButton(onClick = onFinished) { Text("Skip", color = TextTertiary) }
+                TextButton(onClick = onFinished) {
+                    Text(stringResource(R.string.common_skip), color = TextTertiary)
+                }
             }
         }
 
@@ -192,10 +178,14 @@ private fun IntroPager(onFinished: () -> Unit) {
             ) {
                 p.art()
                 Spacer(Modifier.height(28.dp))
-                Text(p.title, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
+                Text(
+                    stringResource(p.title),
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center,
+                )
                 Spacer(Modifier.height(14.dp))
                 Text(
-                    p.body,
+                    stringResource(p.body),
                     style = MaterialTheme.typography.bodyLarge,
                     color = TextSecondary,
                     textAlign = TextAlign.Center,
@@ -203,7 +193,6 @@ private fun IntroPager(onFinished: () -> Unit) {
             }
         }
 
-        // dots + CTA
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -221,7 +210,10 @@ private fun IntroPager(onFinished: () -> Unit) {
             }
         }
         PactButton(
-            text = if (pagerState.currentPage == pages.size - 1) "Get started" else "Next",
+            text = stringResource(
+                if (pagerState.currentPage == pages.size - 1) R.string.intro_get_started
+                else R.string.common_next
+            ),
             onClick = {
                 if (pagerState.currentPage == pages.size - 1) onFinished()
                 else scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
@@ -245,10 +237,14 @@ private fun RoleSelect(onUser: () -> Unit, onSponsor: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Who is this phone for?", style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
+        Text(
+            stringResource(R.string.role_title),
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center,
+        )
         Spacer(Modifier.height(10.dp))
         Text(
-            "Pact has two sides — the person locking their apps, and the person holding the key.",
+            stringResource(R.string.role_body),
             style = MaterialTheme.typography.bodyLarge,
             color = TextSecondary,
             textAlign = TextAlign.Center,
@@ -258,16 +254,16 @@ private fun RoleSelect(onUser: () -> Unit, onSponsor: () -> Unit) {
         RoleCard(
             icon = Icons.Rounded.Lock,
             iconOnGradient = true,
-            title = "Block my apps",
-            body = "I want to lock distracting apps and give the key to someone I trust.",
+            title = stringResource(R.string.role_user_title),
+            body = stringResource(R.string.role_user_body),
             onClick = onUser,
         )
         Spacer(Modifier.height(14.dp))
         RoleCard(
             icon = Icons.Rounded.Key,
             iconOnGradient = false,
-            title = "I'm the sponsor",
-            body = "Someone I care about asked me to hold their unlock codes.",
+            title = stringResource(R.string.role_sponsor_title),
+            body = stringResource(R.string.role_sponsor_body),
             onClick = onSponsor,
         )
     }
@@ -288,7 +284,7 @@ private fun RoleCard(
             .fillMaxWidth()
             .clip(shape)
             .background(Surface1)
-            .border(1.dp, CardBorder, shape)
+            .border(1.dp, com.pact.app.ui.theme.CardBorder, shape)
             .clickable(onClick = onClick)
             .padding(20.dp),
     ) {
@@ -371,7 +367,6 @@ private fun UserSetupFlow(state: PactState, onDone: () -> Unit) {
                 )
                 5 -> SealStep(
                     guardianName = guardianName,
-                    appCount = selectedApps.size,
                     onFinish = {
                         state.completeSetup(guardianName, secret, selectedApps)
                         onDone()
@@ -419,13 +414,13 @@ private fun StepScaffold(
 @Composable
 private fun GuardianStep(name: String, onNameChange: (String) -> Unit, onNext: () -> Unit) {
     StepScaffold(
-        title = "Choose your sponsor",
-        subtitle = "Pick someone who wants you to succeed — a partner, parent, or close friend. They'll hold the codes that unlock your apps, so you'll have to ask them each time.",
+        title = stringResource(R.string.guardian_title),
+        subtitle = stringResource(R.string.guardian_body),
     ) {
         OutlinedTextField(
             value = name,
             onValueChange = onNameChange,
-            label = { Text("Their name") },
+            label = { Text(stringResource(R.string.guardian_name_label)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
@@ -440,14 +435,14 @@ private fun GuardianStep(name: String, onNameChange: (String) -> Unit, onNext: (
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            "Choose someone you can reach easily — you'll need them whenever you want back in.",
+            stringResource(R.string.guardian_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = TextTertiary,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(28.dp))
         PactButton(
-            "Continue",
+            stringResource(R.string.common_continue),
             onClick = onNext,
             enabled = name.trim().length >= 2,
             modifier = Modifier.fillMaxWidth(),
@@ -461,8 +456,8 @@ private fun PairStep(guardianName: String, secret: String, onNext: () -> Unit) {
         Qr.encode(Totp.otpAuthUri(secret, guardianName)).asImageBitmap()
     }
     StepScaffold(
-        title = "Hand over the key",
-        subtitle = "This QR code is the key to your locks. It appears once — right now — and only $guardianName should have it.",
+        title = stringResource(R.string.pair_title),
+        subtitle = stringResource(R.string.pair_body, guardianName),
     ) {
         Box(
             modifier = Modifier
@@ -472,31 +467,25 @@ private fun PairStep(guardianName: String, secret: String, onNext: () -> Unit) {
         ) {
             Image(
                 bitmap = qr,
-                contentDescription = "Pairing QR code",
+                contentDescription = stringResource(R.string.pair_qr_desc),
                 modifier = Modifier.size(220.dp),
             )
         }
         Spacer(Modifier.height(20.dp))
         PactCard {
-            Text("On $guardianName's phone:", style = MaterialTheme.typography.titleSmall)
+            Text(
+                stringResource(R.string.pair_on_their_phone, guardianName),
+                style = MaterialTheme.typography.titleSmall,
+            )
             Spacer(Modifier.height(12.dp))
-            NumberedStep(1, buildAnnotatedString {
-                append("Install ")
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Periwinkle)) { append("Pact") }
-                append(" (this app) on their phone")
-            })
+            NumberedStep(1, stringResource(R.string.pair_step1))
             Spacer(Modifier.height(10.dp))
-            NumberedStep(2, buildAnnotatedString {
-                append("During setup, choose ")
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Periwinkle)) { append("“I'm the sponsor”") }
-            })
+            NumberedStep(2, stringResource(R.string.pair_step2))
             Spacer(Modifier.height(10.dp))
-            NumberedStep(3, buildAnnotatedString {
-                append("Scan this QR with the camera button there")
-            })
+            NumberedStep(3, stringResource(R.string.pair_step3))
             Spacer(Modifier.height(14.dp))
             Text(
-                "Prefer not to install anything? Google Authenticator or any 2FA app can scan this same QR. Manual key: ${Totp.prettySecret(secret)}",
+                stringResource(R.string.pair_alt_authenticator, Totp.prettySecret(secret)),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextTertiary,
             )
@@ -507,7 +496,7 @@ private fun PairStep(guardianName: String, secret: String, onNext: () -> Unit) {
                 Icon(Icons.Rounded.Lock, contentDescription = null, tint = Mint)
                 Spacer(Modifier.width(12.dp))
                 Text(
-                    "Don't scan it into your own phone — that would give you the key to your own lock.",
+                    stringResource(R.string.pair_warning),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                 )
@@ -515,7 +504,7 @@ private fun PairStep(guardianName: String, secret: String, onNext: () -> Unit) {
         }
         Spacer(Modifier.height(24.dp))
         PactButton(
-            "$guardianName has the key",
+            stringResource(R.string.pair_confirm, guardianName),
             onClick = onNext,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -532,8 +521,8 @@ private fun ProveStep(
     var code by remember { mutableStateOf("") }
     var error by remember { mutableStateOf(false) }
     StepScaffold(
-        title = "Prove it works",
-        subtitle = "Ask $guardianName for the 6-digit code showing on their phone right now.",
+        title = stringResource(R.string.prove_title),
+        subtitle = stringResource(R.string.prove_body, guardianName),
     ) {
         CodeInput(
             value = code,
@@ -554,14 +543,16 @@ private fun ProveStep(
         if (error) {
             Spacer(Modifier.height(12.dp))
             Text(
-                "That didn't match. Make sure they scanned the QR on the previous step, and try the current code.",
+                stringResource(R.string.prove_error),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center,
             )
         }
         Spacer(Modifier.height(20.dp))
-        TextButton(onClick = onBack) { Text("Show the QR again", color = TextSecondary) }
+        TextButton(onClick = onBack) {
+            Text(stringResource(R.string.prove_show_qr), color = TextSecondary)
+        }
     }
 }
 
@@ -575,37 +566,19 @@ private fun PermissionStep(onNext: () -> Unit) {
         }
     }
     StepScaffold(
-        title = "Raise the shield",
-        subtitle = "One Android permission lets Pact notice when a locked app opens so it can step in front. Here's exactly how to turn it on:",
+        title = stringResource(R.string.perm_title),
+        subtitle = stringResource(R.string.perm_body),
     ) {
         PactCard {
-            NumberedStep(1, buildAnnotatedString {
-                append("Tap ")
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Periwinkle)) { append("“Open settings”") }
-                append(" below")
-            })
+            NumberedStep(1, stringResource(R.string.perm_step1))
             Spacer(Modifier.height(12.dp))
-            NumberedStep(2, buildAnnotatedString {
-                append("Find ")
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Periwinkle)) { append("Pact app shield") }
-                append(" in the list — it may sit under “Installed apps” or “Downloaded apps”")
-            })
+            NumberedStep(2, stringResource(R.string.perm_step2))
             Spacer(Modifier.height(12.dp))
-            NumberedStep(3, buildAnnotatedString {
-                append("Tap it and switch it ")
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Periwinkle)) { append("On") }
-            })
+            NumberedStep(3, stringResource(R.string.perm_step3))
             Spacer(Modifier.height(12.dp))
-            NumberedStep(4, buildAnnotatedString {
-                append("Android will show a warning — ")
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("that's normal") }
-                append(". Pact only detects which app opens; it never reads what's on your screen. Tap ")
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold, color = Periwinkle)) { append("Allow") }
-            })
+            NumberedStep(4, stringResource(R.string.perm_step4))
             Spacer(Modifier.height(12.dp))
-            NumberedStep(5, buildAnnotatedString {
-                append("Come back here — this page will turn green ✓")
-            })
+            NumberedStep(5, stringResource(R.string.perm_step5))
         }
         Spacer(Modifier.height(16.dp))
         PactCard(background = if (serviceOn) Surface2 else Surface1) {
@@ -617,7 +590,9 @@ private fun PermissionStep(onNext: () -> Unit) {
                 )
                 Spacer(Modifier.width(12.dp))
                 Text(
-                    if (serviceOn) "The shield is up — you're protected." else "Waiting for the shield…",
+                    stringResource(
+                        if (serviceOn) R.string.perm_status_on else R.string.perm_status_waiting
+                    ),
                     style = MaterialTheme.typography.titleSmall,
                     color = if (serviceOn) Mint else TextSecondary,
                 )
@@ -625,10 +600,14 @@ private fun PermissionStep(onNext: () -> Unit) {
         }
         Spacer(Modifier.height(24.dp))
         if (serviceOn) {
-            PactButton("Continue", onClick = onNext, modifier = Modifier.fillMaxWidth())
+            PactButton(
+                stringResource(R.string.common_continue),
+                onClick = onNext,
+                modifier = Modifier.fillMaxWidth(),
+            )
         } else {
             PactButton(
-                "Open settings",
+                stringResource(R.string.perm_open_settings),
                 onClick = {
                     context.startActivity(
                         Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
@@ -638,7 +617,9 @@ private fun PermissionStep(onNext: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
-            TextButton(onClick = onNext) { Text("Set up later", color = TextTertiary) }
+            TextButton(onClick = onNext) {
+                Text(stringResource(R.string.perm_later), color = TextTertiary)
+            }
         }
     }
 }
@@ -657,7 +638,7 @@ private fun PickAppsStep(
             .padding(horizontal = 20.dp)
     ) {
         Text(
-            "What pulls you in?",
+            stringResource(R.string.pick_title),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
@@ -666,8 +647,8 @@ private fun PickAppsStep(
             AppPickerList(selected = selected, onSelectedChange = onSelectedChange)
         }
         PactButton(
-            if (selected.isEmpty()) "Choose at least one app"
-            else "Lock ${selected.size} ${if (selected.size == 1) "app" else "apps"}",
+            if (selected.isEmpty()) stringResource(R.string.pick_min_one)
+            else pluralStringResource(R.plurals.lock_n_apps, selected.size, selected.size),
             onClick = onNext,
             enabled = selected.isNotEmpty(),
             modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
@@ -676,7 +657,7 @@ private fun PickAppsStep(
 }
 
 @Composable
-private fun SealStep(guardianName: String, appCount: Int, onFinish: () -> Unit) {
+private fun SealStep(guardianName: String, onFinish: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -699,15 +680,19 @@ private fun SealStep(guardianName: String, appCount: Int, onFinish: () -> Unit) 
             )
         }
         Spacer(Modifier.height(28.dp))
-        Text("Your Pact is sealed", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.seal_title), style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(14.dp))
         Text(
-            "$appCount ${if (appCount == 1) "app is" else "apps are"} now locked. From here on, $guardianName holds the key — and that's exactly the point.",
+            stringResource(R.string.seal_body, guardianName),
             style = MaterialTheme.typography.bodyLarge,
             color = TextSecondary,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(40.dp))
-        PactButton("Begin", onClick = onFinish, modifier = Modifier.fillMaxWidth())
+        PactButton(
+            stringResource(R.string.seal_begin),
+            onClick = onFinish,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }

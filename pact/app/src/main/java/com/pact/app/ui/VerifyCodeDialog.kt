@@ -15,7 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.pact.app.R
 import com.pact.app.core.PactState
 import com.pact.app.ui.theme.TextSecondary
 
@@ -36,6 +38,7 @@ fun VerifyCodeDialog(
     var lockedUntil by remember { mutableStateOf(state.snapshot.value.lockoutUntil) }
     val now by rememberNow()
     val isLockedOut = lockedUntil > now
+    val wrongMessage = stringResource(R.string.verify_wrong)
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -58,7 +61,7 @@ fun VerifyCodeDialog(
                                 is PactState.VerifyResult.Ok -> onVerified()
                                 is PactState.VerifyResult.Wrong -> {
                                     code = ""
-                                    error = "That code isn't right. Codes refresh every 30 seconds — ask for a fresh one."
+                                    error = wrongMessage
                                 }
                                 is PactState.VerifyResult.TooManyAttempts -> {
                                     code = ""
@@ -74,7 +77,7 @@ fun VerifyCodeDialog(
                 )
                 if (isLockedOut) {
                     Text(
-                        "Too many attempts. Try again in ${formatCountdown(lockedUntil - now)}.",
+                        stringResource(R.string.verify_too_many, formatCountdown(lockedUntil - now)),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -89,7 +92,7 @@ fun VerifyCodeDialog(
         },
         confirmButton = {},
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }

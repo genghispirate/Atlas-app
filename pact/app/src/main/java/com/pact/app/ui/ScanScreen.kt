@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -51,6 +52,7 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.BarcodeView
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
+import com.pact.app.R
 import com.pact.app.ui.theme.Ink
 import com.pact.app.ui.theme.Periwinkle
 import com.pact.app.ui.theme.Surface1
@@ -149,7 +151,11 @@ fun ScanScreen(
                     .clip(CircleShape)
                     .background(Ink.copy(alpha = 0.55f)),
             ) {
-                Icon(Icons.Rounded.Close, contentDescription = "Close", tint = Color.White)
+                Icon(
+                    Icons.Rounded.Close,
+                    contentDescription = stringResource(R.string.common_close),
+                    tint = Color.White,
+                )
             }
             Spacer(Modifier.size(12.dp))
             Text(
@@ -170,14 +176,14 @@ fun ScanScreen(
         ) {
             if (permissionDenied) {
                 Text(
-                    "Pact needs the camera to scan the QR code.\nAllow camera access, or type the key manually instead.",
+                    stringResource(R.string.scan_perm),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                     textAlign = TextAlign.Center,
                 )
             } else {
                 Text(
-                    "Hold the frame over the QR code on their screen",
+                    stringResource(R.string.scan_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White.copy(alpha = 0.85f),
                     textAlign = TextAlign.Center,
@@ -192,7 +198,7 @@ fun ScanScreen(
             ) {
                 Icon(
                     if (torchOn) Icons.Rounded.FlashOn else Icons.Rounded.FlashOff,
-                    contentDescription = "Toggle torch",
+                    contentDescription = stringResource(R.string.cd_torch),
                     tint = if (torchOn) Ink else Color.White,
                 )
             }

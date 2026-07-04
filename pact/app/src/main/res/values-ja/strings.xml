@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_label">Pact アプリシールド</string>
+    <string name="accessibility_service_description">Pact がこの権限を使うのはただ一つ、ロック中のアプリが前面に来たことを検知してロック画面を表示するためです。画面の内容を読むことは決してなく、データも収集せず、完全にオフラインで動作します。</string>
+
+    <string name="common_continue">続ける</string>
+    <string name="common_cancel">キャンセル</string>
+    <string name="common_close">閉じる</string>
+    <string name="common_done">完了</string>
+    <string name="common_next">次へ</string>
+    <string name="common_back">戻る</string>
+    <string name="common_remove">削除</string>
+    <string name="common_skip">スキップ</string>
+
+    <string name="intro_page1_title">つい開くアプリに鍵を</string>
+    <string name="intro_page1_body">Pact は手放せないアプリをブロックします。Instagram、TikTok、YouTube──何でも。誰かが開けてくれるまで、鍵はかかったままです。</string>
+    <string name="intro_page2_title">パスワードではなく、人</string>
+    <string name="intro_page2_body">パートナーや親、親友など「見守り役」を選びます。アプリを開けるのは、その人が持つ最新の6桁コードだけ。意志の力はもう弱点ではありません。</string>
+    <string name="intro_page3_title">プライベート。オフライン。あなたのもの。</string>
+    <string name="intro_page3_body">アカウント不要、サーバー不要、インターネットも一切不要。コードは2段階認証と同じ仕組みなので、電話越しに読み上げてもらえます。</string>
+    <string name="intro_get_started">はじめる</string>
+
+    <string name="role_title">このスマホは誰のもの？</string>
+    <string name="role_body">Pact には2つの役割があります。アプリに鍵をかける人と、その鍵を預かる人です。</string>
+    <string name="role_user_title">自分のアプリをロックする</string>
+    <string name="role_user_body">気が散るアプリに鍵をかけて、信頼できる人に鍵を預けたい。</string>
+    <string name="role_sponsor_title">私は見守り役</string>
+    <string name="role_sponsor_body">大切な人から、ロック解除コードを預かってほしいと頼まれた。</string>
+
+    <string name="guardian_title">見守り役を選ぶ</string>
+    <string name="guardian_body">あなたの成功を願う人を選んでください。パートナー、親、親友など。解除コードはその人が持つので、開けるにはまずお願いすることになります。</string>
+    <string name="guardian_name_label">相手の名前</string>
+    <string name="guardian_hint">連絡しやすい人を選びましょう。開けたくなるたびに、その人が必要になります。</string>
+
+    <string name="pair_title">鍵を渡す</string>
+    <string name="pair_body">このQRコードがロックの鍵です。表示されるのは今この一度だけ。この鍵は%1$sのもので、あなたのものではありません。</string>
+    <string name="pair_qr_desc">ペアリング用QRコード</string>
+    <string name="pair_on_their_phone">%1$sのスマホで：</string>
+    <string name="pair_step1">Pact（今使っているこのアプリ）をインストール</string>
+    <string name="pair_step2">セットアップで「私は見守り役」を選ぶ</string>
+    <string name="pair_step3">そこにあるスキャンボタンでこのQRを読み取る</string>
+    <string name="pair_alt_authenticator">アプリを入れたくない場合は、Google Authenticator など任意の2FAアプリでも読み取れます。手動キー：%1$s</string>
+    <string name="pair_warning">自分のスマホで読み取らないでください。自分の錠前の鍵を自分で持つことになります。</string>
+    <string name="pair_confirm">%1$sが鍵を受け取った</string>
+
+    <string name="prove_title">動作を確かめる</string>
+    <string name="prove_body">%1$sの画面に今表示されている6桁のコードを聞いてください。</string>
+    <string name="prove_error">一致しませんでした。前の手順のQRを読み取ったか確認し、今表示されているコードを試してください。</string>
+    <string name="prove_show_qr">QRをもう一度表示</string>
+
+    <string name="perm_title">シールドを立ち上げる</string>
+    <string name="perm_body">Android の権限を一つ許可すると、Pact はロック中のアプリが開いたことを検知して立ちはだかれるようになります。手順は次のとおり：</string>
+    <string name="perm_step1">下の「設定を開く」をタップ</string>
+    <string name="perm_step2">一覧から「Pact アプリシールド」を探す（「インストール済みアプリ」や「ダウンロードアプリ」の下にあることも）</string>
+    <string name="perm_step3">タップしてオンにする</string>
+    <string name="perm_step4">Android が警告を表示しますが、正常です。Pact が見るのはどのアプリが開いたかだけで、画面の中身は見ません。「許可」をタップ</string>
+    <string name="perm_step5">ここに戻る──成功するとこのページが緑になります</string>
+    <string name="perm_status_on">シールドは稼働中。守られています。</string>
+    <string name="perm_status_waiting">シールドを待っています…</string>
+    <string name="perm_open_settings">設定を開く</string>
+    <string name="perm_later">あとでやる</string>
+
+    <string name="pick_title">何に吸い込まれますか？</string>
+    <string name="pick_min_one">アプリを1つ以上選んでください</string>
+    <string name="search_apps">アプリを検索</string>
+    <string name="often_locked">よくロックされる</string>
+
+    <string name="seal_title">Pact が結ばれました</string>
+    <string name="seal_body">アプリはロックされました。これからは鍵を%1$sが持ちます──それこそが狙いです。</string>
+    <string name="seal_begin">はじめる</string>
+
+    <string name="home_with">%1$sと</string>
+    <string name="home_add_apps">アプリを追加</string>
+    <string name="home_settings">設定</string>
+    <string name="hero_active_title">保護は有効</string>
+    <string name="hero_active_sub">あなたの Pact は守られています</string>
+    <string name="hero_down_title">シールドがオフです</string>
+    <string name="hero_down_sub">今は何もブロックされていません。ユーザー補助の設定でシールドをオンに戻してください。</string>
+    <string name="hero_enable">シールドをオンにする</string>
+    <string name="stat_locked_label">ロック中</string>
+    <string name="stat_saves_label">今日のブロック</string>
+    <string name="section_on_break">休憩中</string>
+    <string name="row_relocks_in">%1$s後に再ロック</string>
+    <string name="action_relock">今すぐロック</string>
+    <string name="section_locked">ロック中</string>
+    <string name="home_empty">まだ何もありません。「+」から、時間を奪うアプリを選びましょう。</string>
+    <string name="home_all_on_break">今はすべて休憩中です。</string>
+    <string name="row_blocked_once">今日1回ブロック</string>
+    <string name="row_blocked_times">今日%1$d回ブロック</string>
+    <string name="dialog_locked_body">このアプリは Pact でロックされています。どちらの操作にも%1$sの最新コードが必要です。</string>
+    <string name="action_unlock_a_while">しばらく解除する…</string>
+    <string name="action_remove_from_pact">Pact から外す…</string>
+    <string name="unlock_q_title">%1$sを解除しますか？</string>
+    <string name="ask_code">%1$sのスマホに今表示されているコードを聞いてください。</string>
+    <string name="duration_title">どのくらい必要ですか？</string>
+    <string name="duration_5m">5分</string>
+    <string name="duration_15m">15分</string>
+    <string name="duration_1h">1時間</string>
+    <string name="duration_midnight">深夜0時まで</string>
+    <string name="remove_q_title">%1$sを外しますか？</string>
+    <string name="remove_q_body">このアプリを Pact から外すには、%1$sに今のコードを聞いてください。</string>
+
+    <string name="verify_wrong">コードが一致しません。コードは30秒ごとに変わります──新しいものを聞いてください。</string>
+    <string name="verify_too_many">試行回数が多すぎます。%1$sの間ロックされます。</string>
+
+    <string name="wall_locked_title">%1$sはロック中</string>
+    <string name="wall_ask">%1$sに今のコードを聞いてください</string>
+    <string name="wall_accepted">コード確認。どのくらい必要ですか？</string>
+    <string name="wall_go_home">やっぱりやめて、ホームに戻る</string>
+    <string name="cd_delete">削除</string>
+    <string name="cd_locked">ロック中</string>
+    <string-array name="encouragements">
+        <item>この立ち止まりこそが目的です。</item>
+        <item>この壁は、頭が冴えていた日のあなたが望んだもの。</item>
+        <item>衝動は、応えても応えなくても過ぎ去ります。</item>
+        <item>5分後には、止まってよかったと思うはず。</item>
+        <item>大事なものは何も見逃していません。</item>
+    </string-array>
+
+    <string name="settings_title">設定</string>
+    <string name="settings_sponsor_section">あなたの見守り役</string>
+    <string name="settings_paired">ペアリング済み──解除コードを預かっています</string>
+    <string name="settings_change_sponsor">見守り役を変更…</string>
+    <string name="settings_change_sponsor_hint">変更には現在の見守り役のコードが必要で、その後まったく新しい鍵を作ります。</string>
+    <string name="settings_strict_section">厳格モード</string>
+    <string name="strict_title">システム設定もロックする</string>
+    <string name="strict_body">シールドをこっそり切られるのを防ぎます。Android の設定を開くにもコードが必要になります。オンにするのは自由、オフにはコードが必要です。</string>
+    <string name="settings_how_section">Pact の仕組み</string>
+    <string name="how_body">Pact はすべてこのスマホの中で動きます。アカウントもサーバーもインターネットも不要です。解除コードは標準の認証コード（TOTP）で、見守り役のスマホとあなたのスマホが共有鍵と時計から同じ6桁の数字を計算するため、両方オフラインでも使えます。\n\n鍵が表示されたのはセットアップ時の一度だけで、持っているのは見守り役だけ。このスマホでは Android Keystore で暗号化されて保管されています。</string>
+    <string name="settings_danger">危険な操作</string>
+    <string name="reset_action">Pact を終了してリセット…</string>
+    <string name="reset_hint">すべてのロックを解除して最初からやり直します。%1$sのコードが必要です。</string>
+    <string name="strict_off_title">厳格モードをオフにしますか？</string>
+    <string name="change_sponsor_title">見守り役を変更しますか？</string>
+    <string name="change_sponsor_body">まず、変更を承認するために%1$sのコードが必要です。</string>
+    <string name="end_pact_title">Pact を終了しますか？</string>
+    <string name="end_pact_body">すべてのロックを解除してリセットするには、%1$sに今のコードを聞いてください。</string>
+    <string name="repair_new_sponsor">新しい見守り役</string>
+    <string name="repair_scan_title">相手のスマホでスキャン</string>
+    <string name="repair_body_qr">%1$sのスマホで：Pact をインストールして「私は見守り役」を選ぶか、Google Authenticator でスキャン。手動キー：\n%2$s</string>
+    <string name="repair_enter_code">新しい Pact を結ぶため、%1$sの今のコードを入力してください。</string>
+    <string name="repair_wrong">一致しません──今表示されているコードを試してください。</string>
+    <string name="they_added_it">追加してもらった</string>
+
+    <string name="sponsor_setup_title">鍵はあなたの手に</string>
+    <string name="sponsor_setup_body">あなたの大切な人が、いちばん気の散るアプリに鍵をかけようとしています──そして見守り役にあなたを選びました。開けたくなったら、ここに表示される6桁のコードをあなたに聞いてきます。\n\nセットアップ中、相手のスマホにQRコードが表示されます。下のボタンで読み取ってください。</string>
+    <string name="sponsor_badge">見守り役</string>
+    <string name="sponsor_hint_codes">解除を頼まれたら、コードを読み上げてください。30秒ごとに変わり、インターネットは不要です。</string>
+    <string name="sponsor_scan_hint">相手のスマホのQRコードにカメラを向けてください。セットアップの「鍵を渡す」の画面にあります。</string>
+    <string name="sponsor_scan_button">相手のQRコードをスキャン</string>
+    <string name="sponsor_manual_toggle">カメラの調子が悪い？キーを入力する</string>
+    <string name="sponsor_manual_hint">相手のペアリング画面には文字のキーも表示されています。ここに入力するか貼り付けてください。</string>
+    <string name="sponsor_key_label">キー（ABCD EFGH …）</string>
+    <string name="sponsor_key_invalid">正しくないようです。キーは32文字の英数字です。</string>
+    <string name="sponsor_add_key">キーを追加</string>
+    <string name="sponsor_key_added">キーを追加しました</string>
+    <string name="sponsor_whose">この鍵は誰のアプリを開けますか？</string>
+    <string name="sponsor_empty">まだ鍵がありません。「+」を押して相手のスマホのQRコードを読み取ってください。</string>
+    <string name="sponsor_add_person">メンバーを追加</string>
+    <string name="sponsor_remove_title">%1$sを削除しますか？</string>
+    <string name="sponsor_remove_body">%1$sに解除コードを渡せなくなります。変更するには、相手が見守り役と再ペアリングする必要があります。</string>
+    <string name="sponsor_key_error">この鍵を安全なストレージから読み取れません。</string>
+    <string name="scan_not_pact">このQRコードは Pact の鍵ではありません。相手のスマホがペアリング画面になっているか確認してください。</string>
+
+    <string name="scan_title">ペアリングQRをスキャン</string>
+    <string name="scan_hint">枠の中にコードを合わせてください</string>
+    <string name="scan_perm">QRコードの読み取りにはカメラが必要です。\nカメラを許可するか、戻ってキーを手入力してください。</string>
+    <string name="cd_torch">ライト</string>
+
+    <plurals name="lock_n_apps">
+        <item quantity="other">%1$d個のアプリをロック</item>
+    </plurals>
+    <plurals name="n_apps">
+        <item quantity="other">%1$d個のアプリ</item>
+    </plurals>
+</resources>

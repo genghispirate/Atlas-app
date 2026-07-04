@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_label">Щит Pact</string>
+    <string name="accessibility_service_description">Pact использует это разрешение только для одного: замечать, когда заблокированное приложение выходит на передний план, чтобы показать экран блокировки. Он никогда не читает содержимое экрана, ничего не собирает и работает полностью офлайн.</string>
+
+    <string name="common_continue">Продолжить</string>
+    <string name="common_cancel">Отмена</string>
+    <string name="common_close">Закрыть</string>
+    <string name="common_done">Готово</string>
+    <string name="common_next">Далее</string>
+    <string name="common_back">Назад</string>
+    <string name="common_remove">Убрать</string>
+    <string name="common_skip">Пропустить</string>
+
+    <string name="intro_page1_title">Заблокируйте то, что затягивает</string>
+    <string name="intro_page1_body">Pact блокирует приложения, от которых вы не можете оторваться — Instagram, TikTok, YouTube, что угодно. Они останутся под замком, пока кто-то не впустит вас обратно.</string>
+    <string name="intro_page2_title">Человек вместо пароля</string>
+    <string name="intro_page2_body">Вы выбираете хранителя — партнёра, родителя, близкого друга. Только его свежий 6-значный код открывает ваши приложения. Сила воли больше не слабое звено.</string>
+    <string name="intro_page3_title">Приватно. Офлайн. Ваше.</string>
+    <string name="intro_page3_body">Без аккаунта, без сервера, без интернета — никогда. Коды работают как коды 2FA: хранитель может продиктовать код по телефону.</string>
+    <string name="intro_get_started">Начать</string>
+
+    <string name="role_title">Чей это телефон?</string>
+    <string name="role_body">У Pact две стороны: тот, кто блокирует свои приложения, и тот, кто хранит ключ.</string>
+    <string name="role_user_title">Заблокировать мои приложения</string>
+    <string name="role_user_body">Хочу закрыть отвлекающие приложения и отдать ключ тому, кому доверяю.</string>
+    <string name="role_sponsor_title">Я хранитель</string>
+    <string name="role_sponsor_body">Близкий человек попросил меня хранить коды разблокировки.</string>
+
+    <string name="guardian_title">Выберите хранителя</string>
+    <string name="guardian_body">Выберите того, кто желает вам добра — партнёра, родителя, близкого друга. Коды будут у него, так что каждая разблокировка начинается с просьбы.</string>
+    <string name="guardian_name_label">Имя</string>
+    <string name="guardian_hint">Выберите того, с кем легко связаться — он понадобится каждый раз, когда захотите войти.</string>
+
+    <string name="pair_title">Передайте ключ</string>
+    <string name="pair_body">Этот QR-код — ключ от ваших замков. Он показывается один раз — сейчас — и принадлежит %1$s, а не вам.</string>
+    <string name="pair_qr_desc">QR-код для сопряжения</string>
+    <string name="pair_on_their_phone">На телефоне %1$s:</string>
+    <string name="pair_step1">Установить Pact — то же приложение, что у вас</string>
+    <string name="pair_step2">При настройке выбрать «Я хранитель»</string>
+    <string name="pair_step3">Отсканировать этот QR кнопкой сканирования</string>
+    <string name="pair_alt_authenticator">Не хочется ничего ставить? Google Authenticator или любое 2FA-приложение тоже отсканирует этот код. Ключ вручную: %1$s</string>
+    <string name="pair_warning">Не сканируйте его своим телефоном — иначе ключ от собственного замка останется у вас.</string>
+    <string name="pair_confirm">Ключ у %1$s</string>
+
+    <string name="prove_title">Проверим, что работает</string>
+    <string name="prove_body">Спросите у %1$s 6-значный код, который сейчас на его экране.</string>
+    <string name="prove_error">Не совпало. Убедитесь, что QR с прошлого шага отсканирован, и попробуйте код, который виден прямо сейчас.</string>
+    <string name="prove_show_qr">Показать QR ещё раз</string>
+
+    <string name="perm_title">Поднимите щит</string>
+    <string name="perm_body">Одно разрешение Android позволяет Pact замечать запуск заблокированного приложения и вставать у него на пути. Вот как его выдать:</string>
+    <string name="perm_step1">Нажмите «Открыть настройки» ниже</string>
+    <string name="perm_step2">Найдите «Щит Pact» в списке — иногда в разделе «Установленные приложения» или «Скачанные приложения»</string>
+    <string name="perm_step3">Нажмите и включите</string>
+    <string name="perm_step4">Android покажет предупреждение — это нормально. Pact видит только, какое приложение открылось, и никогда — ваш экран. Нажмите «Разрешить»</string>
+    <string name="perm_step5">Вернитесь сюда — страница станет зелёной, когда всё получится</string>
+    <string name="perm_status_on">Щит поднят. Вы под защитой.</string>
+    <string name="perm_status_waiting">Ожидание щита…</string>
+    <string name="perm_open_settings">Открыть настройки</string>
+    <string name="perm_later">Сделаю позже</string>
+
+    <string name="pick_title">Что вас затягивает?</string>
+    <string name="pick_min_one">Выберите хотя бы одно приложение</string>
+    <string name="search_apps">Поиск приложений</string>
+    <string name="often_locked">Часто блокируют</string>
+
+    <string name="seal_title">Ваш Pact скреплён</string>
+    <string name="seal_body">Приложения заблокированы. Теперь ключ у %1$s — в этом и весь смысл.</string>
+    <string name="seal_begin">Начать</string>
+
+    <string name="home_with">с %1$s</string>
+    <string name="home_add_apps">Добавить приложения</string>
+    <string name="home_settings">Настройки</string>
+    <string name="hero_active_title">Защита включена</string>
+    <string name="hero_active_sub">Ваш Pact держится</string>
+    <string name="hero_down_title">Щит выключен</string>
+    <string name="hero_down_sub">Сейчас ничего не блокируется. Включите щит в настройках специальных возможностей.</string>
+    <string name="hero_enable">Включить щит</string>
+    <string name="stat_locked_label">под замком</string>
+    <string name="stat_saves_label">блокировок сегодня</string>
+    <string name="section_on_break">На перерыве</string>
+    <string name="row_relocks_in">Снова закроется через %1$s</string>
+    <string name="action_relock">Закрыть сейчас</string>
+    <string name="section_locked">Заблокированы</string>
+    <string name="home_empty">Пока пусто. Нажмите + и выберите приложения, пожирающие ваше время.</string>
+    <string name="home_all_on_break">Сейчас всё на перерыве.</string>
+    <string name="row_blocked_once">Сегодня остановлено 1 раз</string>
+    <string name="row_blocked_times">Сегодня остановлено %1$d раз</string>
+    <string name="dialog_locked_body">Приложение заблокировано вашим Pact. Оба действия требуют свежий код от %1$s.</string>
+    <string name="action_unlock_a_while">Разблокировать на время…</string>
+    <string name="action_remove_from_pact">Убрать из Pact…</string>
+    <string name="unlock_q_title">Разблокировать %1$s?</string>
+    <string name="ask_code">Спросите у %1$s код, который сейчас на его телефоне.</string>
+    <string name="duration_title">Сколько времени нужно?</string>
+    <string name="duration_5m">5 минут</string>
+    <string name="duration_15m">15 минут</string>
+    <string name="duration_1h">1 час</string>
+    <string name="duration_midnight">До полуночи</string>
+    <string name="remove_q_title">Убрать %1$s?</string>
+    <string name="remove_q_body">Спросите у %1$s текущий код, чтобы убрать это приложение из Pact.</string>
+
+    <string name="verify_wrong">Код не подошёл. Коды меняются каждые 30 секунд — попросите новый.</string>
+    <string name="verify_too_many">Слишком много попыток. Блокировка на %1$s.</string>
+
+    <string name="wall_locked_title">%1$s под замком</string>
+    <string name="wall_ask">Спросите у %1$s текущий код</string>
+    <string name="wall_accepted">Код принят. Сколько времени нужно?</string>
+    <string name="wall_go_home">Неважно — на главный экран</string>
+    <string name="cd_delete">Стереть</string>
+    <string name="cd_locked">Заблокировано</string>
+    <string-array name="encouragements">
+        <item>Эта пауза и есть весь смысл.</item>
+        <item>Вы сами попросили эту стену в день, когда мыслили ясно.</item>
+        <item>Тяга пройдёт — кормите вы её или нет.</item>
+        <item>Через пять минут вы будете рады, что остановились.</item>
+        <item>Вы не упускаете ничего важного.</item>
+    </string-array>
+
+    <string name="settings_title">Настройки</string>
+    <string name="settings_sponsor_section">Ваш хранитель</string>
+    <string name="settings_paired">Сопряжён — коды разблокировки у него</string>
+    <string name="settings_change_sponsor">Сменить хранителя…</string>
+    <string name="settings_change_sponsor_hint">Смена требует код текущего хранителя, затем создаётся совершенно новый ключ.</string>
+    <string name="settings_strict_section">Строгий режим</string>
+    <string name="strict_title">Заблокировать и системные настройки</string>
+    <string name="strict_body">Не даёт втихую выключить щит — настройки Android тоже спросят код. Включить можно свободно; выключить — только с кодом.</string>
+    <string name="settings_how_section">Как работает Pact</string>
+    <string name="how_body">Pact целиком работает на этом телефоне — без аккаунта, без сервера, без интернета. Коды разблокировки — это стандартные коды аутентификатора (TOTP): телефон хранителя и ваш вычисляют одно и то же 6-значное число из общего ключа и часов, поэтому коды работают даже офлайн.\n\nКлюч показывался ровно один раз, при настройке, и есть только у хранителя. На этом телефоне он хранится зашифрованным в Android Keystore.</string>
+    <string name="settings_danger">Опасная зона</string>
+    <string name="reset_action">Завершить Pact и сбросить…</string>
+    <string name="reset_hint">Убирает все замки и начинает заново. Нужен код от %1$s.</string>
+    <string name="strict_off_title">Выключить строгий режим?</string>
+    <string name="change_sponsor_title">Сменить хранителя?</string>
+    <string name="change_sponsor_body">Сначала — код от %1$s, чтобы одобрить смену.</string>
+    <string name="end_pact_title">Завершить Pact?</string>
+    <string name="end_pact_body">Спросите у %1$s текущий код, чтобы снять все замки и сбросить.</string>
+    <string name="repair_new_sponsor">Новый хранитель</string>
+    <string name="repair_scan_title">Сканировать на его телефоне</string>
+    <string name="repair_body_qr">На телефоне %1$s: установить Pact и выбрать «Я хранитель» — или отсканировать в Google Authenticator. Ключ вручную:\n%2$s</string>
+    <string name="repair_enter_code">Введите текущий код от %1$s, чтобы скрепить новый Pact.</string>
+    <string name="repair_wrong">Не совпало — попробуйте код, который виден сейчас.</string>
+    <string name="they_added_it">Уже добавил</string>
+
+    <string name="sponsor_setup_title">Ключ у вас</string>
+    <string name="sponsor_setup_body">Близкий вам человек блокирует свои самые отвлекающие приложения — и выбрал вас хранителем. Когда он захочет вернуться, он попросит у вас 6-значный код, показанный здесь.\n\nВо время настройки его телефон показывает QR-код — отсканируйте его ниже.</string>
+    <string name="sponsor_badge">Хранитель</string>
+    <string name="sponsor_hint_codes">Когда попросят разблокировать, продиктуйте код. Он меняется каждые 30 секунд и не требует интернета.</string>
+    <string name="sponsor_scan_hint">Наведите камеру на QR-код на его телефоне — он на шаге «Передайте ключ» его настройки.</string>
+    <string name="sponsor_scan_button">Сканировать его QR-код</string>
+    <string name="sponsor_manual_toggle">Камера барахлит? Введите ключ вручную</string>
+    <string name="sponsor_manual_hint">Экран сопряжения показывает ключ и буквами. Введите или вставьте его сюда.</string>
+    <string name="sponsor_key_label">Ключ (ABCD EFGH …)</string>
+    <string name="sponsor_key_invalid">Непохоже на ключ — в нём 32 буквы и цифры.</string>
+    <string name="sponsor_add_key">Добавить ключ</string>
+    <string name="sponsor_key_added">Ключ добавлен</string>
+    <string name="sponsor_whose">Чьи приложения открывает этот ключ?</string>
+    <string name="sponsor_empty">Ключей пока нет. Нажмите + и отсканируйте QR-код на его телефоне.</string>
+    <string name="sponsor_add_person">Добавить человека</string>
+    <string name="sponsor_remove_title">Убрать %1$s?</string>
+    <string name="sponsor_remove_body">Вы больше не сможете давать %1$s коды разблокировки. Чтобы что-то изменить, ему придётся заново сопрячься с хранителем.</string>
+    <string name="sponsor_key_error">Не удалось прочитать ключ из защищённого хранилища.</string>
+    <string name="scan_not_pact">Этот QR-код — не ключ Pact. Убедитесь, что на его телефоне открыт экран сопряжения.</string>
+
+    <string name="scan_title">Сканирование QR-кода</string>
+    <string name="scan_hint">Совместите код с рамкой</string>
+    <string name="scan_perm">Pact нужна камера, чтобы отсканировать QR-код.\nРазрешите доступ или вернитесь и введите ключ вручную.</string>
+    <string name="cd_torch">Фонарик</string>
+
+    <plurals name="lock_n_apps">
+        <item quantity="one">Заблокировать %1$d приложение</item>
+        <item quantity="few">Заблокировать %1$d приложения</item>
+        <item quantity="many">Заблокировать %1$d приложений</item>
+        <item quantity="other">Заблокировать %1$d приложения</item>
+    </plurals>
+    <plurals name="n_apps">
+        <item quantity="one">%1$d приложение</item>
+        <item quantity="few">%1$d приложения</item>
+        <item quantity="many">%1$d приложений</item>
+        <item quantity="other">%1$d приложения</item>
+    </plurals>
+</resources>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_label">Escudo de Pact</string>
+    <string name="accessibility_service_description">Pact usa este permiso para una sola cosa: detectar cuándo una app bloqueada pasa al frente para mostrar la pantalla de bloqueo. Nunca lee el contenido de tu pantalla, no recopila nada y funciona completamente sin conexión.</string>
+
+    <string name="common_continue">Continuar</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_close">Cerrar</string>
+    <string name="common_done">Listo</string>
+    <string name="common_next">Siguiente</string>
+    <string name="common_back">Atrás</string>
+    <string name="common_remove">Quitar</string>
+    <string name="common_skip">Omitir</string>
+
+    <string name="intro_page1_title">Bloquea lo que te atrapa</string>
+    <string name="intro_page1_body">Pact bloquea las apps que no puedes soltar: Instagram, TikTok, YouTube, la que sea. Quedan bloqueadas hasta que alguien te deje volver a entrar.</string>
+    <string name="intro_page2_title">Una persona, no una contraseña</string>
+    <string name="intro_page2_body">Eliges un padrino: tu pareja, tu madre, un buen amigo. Solo un código de 6 dígitos suyo abre tus apps. La fuerza de voluntad deja de ser el punto débil.</string>
+    <string name="intro_page3_title">Privado. Sin conexión. Tuyo.</string>
+    <string name="intro_page3_body">Sin cuenta, sin servidor, sin internet — nunca. Los códigos funcionan como los de 2FA: tu padrino puede leerte uno por teléfono.</string>
+    <string name="intro_get_started">Empezar</string>
+
+    <string name="role_title">¿Para quién es este teléfono?</string>
+    <string name="role_body">Pact tiene dos lados: quien bloquea sus apps y quien guarda la llave.</string>
+    <string name="role_user_title">Bloquear mis apps</string>
+    <string name="role_user_body">Quiero bloquear mis apps y darle la llave a alguien de confianza.</string>
+    <string name="role_sponsor_title">Soy el padrino</string>
+    <string name="role_sponsor_body">Alguien que me importa me pidió guardar sus códigos de desbloqueo.</string>
+
+    <string name="guardian_title">Elige a tu padrino</string>
+    <string name="guardian_body">Elige a alguien que quiera verte bien: tu pareja, un familiar, un amigo cercano. Tendrá los códigos de desbloqueo, así que cada desbloqueo empieza pidiéndoselo.</string>
+    <string name="guardian_name_label">Su nombre</string>
+    <string name="guardian_hint">Elige a alguien fácil de contactar: lo necesitarás cada vez que quieras entrar.</string>
+
+    <string name="pair_title">Entrega la llave</string>
+    <string name="pair_body">Este código QR es la llave de tus bloqueos. Se muestra una sola vez — ahora — y le pertenece a %1$s, no a ti.</string>
+    <string name="pair_qr_desc">Código QR de vinculación</string>
+    <string name="pair_on_their_phone">En el teléfono de %1$s:</string>
+    <string name="pair_step1">Instala Pact — esta misma app</string>
+    <string name="pair_step2">En la configuración, elige «Soy el padrino»</string>
+    <string name="pair_step3">Escanea este QR con el botón de escanear</string>
+    <string name="pair_alt_authenticator">¿Prefiere no instalar nada? Google Authenticator o cualquier app de 2FA también puede escanear este código. Clave manual: %1$s</string>
+    <string name="pair_warning">No lo escanees en tu propio teléfono: tendrías la llave de tu propio candado.</string>
+    <string name="pair_confirm">%1$s ya tiene la llave</string>
+
+    <string name="prove_title">Comprueba que funciona</string>
+    <string name="prove_body">Pídele a %1$s el código de 6 dígitos que ve ahora mismo.</string>
+    <string name="prove_error">No coincide. Asegúrate de que escaneó el QR del paso anterior y prueba con el código que ve ahora.</string>
+    <string name="prove_show_qr">Mostrar el QR otra vez</string>
+
+    <string name="perm_title">Activa el escudo</string>
+    <string name="perm_body">Un permiso de Android le permite a Pact detectar cuándo se abre una app bloqueada para interponerse. Así se activa:</string>
+    <string name="perm_step1">Toca «Abrir ajustes» abajo</string>
+    <string name="perm_step2">Busca «Escudo de Pact» en la lista, a veces bajo «Apps instaladas» o «Apps descargadas»</string>
+    <string name="perm_step3">Tócalo y actívalo</string>
+    <string name="perm_step4">Android mostrará una advertencia: es normal. Pact solo ve qué app se abre, nunca el contenido. Toca «Permitir»</string>
+    <string name="perm_step5">Vuelve aquí: esta página se pondrá verde cuando funcione</string>
+    <string name="perm_status_on">El escudo está activo. Estás protegido.</string>
+    <string name="perm_status_waiting">Esperando el escudo…</string>
+    <string name="perm_open_settings">Abrir ajustes</string>
+    <string name="perm_later">Lo haré después</string>
+
+    <string name="pick_title">¿Qué te atrapa?</string>
+    <string name="pick_min_one">Elige al menos una app</string>
+    <string name="search_apps">Buscar apps</string>
+    <string name="often_locked">Se bloquea a menudo</string>
+
+    <string name="seal_title">Tu Pact está sellado</string>
+    <string name="seal_body">Tus apps están bloqueadas. A partir de ahora, %1$s tiene la llave — y esa es justamente la idea.</string>
+    <string name="seal_begin">Empezar</string>
+
+    <string name="home_with">con %1$s</string>
+    <string name="home_add_apps">Añadir apps</string>
+    <string name="home_settings">Ajustes</string>
+    <string name="hero_active_title">Protección activa</string>
+    <string name="hero_active_sub">Tu Pact se mantiene firme</string>
+    <string name="hero_down_title">El escudo está apagado</string>
+    <string name="hero_down_sub">Ahora mismo no se bloquea nada. Vuelve a activar el escudo en los ajustes de accesibilidad.</string>
+    <string name="hero_enable">Activar el escudo</string>
+    <string name="stat_locked_label">bajo llave</string>
+    <string name="stat_saves_label">bloqueos hoy</string>
+    <string name="section_on_break">En pausa</string>
+    <string name="row_relocks_in">Se vuelve a bloquear en %1$s</string>
+    <string name="action_relock">Bloquear ya</string>
+    <string name="section_locked">Bloqueadas</string>
+    <string name="home_empty">Aún no hay nada. Toca + y elige las apps que te roban el tiempo.</string>
+    <string name="home_all_on_break">Ahora mismo todo está en pausa.</string>
+    <string name="row_blocked_once">Bloqueada una vez hoy</string>
+    <string name="row_blocked_times">Bloqueada %1$d veces hoy</string>
+    <string name="dialog_locked_body">Esta app está bloqueada por tu Pact. Ambas acciones necesitan un código nuevo de %1$s.</string>
+    <string name="action_unlock_a_while">Desbloquear un rato…</string>
+    <string name="action_remove_from_pact">Quitar del Pact…</string>
+    <string name="unlock_q_title">¿Desbloquear %1$s?</string>
+    <string name="ask_code">Pídele a %1$s el código que ve en su teléfono ahora mismo.</string>
+    <string name="duration_title">¿Cuánto tiempo necesitas?</string>
+    <string name="duration_5m">5 minutos</string>
+    <string name="duration_15m">15 minutos</string>
+    <string name="duration_1h">1 hora</string>
+    <string name="duration_midnight">Hasta medianoche</string>
+    <string name="remove_q_title">¿Quitar %1$s?</string>
+    <string name="remove_q_body">Pídele a %1$s el código actual para sacar esta app de tu Pact.</string>
+
+    <string name="verify_wrong">El código no coincide. Cambian cada 30 segundos: pide uno nuevo.</string>
+    <string name="verify_too_many">Demasiados intentos. Bloqueado durante %1$s.</string>
+
+    <string name="wall_locked_title">%1$s está bloqueada</string>
+    <string name="wall_ask">Pídele a %1$s el código actual</string>
+    <string name="wall_accepted">Código aceptado. ¿Cuánto tiempo necesitas?</string>
+    <string name="wall_go_home">Da igual — llévame al inicio</string>
+    <string name="cd_delete">Borrar</string>
+    <string name="cd_locked">Bloqueada</string>
+    <string-array name="encouragements">
+        <item>Esta pausa es justo lo que buscabas.</item>
+        <item>Pediste este muro un día que lo veías claro.</item>
+        <item>El impulso pasa, lo alimentes o no.</item>
+        <item>En cinco minutos te alegrarás de haber parado.</item>
+        <item>No te estás perdiendo nada importante.</item>
+    </string-array>
+
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_sponsor_section">Tu padrino</string>
+    <string name="settings_paired">Vinculado — guarda tus códigos de desbloqueo</string>
+    <string name="settings_change_sponsor">Cambiar de padrino…</string>
+    <string name="settings_change_sponsor_hint">Cambiar de padrino requiere un código del actual y genera una llave completamente nueva.</string>
+    <string name="settings_strict_section">Modo estricto</string>
+    <string name="strict_title">Bloquear también los Ajustes del sistema</string>
+    <string name="strict_body">Evita que apaguen el escudo a escondidas: abrir los Ajustes de Android también pedirá un código. Activarlo es gratis; desactivarlo necesita un código.</string>
+    <string name="settings_how_section">Cómo funciona Pact</string>
+    <string name="how_body">Pact funciona por completo en este teléfono: sin cuenta, sin servidor, sin internet. Los códigos de desbloqueo son códigos estándar de autenticación (TOTP): el teléfono de tu padrino y el tuyo calculan el mismo número de 6 dígitos a partir de una llave compartida y el reloj, así que funcionan incluso sin conexión.\n\nLa llave apareció exactamente una vez, durante la configuración, y solo tu padrino la tiene. En este teléfono se guarda cifrada en el Keystore de Android.</string>
+    <string name="settings_danger">Zona de riesgo</string>
+    <string name="reset_action">Terminar el Pact y reiniciar…</string>
+    <string name="reset_hint">Elimina todos los bloqueos y empieza de cero. Necesita un código de %1$s.</string>
+    <string name="strict_off_title">¿Desactivar el modo estricto?</string>
+    <string name="change_sponsor_title">¿Cambiar de padrino?</string>
+    <string name="change_sponsor_body">Primero, un código de %1$s para aprobar el cambio.</string>
+    <string name="end_pact_title">¿Terminar el Pact?</string>
+    <string name="end_pact_body">Pídele a %1$s el código actual para quitar todos los bloqueos y reiniciar.</string>
+    <string name="repair_new_sponsor">Nuevo padrino</string>
+    <string name="repair_scan_title">Escanear en su teléfono</string>
+    <string name="repair_body_qr">En el teléfono de %1$s: instala Pact y elige «Soy el padrino», o escanea con Google Authenticator. Clave manual:\n%2$s</string>
+    <string name="repair_enter_code">Introduce el código actual de %1$s para sellar el nuevo Pact.</string>
+    <string name="repair_wrong">No coincide: prueba con el código que ve ahora mismo.</string>
+    <string name="they_added_it">Ya lo añadió</string>
+
+    <string name="sponsor_setup_title">Tú guardas la llave</string>
+    <string name="sponsor_setup_body">Alguien que te importa está bloqueando sus apps más adictivas y te eligió como padrino. Cuando quiera entrar, te pedirá el código de 6 dígitos que se muestra aquí.\n\nSu teléfono muestra un código QR durante la configuración: escanéalo abajo.</string>
+    <string name="sponsor_badge">Padrino</string>
+    <string name="sponsor_hint_codes">Cuando te pida desbloquear, léele el código. Cambia cada 30 segundos y no necesita internet.</string>
+    <string name="sponsor_scan_hint">Apunta la cámara al código QR de su teléfono: está en el paso «Entrega la llave» de su configuración.</string>
+    <string name="sponsor_scan_button">Escanear su código QR</string>
+    <string name="sponsor_manual_toggle">¿Problemas con la cámara? Escribe la clave</string>
+    <string name="sponsor_manual_hint">Su pantalla de vinculación también muestra la clave en letras. Escríbela o pégala aquí.</string>
+    <string name="sponsor_key_label">Clave (ABCD EFGH …)</string>
+    <string name="sponsor_key_invalid">No parece correcta: la clave tiene 32 letras y números.</string>
+    <string name="sponsor_add_key">Añadir clave</string>
+    <string name="sponsor_key_added">Clave añadida</string>
+    <string name="sponsor_whose">¿De quién son las apps que abre esta llave?</string>
+    <string name="sponsor_empty">Aún no hay llaves. Toca + y escanea el código QR de su teléfono.</string>
+    <string name="sponsor_add_person">Añadir persona</string>
+    <string name="sponsor_remove_title">¿Quitar a %1$s?</string>
+    <string name="sponsor_remove_body">Ya no podrás darle códigos de desbloqueo a %1$s. Tendría que vincularse de nuevo con un padrino para cambiar algo.</string>
+    <string name="sponsor_key_error">No se puede leer esta llave del almacenamiento seguro.</string>
+    <string name="scan_not_pact">Ese código QR no es una llave de Pact. Asegúrate de que su teléfono muestra la pantalla de vinculación.</string>
+
+    <string name="scan_title">Escanear su QR de vinculación</string>
+    <string name="scan_hint">Encuadra el código dentro del marco</string>
+    <string name="scan_perm">Pact necesita la cámara para escanear el código QR.\nPermite el acceso, o vuelve atrás y escribe la clave.</string>
+    <string name="cd_torch">Linterna</string>
+
+    <plurals name="lock_n_apps">
+        <item quantity="one">Bloquear %1$d app</item>
+        <item quantity="other">Bloquear %1$d apps</item>
+    </plurals>
+    <plurals name="n_apps">
+        <item quantity="one">%1$d app</item>
+        <item quantity="other">%1$d apps</item>
+    </plurals>
+</resources>

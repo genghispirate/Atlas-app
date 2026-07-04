@@ -46,7 +46,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.pact.app.R
 import com.pact.app.core.Apps
 import com.pact.app.core.PactState
 import com.pact.app.service.BlockerService
@@ -98,18 +100,18 @@ fun HomeScreen(
             PactLogo(38)
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text("Pact", style = MaterialTheme.typography.headlineSmall)
+                Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineSmall)
                 Text(
-                    "with ${snapshot.guardianName}",
+                    stringResource(R.string.home_with, snapshot.guardianName),
                     style = MaterialTheme.typography.labelMedium,
                     color = Periwinkle,
                 )
             }
             IconButton(onClick = onAddApps) {
-                Icon(Icons.Rounded.Add, contentDescription = "Add apps", tint = TextSecondary)
+                Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.home_add_apps), tint = TextSecondary)
             }
             IconButton(onClick = onOpenSettings) {
-                Icon(Icons.Rounded.Settings, contentDescription = "Settings", tint = TextSecondary)
+                Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.home_settings), tint = TextSecondary)
             }
         }
 
@@ -135,15 +137,18 @@ fun HomeScreen(
             // currently unlocked
             val unlockedNow = snapshot.unlockUntil.filter { it.value > now && it.key in snapshot.blocked }
             if (unlockedNow.isNotEmpty()) {
-                item { SectionLabel("On a break", Modifier.padding(top = 12.dp)) }
+                item { SectionLabel(stringResource(R.string.section_on_break), Modifier.padding(top = 12.dp)) }
                 items(unlockedNow.keys.sorted(), key = { "u_$it" }) { pkg ->
                     AppRow(
                         pkg = pkg,
-                        subtitle = "Relocks in ${formatCountdown((unlockedNow[pkg] ?: 0) - now)}",
+                        subtitle = stringResource(
+                            R.string.row_relocks_in,
+                            formatCountdown((unlockedNow[pkg] ?: 0) - now),
+                        ),
                         subtitleColor = Mint,
                         trailing = {
                             TextButton(onClick = { state.relock(pkg) }) {
-                                Text("Relock", color = Periwinkle)
+                                Text(stringResource(R.string.action_relock), color = Periwinkle)
                             }
                         },
                     )
@@ -151,28 +156,38 @@ fun HomeScreen(
             }
 
             // locked apps
-            item { SectionLabel("Locked", Modifier.padding(top = 12.dp)) }
+            item { SectionLabel(stringResource(R.string.section_locked), Modifier.padding(top = 12.dp)) }
+            val locked = snapshot.blocked
+                .filter { (snapshot.unlockUntil[it] ?: 0L) <= now }
+                .sortedBy { Apps.label(context, it).lowercase() }
             if (snapshot.blocked.isEmpty()) {
                 item {
                     PactCard {
                         Text(
-                            "No apps in your Pact yet. Tap + to lock the apps that pull you in.",
+                            stringResource(R.string.home_empty),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = TextSecondary,
+                        )
+                    }
+                }
+            } else if (locked.isEmpty()) {
+                item {
+                    PactCard {
+                        Text(
+                            stringResource(R.string.home_all_on_break),
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextSecondary,
                         )
                     }
                 }
             }
-            val locked = snapshot.blocked
-                .filter { (snapshot.unlockUntil[it] ?: 0L) <= now }
-                .sortedBy { Apps.label(context, it).lowercase() }
             items(locked, key = { "l_$it" }) { pkg ->
                 val blocksToday = snapshot.blocksToday[pkg] ?: 0
                 AppRow(
                     pkg = pkg,
                     subtitle = when {
-                        blocksToday == 1 -> "Stepped in once today"
-                        blocksToday > 1 -> "Stepped in $blocksToday times today"
+                        blocksToday == 1 -> stringResource(R.string.row_blocked_once)
+                        blocksToday > 1 -> stringResource(R.string.row_blocked_times, blocksToday)
                         else -> null
                     },
                     subtitleColor = TextTertiary,
@@ -180,7 +195,7 @@ fun HomeScreen(
                     trailing = {
                         Icon(
                             Icons.Rounded.Lock,
-                            contentDescription = "Locked",
+                            contentDescription = stringResource(R.string.cd_locked),
                             tint = TextTertiary,
                             modifier = Modifier.size(20.dp),
                         )
@@ -199,7 +214,7 @@ fun HomeScreen(
             title = { Text(Apps.label(context, pkg), style = MaterialTheme.typography.headlineSmall) },
             text = {
                 Text(
-                    "Locked by your Pact. Both actions need a fresh code from ${snapshot.guardianName}.",
+                    stringResource(R.string.dialog_locked_body, snapshot.guardianName),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                 )
@@ -209,15 +224,15 @@ fun HomeScreen(
                     TextButton(onClick = {
                         verifyingUnlock = pkg
                         appForAction = null
-                    }) { Text("Unlock for a while…", color = Periwinkle) }
+                    }) { Text(stringResource(R.string.action_unlock_a_while), color = Periwinkle) }
                     TextButton(onClick = {
                         verifyingRemoval = pkg
                         appForAction = null
-                    }) { Text("Remove from Pact…", color = MaterialTheme.colorScheme.error) }
+                    }) { Text(stringResource(R.string.action_remove_from_pact), color = MaterialTheme.colorScheme.error) }
                 }
             },
             dismissButton = {
-                TextButton(onClick = { appForAction = null }) { Text("Close") }
+                TextButton(onClick = { appForAction = null }) { Text(stringResource(R.string.common_close)) }
             },
         )
     }
@@ -225,8 +240,8 @@ fun HomeScreen(
     verifyingUnlock?.let { pkg ->
         VerifyCodeDialog(
             state = state,
-            title = "Unlock ${Apps.label(context, pkg)}?",
-            subtitle = "Ask ${snapshot.guardianName} for the current code.",
+            title = stringResource(R.string.unlock_q_title, Apps.label(context, pkg)),
+            subtitle = stringResource(R.string.ask_code, snapshot.guardianName),
             onDismiss = { verifyingUnlock = null },
             onVerified = {
                 verifyingUnlock = null
@@ -239,17 +254,17 @@ fun HomeScreen(
         AlertDialog(
             onDismissRequest = { choosingDuration = null },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("How long do you need?", style = MaterialTheme.typography.headlineSmall) },
+            title = { Text(stringResource(R.string.duration_title), style = MaterialTheme.typography.headlineSmall) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     listOf(
-                        "5 minutes" to 5 * 60_000L,
-                        "15 minutes" to 15 * 60_000L,
-                        "1 hour" to 60 * 60_000L,
-                        "Until midnight" to PactState.untilMidnightMillis(),
-                    ).forEach { (label, duration) ->
+                        R.string.duration_5m to 5 * 60_000L,
+                        R.string.duration_15m to 15 * 60_000L,
+                        R.string.duration_1h to 60 * 60_000L,
+                        R.string.duration_midnight to PactState.untilMidnightMillis(),
+                    ).forEach { (labelRes, duration) ->
                         PactButton(
-                            label,
+                            stringResource(labelRes),
                             onClick = {
                                 state.unlockFor(pkg, duration)
                                 choosingDuration = null
@@ -262,7 +277,7 @@ fun HomeScreen(
             },
             confirmButton = {},
             dismissButton = {
-                TextButton(onClick = { choosingDuration = null }) { Text("Cancel") }
+                TextButton(onClick = { choosingDuration = null }) { Text(stringResource(R.string.common_cancel)) }
             },
         )
     }
@@ -270,8 +285,8 @@ fun HomeScreen(
     verifyingRemoval?.let { pkg ->
         VerifyCodeDialog(
             state = state,
-            title = "Remove ${Apps.label(context, pkg)}?",
-            subtitle = "Ask ${snapshot.guardianName} for the current code to remove this app from your Pact.",
+            title = stringResource(R.string.remove_q_title, Apps.label(context, pkg)),
+            subtitle = stringResource(R.string.remove_q_body, snapshot.guardianName),
             onDismiss = { verifyingRemoval = null },
             onVerified = {
                 state.removeBlocked(pkg)
@@ -321,12 +336,12 @@ private fun HeroCard(
             Spacer(Modifier.width(14.dp))
             Column {
                 Text(
-                    if (serviceOn) "Protection active" else "The shield is down",
+                    stringResource(if (serviceOn) R.string.hero_active_title else R.string.hero_down_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = if (serviceOn) Mint else Amber,
                 )
                 Text(
-                    if (serviceOn) "Your Pact is holding" else "Nothing is being blocked right now",
+                    stringResource(if (serviceOn) R.string.hero_active_sub else R.string.hero_down_sub),
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                 )
@@ -337,17 +352,21 @@ private fun HeroCard(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 StatTile(
                     value = "$lockedCount",
-                    label = if (lockedCount == 1) "app locked" else "apps locked",
+                    label = stringResource(R.string.stat_locked_label),
                     modifier = Modifier.weight(1f),
                 )
                 StatTile(
                     value = "$interventionsToday",
-                    label = if (interventionsToday == 1) "save today" else "saves today",
+                    label = stringResource(R.string.stat_saves_label),
                     modifier = Modifier.weight(1f),
                 )
             }
         } else {
-            PactButton("Raise the shield", onClick = onEnable, modifier = Modifier.fillMaxWidth())
+            PactButton(
+                stringResource(R.string.hero_enable),
+                onClick = onEnable,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_label">Pact-Schutzschild</string>
+    <string name="accessibility_service_description">Pact nutzt diese Berechtigung für genau eine Sache: zu erkennen, wenn eine gesperrte App in den Vordergrund kommt, um den Sperrbildschirm zu zeigen. Es liest nie deine Bildschirminhalte, sammelt nichts und funktioniert komplett offline.</string>
+
+    <string name="common_continue">Weiter</string>
+    <string name="common_cancel">Abbrechen</string>
+    <string name="common_close">Schließen</string>
+    <string name="common_done">Fertig</string>
+    <string name="common_next">Weiter</string>
+    <string name="common_back">Zurück</string>
+    <string name="common_remove">Entfernen</string>
+    <string name="common_skip">Überspringen</string>
+
+    <string name="intro_page1_title">Sperre, was dich fesselt</string>
+    <string name="intro_page1_body">Pact blockiert die Apps, von denen du nicht loskommst — Instagram, TikTok, YouTube, was auch immer. Sie bleiben gesperrt, bis dich jemand wieder hineinlässt.</string>
+    <string name="intro_page2_title">Ein Mensch statt eines Passworts</string>
+    <string name="intro_page2_body">Du wählst eine Vertrauensperson — Partner, Elternteil, enge Freundin. Nur ihr frischer 6-stelliger Code öffnet deine Apps. Willenskraft ist nicht länger die Schwachstelle.</string>
+    <string name="intro_page3_title">Privat. Offline. Deins.</string>
+    <string name="intro_page3_body">Kein Konto, kein Server, kein Internet — niemals. Die Codes funktionieren wie 2FA-Codes: Deine Vertrauensperson kann dir einen am Telefon vorlesen.</string>
+    <string name="intro_get_started">Los geht\'s</string>
+
+    <string name="role_title">Für wen ist dieses Handy?</string>
+    <string name="role_body">Pact hat zwei Seiten: die Person, die ihre Apps sperrt, und die Person, die den Schlüssel hält.</string>
+    <string name="role_user_title">Meine Apps sperren</string>
+    <string name="role_user_body">Ich will ablenkende Apps sperren und den Schlüssel jemandem geben, dem ich vertraue.</string>
+    <string name="role_sponsor_title">Ich halte den Schlüssel</string>
+    <string name="role_sponsor_body">Jemand, der mir wichtig ist, hat mich gebeten, die Entsperrcodes zu verwahren.</string>
+
+    <string name="guardian_title">Wähle deine Vertrauensperson</string>
+    <string name="guardian_body">Wähle jemanden, der dich erfolgreich sehen will — Partner, Elternteil, enge Freundin. Diese Person hält die Codes, jedes Entsperren beginnt also mit einer Frage an sie.</string>
+    <string name="guardian_name_label">Ihr Name</string>
+    <string name="guardian_hint">Wähle jemanden, den du leicht erreichst — du brauchst ihn jedes Mal, wenn du wieder hinein willst.</string>
+
+    <string name="pair_title">Übergib den Schlüssel</string>
+    <string name="pair_body">Dieser QR-Code ist der Schlüssel zu deinen Sperren. Er wird genau einmal gezeigt — jetzt — und gehört %1$s, nicht dir.</string>
+    <string name="pair_qr_desc">Kopplungs-QR-Code</string>
+    <string name="pair_on_their_phone">Auf dem Handy von %1$s:</string>
+    <string name="pair_step1">Pact installieren — dieselbe App wie diese</string>
+    <string name="pair_step2">Bei der Einrichtung „Ich halte den Schlüssel“ wählen</string>
+    <string name="pair_step3">Diesen QR-Code mit der Scan-Taste dort scannen</string>
+    <string name="pair_alt_authenticator">Lieber nichts installieren? Google Authenticator oder jede 2FA-App kann diesen Code ebenfalls scannen. Manueller Schlüssel: %1$s</string>
+    <string name="pair_warning">Scanne ihn nicht auf deinem eigenen Handy — sonst hältst du den Schlüssel zu deinem eigenen Schloss.</string>
+    <string name="pair_confirm">%1$s hat den Schlüssel</string>
+
+    <string name="prove_title">Der Beweis</string>
+    <string name="prove_body">Frag %1$s nach dem 6-stelligen Code, der gerade auf ihrem Bildschirm steht.</string>
+    <string name="prove_error">Das passte nicht. Stell sicher, dass der QR-Code vom vorherigen Schritt gescannt wurde, und probiere den aktuell angezeigten Code.</string>
+    <string name="prove_show_qr">QR-Code noch einmal zeigen</string>
+
+    <string name="perm_title">Schutzschild aktivieren</string>
+    <string name="perm_body">Eine Android-Berechtigung lässt Pact erkennen, wenn eine gesperrte App startet, um sich davorzustellen. So erteilst du sie:</string>
+    <string name="perm_step1">Tippe unten auf „Einstellungen öffnen“</string>
+    <string name="perm_step2">Suche „Pact-Schutzschild“ in der Liste — manchmal unter „Installierte Apps“ oder „Heruntergeladene Apps“</string>
+    <string name="perm_step3">Antippen und einschalten</string>
+    <string name="perm_step4">Android zeigt eine Warnung — das ist normal. Pact sieht nur, welche App startet, nie deinen Bildschirm. Tippe auf „Zulassen“</string>
+    <string name="perm_step5">Komm hierher zurück — diese Seite wird grün, wenn es geklappt hat</string>
+    <string name="perm_status_on">Der Schild steht. Du bist geschützt.</string>
+    <string name="perm_status_waiting">Warte auf den Schild…</string>
+    <string name="perm_open_settings">Einstellungen öffnen</string>
+    <string name="perm_later">Mache ich später</string>
+
+    <string name="pick_title">Was fesselt dich?</string>
+    <string name="pick_min_one">Wähle mindestens eine App</string>
+    <string name="search_apps">Apps suchen</string>
+    <string name="often_locked">Oft gesperrt</string>
+
+    <string name="seal_title">Dein Pact ist besiegelt</string>
+    <string name="seal_body">Deine Apps sind gesperrt. Ab jetzt hält %1$s den Schlüssel — und genau das ist der Punkt.</string>
+    <string name="seal_begin">Beginnen</string>
+
+    <string name="home_with">mit %1$s</string>
+    <string name="home_add_apps">Apps hinzufügen</string>
+    <string name="home_settings">Einstellungen</string>
+    <string name="hero_active_title">Schutz aktiv</string>
+    <string name="hero_active_sub">Dein Pact hält stand</string>
+    <string name="hero_down_title">Der Schild ist aus</string>
+    <string name="hero_down_sub">Gerade wird nichts blockiert. Schalte den Schild in den Bedienungshilfen wieder ein.</string>
+    <string name="hero_enable">Schild einschalten</string>
+    <string name="stat_locked_label">unter Verschluss</string>
+    <string name="stat_saves_label">Blocks heute</string>
+    <string name="section_on_break">In der Pause</string>
+    <string name="row_relocks_in">Sperrt wieder in %1$s</string>
+    <string name="action_relock">Jetzt sperren</string>
+    <string name="section_locked">Gesperrt</string>
+    <string name="home_empty">Noch nichts hier. Tippe auf + und wähle die Apps, die deine Zeit fressen.</string>
+    <string name="home_all_on_break">Gerade ist alles in der Pause.</string>
+    <string name="row_blocked_once">Heute einmal geblockt</string>
+    <string name="row_blocked_times">Heute %1$d-mal geblockt</string>
+    <string name="dialog_locked_body">Diese App ist durch deinen Pact gesperrt. Beide Aktionen brauchen einen frischen Code von %1$s.</string>
+    <string name="action_unlock_a_while">Eine Weile entsperren…</string>
+    <string name="action_remove_from_pact">Aus dem Pact entfernen…</string>
+    <string name="unlock_q_title">%1$s entsperren?</string>
+    <string name="ask_code">Frag %1$s nach dem Code, der gerade auf ihrem Handy steht.</string>
+    <string name="duration_title">Wie lange brauchst du?</string>
+    <string name="duration_5m">5 Minuten</string>
+    <string name="duration_15m">15 Minuten</string>
+    <string name="duration_1h">1 Stunde</string>
+    <string name="duration_midnight">Bis Mitternacht</string>
+    <string name="remove_q_title">%1$s entfernen?</string>
+    <string name="remove_q_body">Frag %1$s nach dem aktuellen Code, um diese App aus deinem Pact zu nehmen.</string>
+
+    <string name="verify_wrong">Der Code passte nicht. Codes wechseln alle 30 Sekunden — frag nach einem frischen.</string>
+    <string name="verify_too_many">Zu viele Versuche. Gesperrt für %1$s.</string>
+
+    <string name="wall_locked_title">%1$s ist gesperrt</string>
+    <string name="wall_ask">Frag %1$s nach dem aktuellen Code</string>
+    <string name="wall_accepted">Code akzeptiert. Wie lange brauchst du?</string>
+    <string name="wall_go_home">Egal — bring mich zum Startbildschirm</string>
+    <string name="cd_delete">Löschen</string>
+    <string name="cd_locked">Gesperrt</string>
+    <string-array name="encouragements">
+        <item>Diese Pause ist genau der Sinn der Sache.</item>
+        <item>Du wolltest diese Wand an einem klaren Tag.</item>
+        <item>Der Drang vergeht — ob du ihn fütterst oder nicht.</item>
+        <item>In fünf Minuten bist du froh, dass du gestoppt hast.</item>
+        <item>Du verpasst nichts, was zählt.</item>
+    </string-array>
+
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_sponsor_section">Deine Vertrauensperson</string>
+    <string name="settings_paired">Gekoppelt — sie hält deine Entsperrcodes</string>
+    <string name="settings_change_sponsor">Vertrauensperson wechseln…</string>
+    <string name="settings_change_sponsor_hint">Der Wechsel braucht einen Code der aktuellen Person und erzeugt danach einen ganz neuen Schlüssel.</string>
+    <string name="settings_strict_section">Strenger Modus</string>
+    <string name="strict_title">Auch die System-Einstellungen sperren</string>
+    <string name="strict_body">Verhindert, dass der Schild heimlich abgeschaltet wird — auch die Android-Einstellungen fragen dann nach einem Code. Einschalten ist frei; Ausschalten braucht einen Code.</string>
+    <string name="settings_how_section">So funktioniert Pact</string>
+    <string name="how_body">Pact läuft vollständig auf diesem Handy — kein Konto, kein Server, kein Internet. Entsperrcodes sind Standard-Authenticator-Codes (TOTP): Das Handy deiner Vertrauensperson und deins berechnen aus einem gemeinsamen Schlüssel und der Uhrzeit dieselbe 6-stellige Zahl, darum funktionieren Codes auch offline.\n\nDer Schlüssel erschien genau einmal, bei der Einrichtung, und nur deine Vertrauensperson hat ihn. Auf diesem Handy liegt er verschlüsselt im Android-Keystore.</string>
+    <string name="settings_danger">Gefahrenzone</string>
+    <string name="reset_action">Pact beenden und zurücksetzen…</string>
+    <string name="reset_hint">Entfernt jede Sperre und beginnt von vorn. Braucht einen Code von %1$s.</string>
+    <string name="strict_off_title">Strengen Modus ausschalten?</string>
+    <string name="change_sponsor_title">Vertrauensperson wechseln?</string>
+    <string name="change_sponsor_body">Zuerst ein Code von %1$s, um den Wechsel freizugeben.</string>
+    <string name="end_pact_title">Pact beenden?</string>
+    <string name="end_pact_body">Frag %1$s nach dem aktuellen Code, um alle Sperren zu entfernen und zurückzusetzen.</string>
+    <string name="repair_new_sponsor">Neue Vertrauensperson</string>
+    <string name="repair_scan_title">Auf ihrem Handy scannen</string>
+    <string name="repair_body_qr">Auf dem Handy von %1$s: Pact installieren und „Ich halte den Schlüssel“ wählen — oder mit Google Authenticator scannen. Manueller Schlüssel:\n%2$s</string>
+    <string name="repair_enter_code">Gib den aktuellen Code von %1$s ein, um den neuen Pact zu besiegeln.</string>
+    <string name="repair_wrong">Das passte nicht — probiere den gerade angezeigten Code.</string>
+    <string name="they_added_it">Ist hinzugefügt</string>
+
+    <string name="sponsor_setup_title">Du hältst den Schlüssel</string>
+    <string name="sponsor_setup_body">Jemand, der dir wichtig ist, sperrt gerade seine ablenkendsten Apps — und hat dich als Vertrauensperson gewählt. Will er wieder hinein, fragt er dich nach dem 6-stelligen Code, der hier steht.\n\nSein Handy zeigt bei der Einrichtung einen QR-Code — scanne ihn unten.</string>
+    <string name="sponsor_badge">Schlüsselhalter</string>
+    <string name="sponsor_hint_codes">Wenn jemand entsperren will, lies ihm den Code vor. Er wechselt alle 30 Sekunden und braucht kein Internet.</string>
+    <string name="sponsor_scan_hint">Richte die Kamera auf den QR-Code auf seinem Handy — er steht im Schritt „Übergib den Schlüssel“ seiner Einrichtung.</string>
+    <string name="sponsor_scan_button">QR-Code scannen</string>
+    <string name="sponsor_manual_toggle">Kamera zickt? Schlüssel eintippen</string>
+    <string name="sponsor_manual_hint">Sein Kopplungsbildschirm zeigt den Schlüssel auch als Buchstaben. Hier eintippen oder einfügen.</string>
+    <string name="sponsor_key_label">Schlüssel (ABCD EFGH …)</string>
+    <string name="sponsor_key_invalid">Das sieht nicht richtig aus — der Schlüssel hat 32 Buchstaben und Ziffern.</string>
+    <string name="sponsor_add_key">Schlüssel hinzufügen</string>
+    <string name="sponsor_key_added">Schlüssel hinzugefügt</string>
+    <string name="sponsor_whose">Wessen Apps öffnet dieser Schlüssel?</string>
+    <string name="sponsor_empty">Noch keine Schlüssel. Tippe auf + und scanne den QR-Code auf seinem Handy.</string>
+    <string name="sponsor_add_person">Person hinzufügen</string>
+    <string name="sponsor_remove_title">%1$s entfernen?</string>
+    <string name="sponsor_remove_body">Du kannst %1$s dann keine Entsperrcodes mehr geben. Für Änderungen müsste er sich neu mit einer Vertrauensperson koppeln.</string>
+    <string name="sponsor_key_error">Dieser Schlüssel lässt sich nicht aus dem sicheren Speicher lesen.</string>
+    <string name="scan_not_pact">Dieser QR-Code ist kein Pact-Schlüssel. Stell sicher, dass sein Handy den Kopplungsbildschirm zeigt.</string>
+
+    <string name="scan_title">Kopplungs-QR scannen</string>
+    <string name="scan_hint">Halte den Code in den Rahmen</string>
+    <string name="scan_perm">Pact braucht die Kamera, um den QR-Code zu scannen.\nErlaube den Zugriff, oder geh zurück und tippe den Schlüssel ein.</string>
+    <string name="cd_torch">Taschenlampe</string>
+
+    <plurals name="lock_n_apps">
+        <item quantity="one">%1$d App sperren</item>
+        <item quantity="other">%1$d Apps sperren</item>
+    </plurals>
+    <plurals name="n_apps">
+        <item quantity="one">%1$d App</item>
+        <item quantity="other">%1$d Apps</item>
+    </plurals>
+</resources>

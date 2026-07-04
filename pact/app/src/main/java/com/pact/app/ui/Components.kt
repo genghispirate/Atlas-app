@@ -224,7 +224,7 @@ fun PactCard(
 
 /** A numbered instruction row for guided setup steps. */
 @Composable
-fun NumberedStep(number: Int, text: androidx.compose.ui.text.AnnotatedString) {
+fun NumberedStep(number: Int, text: String) {
     Row(verticalAlignment = Alignment.Top) {
         Box(
             modifier = Modifier

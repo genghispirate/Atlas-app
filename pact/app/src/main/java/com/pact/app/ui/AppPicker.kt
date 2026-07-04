@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -29,14 +30,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.pact.app.R
 import com.pact.app.core.Apps
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.pact.app.ui.theme.CardBorder
 import com.pact.app.ui.theme.Ink
 import com.pact.app.ui.theme.Periwinkle
@@ -55,7 +61,13 @@ fun AppPickerList(
     excluded: Set<String> = emptySet(),
 ) {
     val context = LocalContext.current
-    val allApps = remember { Apps.installedApps(context).filter { it.pkg !in excluded } }
+    // Loading the app list touches PackageManager for every installed app —
+    // do it off the main thread so the screen never stutters.
+    val allApps by produceState(initialValue = emptyList<com.pact.app.core.AppInfo>(), excluded) {
+        value = withContext(Dispatchers.IO) {
+            Apps.installedApps(context).filter { it.pkg !in excluded }
+        }
+    }
     var query by remember { mutableStateOf("") }
     val visible = remember(query, allApps) {
         if (query.isBlank()) allApps
@@ -66,7 +78,7 @@ fun AppPickerList(
         OutlinedTextField(
             value = query,
             onValueChange = { query = it },
-            placeholder = { Text("Search apps", color = TextTertiary) },
+            placeholder = { Text(stringResource(R.string.search_apps), color = TextTertiary) },
             leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null, tint = TextTertiary) },
             singleLine = true,
             modifier = Modifier
@@ -78,6 +90,12 @@ fun AppPickerList(
                 unfocusedBorderColor = Surface2,
             ),
         )
+        if (allApps.isEmpty()) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Periwinkle)
+            }
+            return@Column
+        }
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
@@ -111,7 +129,7 @@ fun AppPickerList(
                         Text(app.label, style = MaterialTheme.typography.titleSmall)
                         if (app.pkg in Apps.SUGGESTED) {
                             Text(
-                                "Often locked",
+                                stringResource(R.string.often_locked),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = TextTertiary,
                             )
@@ -121,7 +139,12 @@ fun AppPickerList(
                         modifier = Modifier
                             .size(26.dp)
                             .clip(CircleShape)
-                            .background(if (isSelected) Periwinkle else Surface2),
+                            .background(if (isSelected) Periwinkle else Surface2)
+                            .border(
+                                width = 1.5.dp,
+                                color = if (isSelected) Periwinkle else MaterialTheme.colorScheme.outline,
+                                shape = CircleShape,
+                            ),
                         contentAlignment = Alignment.Center,
                     ) {
                         if (isSelected) {

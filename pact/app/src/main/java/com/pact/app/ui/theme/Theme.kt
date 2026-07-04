@@ -3,6 +3,7 @@ package com.pact.app.ui.theme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
@@ -105,6 +106,15 @@ fun PactTheme(content: @Composable () -> Unit) {
         colorScheme = PactColors,
         typography = PactTypography,
         shapes = PactShapes,
-        content = content,
-    )
+    ) {
+        // Surface establishes LocalContentColor. Without it, any Text that
+        // doesn't set an explicit color falls back to black — invisible on
+        // our dark background.
+        Surface(
+            color = PactColors.background,
+            contentColor = PactColors.onBackground,
+        ) {
+            content()
+        }
+    }
 }

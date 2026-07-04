@@ -2,5 +2,194 @@
 <resources>
     <string name="app_name">Pact</string>
     <string name="accessibility_service_label">Pact app shield</string>
-    <string name="accessibility_service_description">Pact uses this permission for one thing only: noticing when a locked app comes to the foreground so it can show the lock screen. Pact does not read your screen content, does not collect data, and works entirely offline.</string>
+    <string name="accessibility_service_description">Pact uses this permission for exactly one thing: noticing when a locked app comes to the front so it can show the lock screen. It never reads what\'s on your screen, collects nothing, and works entirely offline.</string>
+
+    <!-- common -->
+    <string name="common_continue">Continue</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_close">Close</string>
+    <string name="common_done">Done</string>
+    <string name="common_next">Next</string>
+    <string name="common_back">Back</string>
+    <string name="common_remove">Remove</string>
+    <string name="common_skip">Skip</string>
+
+    <!-- intro -->
+    <string name="intro_page1_title">Lock what pulls you in</string>
+    <string name="intro_page1_body">Pact blocks the apps you can\'t put down — Instagram, TikTok, YouTube, whatever it is for you. They stay locked until someone lets you back in.</string>
+    <string name="intro_page2_title">A person, not a password</string>
+    <string name="intro_page2_body">You choose a sponsor — a partner, a parent, a close friend. Only a fresh 6-digit code from them opens your apps. Willpower stops being the weak link.</string>
+    <string name="intro_page3_title">Private. Offline. Yours.</string>
+    <string name="intro_page3_body">No account, no server, no internet needed — ever. Codes work like 2FA codes, so your sponsor can read one to you over any phone call.</string>
+    <string name="intro_get_started">Get started</string>
+
+    <!-- role select -->
+    <string name="role_title">Who\'s setting up this phone?</string>
+    <string name="role_body">Pact has two sides: the person locking their apps, and the person holding the key.</string>
+    <string name="role_user_title">Block my apps</string>
+    <string name="role_user_body">I want to lock my distracting apps and give the key to someone I trust.</string>
+    <string name="role_sponsor_title">I\'m the sponsor</string>
+    <string name="role_sponsor_body">Someone I care about asked me to hold their unlock codes.</string>
+
+    <!-- guardian step -->
+    <string name="guardian_title">Choose your sponsor</string>
+    <string name="guardian_body">Pick someone who wants to see you succeed — a partner, a parent, a close friend. They\'ll hold the unlock codes, so every unlock starts with asking them.</string>
+    <string name="guardian_name_label">Their name</string>
+    <string name="guardian_hint">Pick someone easy to reach — you\'ll need them every time you want back in.</string>
+
+    <!-- pair step -->
+    <string name="pair_title">Hand over the key</string>
+    <string name="pair_body">This QR code is the key to your locks. It\'s shown once — right now — and it belongs to %1$s, not you.</string>
+    <string name="pair_qr_desc">Pairing QR code</string>
+    <string name="pair_on_their_phone">On %1$s\'s phone:</string>
+    <string name="pair_step1">Install Pact — the same app you\'re using now</string>
+    <string name="pair_step2">During setup, pick “I\'m the sponsor”</string>
+    <string name="pair_step3">Scan this QR code with the scan button there</string>
+    <string name="pair_alt_authenticator">Rather not install anything? Google Authenticator or any 2FA app can scan this code too. Manual key: %1$s</string>
+    <string name="pair_warning">Don\'t scan it into your own phone — you\'d be holding the key to your own lock.</string>
+    <string name="pair_confirm">%1$s has the key</string>
+
+    <!-- prove step -->
+    <string name="prove_title">Prove it works</string>
+    <string name="prove_body">Ask %1$s for the 6-digit code on their screen right now.</string>
+    <string name="prove_error">That didn\'t match. Make sure they scanned the QR code on the previous step, then try the code they see right now.</string>
+    <string name="prove_show_qr">Show the QR code again</string>
+
+    <!-- permission step -->
+    <string name="perm_title">Turn on the shield</string>
+    <string name="perm_body">One Android permission lets Pact notice when a locked app opens, so it can step in front. Here\'s exactly how to grant it:</string>
+    <string name="perm_step1">Tap “Open settings” below</string>
+    <string name="perm_step2">Find “Pact app shield” in the list — sometimes under “Installed apps” or “Downloaded apps”</string>
+    <string name="perm_step3">Tap it and switch it on</string>
+    <string name="perm_step4">Android will show a warning — that\'s normal. Pact only sees which app opens, never what\'s on your screen. Tap “Allow”</string>
+    <string name="perm_step5">Come back here — this page turns green when it worked</string>
+    <string name="perm_status_on">The shield is up. You\'re protected.</string>
+    <string name="perm_status_waiting">Waiting for the shield…</string>
+    <string name="perm_open_settings">Open settings</string>
+    <string name="perm_later">I\'ll do this later</string>
+
+    <!-- pick apps -->
+    <string name="pick_title">What pulls you in?</string>
+    <string name="pick_min_one">Select at least one app</string>
+    <string name="search_apps">Search apps</string>
+    <string name="often_locked">Often locked</string>
+
+    <!-- seal -->
+    <string name="seal_title">Your Pact is sealed</string>
+    <string name="seal_body">Your apps are locked. From here on, %1$s holds the key — and that\'s the whole idea.</string>
+    <string name="seal_begin">Begin</string>
+
+    <!-- home -->
+    <string name="home_with">with %1$s</string>
+    <string name="home_add_apps">Add apps</string>
+    <string name="home_settings">Settings</string>
+    <string name="hero_active_title">Protection is on</string>
+    <string name="hero_active_sub">Your Pact is holding steady</string>
+    <string name="hero_down_title">The shield is off</string>
+    <string name="hero_down_sub">Nothing is being blocked right now. Turn the shield back on in accessibility settings.</string>
+    <string name="hero_enable">Turn the shield on</string>
+    <string name="stat_locked_label">under lock</string>
+    <string name="stat_saves_label">blocks today</string>
+    <string name="section_on_break">On a break</string>
+    <string name="row_relocks_in">Relocks in %1$s</string>
+    <string name="action_relock">Relock</string>
+    <string name="section_locked">Locked</string>
+    <string name="home_empty">Nothing here yet. Tap + and pick the apps that eat your time.</string>
+    <string name="home_all_on_break">Everything is on a break right now.</string>
+    <string name="row_blocked_once">Blocked once today</string>
+    <string name="row_blocked_times">Blocked %1$d times today</string>
+    <string name="dialog_locked_body">This app is locked by your Pact. Both actions below need a fresh code from %1$s.</string>
+    <string name="action_unlock_a_while">Unlock for a while…</string>
+    <string name="action_remove_from_pact">Remove from Pact…</string>
+    <string name="unlock_q_title">Unlock %1$s?</string>
+    <string name="ask_code">Ask %1$s for the code showing on their phone right now.</string>
+    <string name="duration_title">How long do you need?</string>
+    <string name="duration_5m">5 minutes</string>
+    <string name="duration_15m">15 minutes</string>
+    <string name="duration_1h">1 hour</string>
+    <string name="duration_midnight">Until midnight</string>
+    <string name="remove_q_title">Remove %1$s?</string>
+    <string name="remove_q_body">Ask %1$s for the current code to take this app out of your Pact.</string>
+
+    <!-- code verification -->
+    <string name="verify_wrong">That code didn\'t match. Codes change every 30 seconds — ask for a fresh one.</string>
+    <string name="verify_too_many">Too many tries. Locked for %1$s.</string>
+
+    <!-- block wall -->
+    <string name="wall_locked_title">%1$s is locked</string>
+    <string name="wall_ask">Ask %1$s for the current code</string>
+    <string name="wall_accepted">Code accepted. How long do you need?</string>
+    <string name="wall_go_home">Never mind — take me home</string>
+    <string name="cd_delete">Delete</string>
+    <string name="cd_locked">Locked</string>
+    <string-array name="encouragements">
+        <item>This pause is the whole point.</item>
+        <item>You asked for this wall on a clear-headed day.</item>
+        <item>The urge passes whether or not you feed it.</item>
+        <item>Five minutes from now, you\'ll be glad you stopped.</item>
+        <item>You\'re not missing anything that matters.</item>
+    </string-array>
+
+    <!-- settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_sponsor_section">Your sponsor</string>
+    <string name="settings_paired">Paired — they hold your unlock codes</string>
+    <string name="settings_change_sponsor">Change sponsor…</string>
+    <string name="settings_change_sponsor_hint">Changing sponsors needs a code from your current one, then pairs a brand-new key.</string>
+    <string name="settings_strict_section">Strict mode</string>
+    <string name="strict_title">Lock system Settings too</string>
+    <string name="strict_body">Stops the shield from being switched off quietly — opening Android Settings will ask for a code as well. Turning strict mode on is free; turning it off needs a code.</string>
+    <string name="settings_how_section">How Pact works</string>
+    <string name="how_body">Pact runs entirely on this phone — no account, no server, no internet. Unlock codes are standard authenticator codes (TOTP): your sponsor\'s phone and yours compute the same 6-digit number from a shared key and the clock, so codes work even with both phones offline.\n\nThe key appeared exactly once, during setup, and only your sponsor has it. On this phone it\'s stored encrypted inside the Android Keystore.</string>
+    <string name="settings_danger">Danger zone</string>
+    <string name="reset_action">End the Pact and reset…</string>
+    <string name="reset_hint">Removes every lock and starts over. Needs a code from %1$s.</string>
+    <string name="strict_off_title">Turn off strict mode?</string>
+    <string name="change_sponsor_title">Change sponsor?</string>
+    <string name="change_sponsor_body">First, a code from %1$s to approve the change.</string>
+    <string name="end_pact_title">End the Pact?</string>
+    <string name="end_pact_body">Ask %1$s for the current code to remove every lock and reset.</string>
+    <string name="repair_new_sponsor">New sponsor</string>
+    <string name="repair_scan_title">Scan on their phone</string>
+    <string name="repair_body_qr">On %1$s\'s phone: install Pact and choose “I\'m the sponsor”, or scan with Google Authenticator. Manual key:\n%2$s</string>
+    <string name="repair_enter_code">Enter the current code from %1$s to seal the new Pact.</string>
+    <string name="repair_wrong">That didn\'t match — try the code they see right now.</string>
+    <string name="they_added_it">They\'ve added it</string>
+
+    <!-- sponsor -->
+    <string name="sponsor_setup_title">You hold the key</string>
+    <string name="sponsor_setup_body">Someone you care about is locking their distracting apps, and they chose you as their sponsor. When they want back in, they\'ll ask you for the 6-digit code shown here.\n\nTheir phone is showing a QR code during setup — scan it below.</string>
+    <string name="sponsor_badge">Sponsor</string>
+    <string name="sponsor_hint_codes">When they ask for an unlock, read them the code. It changes every 30 seconds and needs no internet.</string>
+    <string name="sponsor_scan_hint">Point the camera at the QR code on their phone — it\'s on the “Hand over the key” step of their setup.</string>
+    <string name="sponsor_scan_button">Scan their QR code</string>
+    <string name="sponsor_manual_toggle">Camera trouble? Type the key instead</string>
+    <string name="sponsor_manual_hint">Their pairing screen shows the key as letters, too. Type or paste it here.</string>
+    <string name="sponsor_key_label">Key (ABCD EFGH …)</string>
+    <string name="sponsor_key_invalid">That doesn\'t look right — the key is 32 letters and digits.</string>
+    <string name="sponsor_add_key">Add key</string>
+    <string name="sponsor_key_added">Key added</string>
+    <string name="sponsor_whose">Whose apps does this key unlock?</string>
+    <string name="sponsor_empty">No keys yet. Tap + and scan the QR code on their phone.</string>
+    <string name="sponsor_add_person">Add a person</string>
+    <string name="sponsor_remove_title">Remove %1$s?</string>
+    <string name="sponsor_remove_body">You won\'t be able to give %1$s unlock codes anymore. They\'d have to pair with a sponsor again to change anything.</string>
+    <string name="sponsor_key_error">This key can\'t be read from secure storage.</string>
+    <string name="scan_not_pact">That QR code isn\'t a Pact key. Make sure their phone is showing the pairing screen.</string>
+
+    <!-- scanner -->
+    <string name="scan_title">Scan their pairing QR</string>
+    <string name="scan_hint">Line the code up inside the frame</string>
+    <string name="scan_perm">Pact needs the camera to scan the QR code.\nAllow camera access, or go back and type the key instead.</string>
+    <string name="cd_torch">Flashlight</string>
+
+    <!-- plurals -->
+    <plurals name="lock_n_apps">
+        <item quantity="one">Lock %1$d app</item>
+        <item quantity="other">Lock %1$d apps</item>
+    </plurals>
+    <plurals name="n_apps">
+        <item quantity="one">%1$d app</item>
+        <item quantity="other">%1$d apps</item>
+    </plurals>
 </resources>
