@@ -32,6 +32,9 @@ class PactState private constructor(context: Context) {
         val lockoutUntil: Long = 0L,
         val strictMode: Boolean = false,
         val sponsees: List<Sponsee> = emptyList(),
+        /** Times the shield stepped in today, per package. */
+        val blocksToday: Map<String, Int> = emptyMap(),
+        val blocksTotal: Long = 0L,
     )
 
     private val _snapshot = MutableStateFlow(read())
@@ -197,6 +200,43 @@ class PactState private constructor(context: Context) {
         return VerifyResult.Ok
     }
 
+    // ---------------------------------------------------------------- stats
+
+    /** Called by the shield each time it steps in front of a blocked app. */
+    fun recordBlock(pkg: String) {
+        val today = dayKey(System.currentTimeMillis())
+        val sameDay = prefs.getInt(KEY_STATS_DAY, 0) == today
+        val counts = if (sameDay) {
+            decodeCounts(prefs.getString(KEY_STATS_MAP, "") ?: "").toMutableMap()
+        } else {
+            mutableMapOf()
+        }
+        counts[pkg] = (counts[pkg] ?: 0) + 1
+        prefs.edit()
+            .putInt(KEY_STATS_DAY, today)
+            .putString(KEY_STATS_MAP, encodeCounts(counts))
+            .putLong(KEY_STATS_TOTAL, prefs.getLong(KEY_STATS_TOTAL, 0L) + 1)
+            .apply()
+        refresh()
+    }
+
+    private fun dayKey(nowMillis: Long): Int {
+        val cal = Calendar.getInstance().apply { timeInMillis = nowMillis }
+        return cal.get(Calendar.YEAR) * 10000 +
+            (cal.get(Calendar.MONTH) + 1) * 100 +
+            cal.get(Calendar.DAY_OF_MONTH)
+    }
+
+    private fun encodeCounts(map: Map<String, Int>): String =
+        map.entries.joinToString(";") { "${it.key}=${it.value}" }
+
+    private fun decodeCounts(raw: String): Map<String, Int> =
+        raw.split(";").mapNotNull { entry ->
+            val i = entry.lastIndexOf('=')
+            if (i <= 0) null
+            else entry.substring(0, i) to (entry.substring(i + 1).toIntOrNull() ?: return@mapNotNull null)
+        }.toMap()
+
     // ------------------------------------------------------------- plumbing
 
     private fun refresh() {
@@ -214,6 +254,12 @@ class PactState private constructor(context: Context) {
         failedAttempts = prefs.getInt(KEY_FAILED, 0),
         lockoutUntil = prefs.getLong(KEY_LOCKOUT, 0L),
         strictMode = prefs.getBoolean(KEY_STRICT, false),
+        blocksToday = if (prefs.getInt(KEY_STATS_DAY, 0) == dayKey(System.currentTimeMillis())) {
+            decodeCounts(prefs.getString(KEY_STATS_MAP, "") ?: "")
+        } else {
+            emptyMap()
+        },
+        blocksTotal = prefs.getLong(KEY_STATS_TOTAL, 0L),
     )
 
     private fun encodeUnlocks(map: Map<String, Long>): String {
@@ -270,6 +316,9 @@ class PactState private constructor(context: Context) {
         private const val KEY_STRICT = "strict_mode"
         private const val KEY_ROLE = "role"
         private const val KEY_SPONSEES = "sponsees"
+        private const val KEY_STATS_DAY = "stats_day"
+        private const val KEY_STATS_MAP = "stats_map"
+        private const val KEY_STATS_TOTAL = "stats_total"
 
         @Volatile
         private var instance: PactState? = null

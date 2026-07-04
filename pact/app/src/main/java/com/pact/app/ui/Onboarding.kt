@@ -131,8 +131,7 @@ fun PactLogo(sizeDp: Int, modifier: Modifier = Modifier) {
 // -------------------------------------------------------------------- intro
 
 private data class IntroPage(
-    val icon: ImageVector,
-    val tint: Color,
+    val art: @Composable () -> Unit,
     val title: String,
     val body: String,
 )
@@ -141,17 +140,17 @@ private data class IntroPage(
 private fun IntroPager(onFinished: () -> Unit) {
     val pages = listOf(
         IntroPage(
-            Icons.Rounded.Lock, Periwinkle,
+            { ArtLockedPhone() },
             "Lock what pulls you in",
             "Pact blocks the apps you can't put down — Instagram, TikTok, YouTube, anything you choose. They stay locked until someone lets you back in.",
         ),
         IntroPage(
-            Icons.Rounded.Favorite, Amber,
+            { ArtTwoPeople() },
             "A person, not a password",
             "You pick a sponsor — a partner, parent, or close friend. Only a fresh 6-digit code from them can unlock your apps. Willpower stops being the weak link.",
         ),
         IntroPage(
-            Icons.Rounded.CloudOff, Mint,
+            { ArtOfflineShield() },
             "Private, offline, yours",
             "No account. No internet needed — ever. Codes work like 2FA codes, so your sponsor can read one out over any phone call. Nothing leaves your phone.",
         ),
@@ -184,17 +183,8 @@ private fun IntroPager(onFinished: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(RoundedCornerShape(36.dp))
-                        .background(Surface1)
-                        .border(1.dp, CardBorder, RoundedCornerShape(36.dp)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(p.icon, contentDescription = null, tint = p.tint, modifier = Modifier.size(56.dp))
-                }
-                Spacer(Modifier.height(36.dp))
+                p.art()
+                Spacer(Modifier.height(28.dp))
                 Text(p.title, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
                 Spacer(Modifier.height(14.dp))
                 Text(

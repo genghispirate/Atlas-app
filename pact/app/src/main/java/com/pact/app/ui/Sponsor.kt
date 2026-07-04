@@ -1,8 +1,7 @@
 package com.pact.app.ui
 
-import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,14 +44,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.journeyapps.barcodescanner.ScanContract
-import com.journeyapps.barcodescanner.ScanOptions
 import com.pact.app.core.PactState
 import com.pact.app.core.Totp
-import com.pact.app.ui.theme.CardBorder
+import com.pact.app.ui.theme.Amber
 import com.pact.app.ui.theme.Mint
 import com.pact.app.ui.theme.Periwinkle
 import com.pact.app.ui.theme.Surface2
@@ -71,6 +67,19 @@ import com.pact.app.ui.theme.TextTertiary
 @Composable
 fun SponsorSetupFlow(state: PactState, onBack: () -> Unit, onDone: () -> Unit) {
     var captured by remember { mutableStateOf<String?>(null) }
+    var scanning by remember { mutableStateOf(false) }
+
+    if (scanning) {
+        ScanScreen(
+            title = "Scan their pairing QR",
+            onResult = { content ->
+                scanning = false
+                Totp.extractSecret(content)?.let { captured = it }
+            },
+            onClose = { scanning = false },
+        )
+        return
+    }
 
     Column(
         modifier = Modifier
@@ -94,6 +103,7 @@ fun SponsorSetupFlow(state: PactState, onBack: () -> Unit, onDone: () -> Unit) {
         )
         Spacer(Modifier.height(28.dp))
         AddKeyContent(
+            onScan = { scanning = true },
             onCaptured = { secret -> captured = secret },
         )
         Spacer(Modifier.height(24.dp))
@@ -113,17 +123,10 @@ fun SponsorSetupFlow(state: PactState, onBack: () -> Unit, onDone: () -> Unit) {
 
 /** Scan button + manual key fallback. Calls [onCaptured] with a valid secret. */
 @Composable
-fun AddKeyContent(onCaptured: (String) -> Unit) {
-    var scanFailed by remember { mutableStateOf(false) }
+fun AddKeyContent(onScan: () -> Unit, onCaptured: (String) -> Unit) {
     var manualKey by remember { mutableStateOf("") }
     var manualError by remember { mutableStateOf(false) }
     var showManual by remember { mutableStateOf(false) }
-
-    val scanLauncher = rememberLauncherForActivityResult(ScanContract()) { result ->
-        val content = result.contents ?: return@rememberLauncherForActivityResult
-        val secret = Totp.extractSecret(content)
-        if (secret != null) onCaptured(secret) else scanFailed = true
-    }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
         PactCard {
@@ -137,28 +140,7 @@ fun AddKeyContent(onCaptured: (String) -> Unit) {
                 )
             }
             Spacer(Modifier.height(16.dp))
-            PactButton(
-                "Scan their QR code",
-                onClick = {
-                    scanFailed = false
-                    scanLauncher.launch(
-                        ScanOptions()
-                            .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-                            .setPrompt("Point at the QR code on their phone")
-                            .setBeepEnabled(false)
-                            .setOrientationLocked(true)
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-            if (scanFailed) {
-                Spacer(Modifier.height(10.dp))
-                Text(
-                    "That QR didn't look like a Pact key — make sure their phone is on the pairing screen.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
+            PactButton("Scan their QR code", onClick = onScan, modifier = Modifier.fillMaxWidth())
         }
         Spacer(Modifier.height(12.dp))
         if (!showManual) {
@@ -259,79 +241,100 @@ private fun NameSponseeDialog(onDismiss: () -> Unit, onNamed: (String) -> Unit) 
 fun SponsorHome(state: PactState) {
     val snapshot by state.snapshot.collectAsState()
     var adding by remember { mutableStateOf(false) }
+    var scanning by remember { mutableStateOf(false) }
     var newSecret by remember { mutableStateOf<String?>(null) }
     var removing by remember { mutableStateOf<PactState.Sponsee?>(null) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .padding(horizontal = 20.dp),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp, bottom = 4.dp),
-        ) {
-            PactLogo(36)
-            Spacer(Modifier.width(12.dp))
-            Column(Modifier.weight(1f)) {
-                Text("Pact", style = MaterialTheme.typography.headlineSmall)
-                Text("Sponsor", style = MaterialTheme.typography.labelMedium, color = Periwinkle)
-            }
-            IconButton(onClick = { adding = true }) {
-                Icon(Icons.Rounded.Add, contentDescription = "Add a person", tint = TextSecondary)
-            }
-        }
-        Text(
-            "When they ask to unlock, read them the code. It changes every 30 seconds and works without internet.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = TextTertiary,
-            modifier = Modifier.padding(bottom = 16.dp),
+    if (scanning) {
+        ScanScreen(
+            title = "Scan their pairing QR",
+            onResult = { content ->
+                scanning = false
+                adding = false
+                Totp.extractSecret(content)?.let { newSecret = it }
+            },
+            onClose = { scanning = false },
         )
-
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(snapshot.sponsees, key = { it.name + it.secretBlob.hashCode() }) { sponsee ->
-                SponseeCodeCard(
-                    state = state,
-                    sponsee = sponsee,
-                    onRemove = { removing = sponsee },
-                )
-            }
-            if (snapshot.sponsees.isEmpty()) {
-                item {
-                    PactCard {
-                        Text(
-                            "No keys yet. Tap + to scan a pairing QR from someone's phone.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = TextSecondary,
-                        )
-                    }
-                }
-            }
-            item { Spacer(Modifier.height(20.dp)) }
-        }
+        return
     }
 
     if (adding) {
-        AlertDialog(
-            onDismissRequest = { adding = false },
-            containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("Add a person", style = MaterialTheme.typography.headlineSmall) },
-            text = {
-                Column {
-                    AddKeyContent(onCaptured = { secret ->
-                        adding = false
-                        newSecret = secret
-                    })
+        BackHandler { adding = false }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 28.dp),
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 12.dp)) {
+                IconButton(onClick = { adding = false }) {
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", tint = TextSecondary)
                 }
-            },
-            confirmButton = {},
-            dismissButton = {
-                TextButton(onClick = { adding = false }) { Text("Cancel") }
-            },
-        )
+                Text("Add a person", style = MaterialTheme.typography.headlineSmall)
+            }
+            Spacer(Modifier.height(16.dp))
+            AddKeyContent(
+                onScan = { scanning = true },
+                onCaptured = { secret ->
+                    adding = false
+                    newSecret = secret
+                },
+            )
+            Spacer(Modifier.height(24.dp))
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .padding(horizontal = 20.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 4.dp),
+            ) {
+                PactLogo(36)
+                Spacer(Modifier.width(12.dp))
+                Column(Modifier.weight(1f)) {
+                    Text("Pact", style = MaterialTheme.typography.headlineSmall)
+                    Text("Sponsor", style = MaterialTheme.typography.labelMedium, color = Periwinkle)
+                }
+                IconButton(onClick = { adding = true }) {
+                    Icon(Icons.Rounded.Add, contentDescription = "Add a person", tint = TextSecondary)
+                }
+            }
+            Text(
+                "When they ask to unlock, read them the code. It changes every 30 seconds and works without internet.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextTertiary,
+                modifier = Modifier.padding(bottom = 16.dp),
+            )
+
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                items(snapshot.sponsees, key = { it.name + it.secretBlob.hashCode() }) { sponsee ->
+                    SponseeCodeCard(
+                        state = state,
+                        sponsee = sponsee,
+                        onRemove = { removing = sponsee },
+                    )
+                }
+                if (snapshot.sponsees.isEmpty()) {
+                    item {
+                        PactCard {
+                            Text(
+                                "No keys yet. Tap + to scan a pairing QR from someone's phone.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TextSecondary,
+                            )
+                        }
+                    }
+                }
+                item { Spacer(Modifier.height(20.dp)) }
+            }
+        }
     }
 
     newSecret?.let { secret ->
@@ -431,7 +434,7 @@ private fun CountdownRing(fraction: Float, secondsLeft: Int) {
                 style = stroke,
             )
             drawArc(
-                color = if (fraction < 0.2f) com.pact.app.ui.theme.Amber else Mint,
+                color = if (fraction < 0.2f) Amber else Mint,
                 startAngle = -90f,
                 sweepAngle = 360f * fraction,
                 useCenter = false,

@@ -7,7 +7,7 @@ that pull you in, and the *only* way to unlock them is a 6-digit code from a tru
 you chose — your **sponsor**: a partner, parent, or close friend. Willpower stops being the
 weak link.
 
-<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v1.1.apk"><code>release/Pact-v1.1.apk</code></a></em></p>
+<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v2.0.apk"><code>release/Pact-v2.0.apk</code></a></em></p>
 
 ---
 
@@ -24,17 +24,21 @@ Pact has two sides, chosen on first launch:
    appears again on your phone.
 3. **Pick your apps.** Instagram, TikTok, YouTube… anything installed.
 4. **Raise the shield.** Guided, step-by-step setup of the one Android permission Pact
-   needs. An accessibility service then watches for locked apps reaching the foreground and
-   instantly covers them with a calm, full-screen lock.
+   needs. The accessibility service then watches for locked apps reaching the foreground and
+   instantly covers them with the lock wall — drawn as an accessibility overlay by the
+   service itself, so it cannot be suppressed by Android's background-activity restrictions.
+   Code entry uses a built-in PIN pad.
 5. **Want back in?** Ask your sponsor for the current code. Enter it, choose a break length
    (5 min / 15 min / 1 h / until midnight), and the app relocks automatically afterwards.
-   Ending a break early is always free.
+   Ending a break early is always free — and you can also unlock straight from Pact's home
+   screen without opening the blocked app.
 
 **If you're the sponsor:**
 
 Install the same APK, choose **"I'm the sponsor"** during setup, and scan the QR from their
-phone. Pact then shows the live 6-digit code with a 30-second countdown ring — no separate
-2FA app needed. One sponsor phone can hold keys for several people.
+phone with the built-in portrait scanner (torch included). Pact then shows the live 6-digit
+code with a 30-second countdown ring — no separate 2FA app needed. One sponsor phone can
+hold keys for several people.
 
 ### Why TOTP means it works offline
 
@@ -63,7 +67,7 @@ can read you a code over a phone call, SMS, or across the kitchen table.
 
 ## Install
 
-1. Copy `release/Pact-v1.1.apk` to **both** phones (yours and your sponsor's), or download it
+1. Copy `release/Pact-v2.0.apk` to **both** phones (yours and your sponsor's), or download it
    from this repo.
 2. Open it and allow "install from unknown sources" when prompted.
 3. Follow the in-app introduction — each phone picks its role during setup.
@@ -99,10 +103,12 @@ app/src/main/java/com/pact/app/
 │   ├── PactState.kt         # persisted state, roles, rate limiting, replay protection
 │   ├── Apps.kt              # installed-app listing, labels, icons
 │   └── Qr.kt                # offline QR rendering (ZXing)
-├── service/BlockerService.kt # accessibility service — the shield
-├── block/BlockActivity.kt    # full-screen lock + code entry + break durations
-└── ui/                       # Compose: intro, role select, setup flows, sponsor codes,
-                              #   home, app picker, settings, shared design system
+├── service/
+│   ├── BlockerService.kt    # accessibility service — the shield
+│   └── BlockOverlay.kt      # the lock wall as a service-drawn overlay window
+└── ui/                       # Compose: illustrated intro, role select, setup flows,
+                              #   sponsor codes, QR scanner, lock wall + PIN pad,
+                              #   home dashboard, app picker, settings
 ```
 
 ## Tech
