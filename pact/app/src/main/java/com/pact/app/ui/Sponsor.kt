@@ -1,7 +1,11 @@
 package com.pact.app.ui
 
+import android.content.Context
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +22,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -42,8 +48,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pact.app.core.PactState
@@ -62,10 +70,19 @@ import com.pact.app.ui.theme.TextTertiary
  * authenticator app needed. Works fully offline, exactly like a 2FA app.
  */
 
+private fun notAPactKey(context: Context) {
+    Toast.makeText(
+        context,
+        "That QR isn't a Pact key — make sure their phone is on the pairing screen.",
+        Toast.LENGTH_LONG,
+    ).show()
+}
+
 // -------------------------------------------------------------- setup flow
 
 @Composable
 fun SponsorSetupFlow(state: PactState, onBack: () -> Unit, onDone: () -> Unit) {
+    val context = LocalContext.current
     var captured by remember { mutableStateOf<String?>(null) }
     var scanning by remember { mutableStateOf(false) }
 
@@ -74,7 +91,8 @@ fun SponsorSetupFlow(state: PactState, onBack: () -> Unit, onDone: () -> Unit) {
             title = "Scan their pairing QR",
             onResult = { content ->
                 scanning = false
-                Totp.extractSecret(content)?.let { captured = it }
+                val secret = Totp.extractSecret(content)
+                if (secret != null) captured = secret else notAPactKey(context)
             },
             onClose = { scanning = false },
         )
@@ -86,6 +104,8 @@ fun SponsorSetupFlow(state: PactState, onBack: () -> Unit, onDone: () -> Unit) {
             .fillMaxSize()
             .statusBarsPadding()
             .verticalScroll(rememberScrollState())
+            .imePadding()
+            .navigationBarsPadding()
             .padding(horizontal = 28.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 12.dp)) {
@@ -164,6 +184,11 @@ fun AddKeyContent(onScan: () -> Unit, onCaptured: (String) -> Unit) {
                     label = { Text("Key (e.g. ABCD EFGH …)") },
                     singleLine = true,
                     isError = manualError,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = {
+                        val secret = Totp.extractSecret(manualKey)
+                        if (secret != null) onCaptured(secret) else manualError = true
+                    }),
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(14.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -239,6 +264,7 @@ private fun NameSponseeDialog(onDismiss: () -> Unit, onNamed: (String) -> Unit) 
 
 @Composable
 fun SponsorHome(state: PactState) {
+    val context = LocalContext.current
     val snapshot by state.snapshot.collectAsState()
     var adding by remember { mutableStateOf(false) }
     var scanning by remember { mutableStateOf(false) }
@@ -250,8 +276,13 @@ fun SponsorHome(state: PactState) {
             title = "Scan their pairing QR",
             onResult = { content ->
                 scanning = false
-                adding = false
-                Totp.extractSecret(content)?.let { newSecret = it }
+                val secret = Totp.extractSecret(content)
+                if (secret != null) {
+                    adding = false
+                    newSecret = secret
+                } else {
+                    notAPactKey(context)
+                }
             },
             onClose = { scanning = false },
         )
@@ -265,6 +296,8 @@ fun SponsorHome(state: PactState) {
                 .fillMaxSize()
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
+                .imePadding()
+                .navigationBarsPadding()
                 .padding(horizontal = 28.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 12.dp)) {
@@ -288,6 +321,7 @@ fun SponsorHome(state: PactState) {
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
+                .navigationBarsPadding()
                 .padding(horizontal = 20.dp),
         ) {
             Row(

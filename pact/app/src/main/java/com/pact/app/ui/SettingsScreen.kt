@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -64,7 +65,8 @@ fun SettingsScreen(state: PactState, onBack: () -> Unit) {
             .fillMaxSize()
             .statusBarsPadding()
             .padding(horizontal = 20.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .navigationBarsPadding(),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -275,6 +277,7 @@ private fun RePairDialog(state: PactState, onDismiss: () -> Unit) {
                                 }
                             },
                             isError = error,
+                            autoFocus = true,
                         )
                         if (error) {
                             Text(

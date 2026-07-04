@@ -7,7 +7,7 @@ that pull you in, and the *only* way to unlock them is a 6-digit code from a tru
 you chose — your **sponsor**: a partner, parent, or close friend. Willpower stops being the
 weak link.
 
-<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v2.0.apk"><code>release/Pact-v2.0.apk</code></a></em></p>
+<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v2.1.apk"><code>release/Pact-v2.1.apk</code></a></em></p>
 
 ---
 
@@ -67,7 +67,7 @@ can read you a code over a phone call, SMS, or across the kitchen table.
 
 ## Install
 
-1. Copy `release/Pact-v2.0.apk` to **both** phones (yours and your sponsor's), or download it
+1. Copy `release/Pact-v2.1.apk` to **both** phones (yours and your sponsor's), or download it
    from this repo.
 2. Open it and allow "install from unknown sources" when prompted.
 3. Follow the in-app introduction — each phone picks its role during setup.

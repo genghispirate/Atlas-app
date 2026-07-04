@@ -2,6 +2,7 @@ package com.pact.app.ui
 
 import android.content.Intent
 import android.provider.Settings
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,8 +17,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -54,6 +59,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -86,6 +92,7 @@ private enum class Phase { Intro, RoleSelect, UserSetup, SponsorSetup }
 @Composable
 fun OnboardingFlow(state: PactState, onDone: () -> Unit) {
     var phase by remember { mutableStateOf(Phase.Intro) }
+    BackHandler(enabled = phase == Phase.RoleSelect) { phase = Phase.Intro }
     when (phase) {
         Phase.Intro -> IntroPager(onFinished = { phase = Phase.RoleSelect })
         Phase.RoleSelect -> RoleSelect(
@@ -221,6 +228,7 @@ private fun IntroPager(onFinished: () -> Unit) {
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
                 .padding(horizontal = 28.dp, vertical = 20.dp),
         )
     }
@@ -316,6 +324,9 @@ private fun UserSetupFlow(state: PactState, onDone: () -> Unit) {
     val secret = remember { Totp.generateSecret() }
     var selectedApps by remember { mutableStateOf(setOf<String>()) }
 
+    // system back walks one step backwards through setup
+    BackHandler(enabled = step > 0) { step -= 1 }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -381,6 +392,8 @@ private fun StepScaffold(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .imePadding()
+            .navigationBarsPadding()
             .padding(horizontal = 28.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -414,6 +427,10 @@ private fun GuardianStep(name: String, onNameChange: (String) -> Unit, onNext: (
             onValueChange = onNameChange,
             label = { Text("Their name") },
             singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+                if (name.trim().length >= 2) onNext()
+            }),
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(
@@ -532,6 +549,7 @@ private fun ProveStep(
                 }
             },
             isError = error,
+            autoFocus = true,
         )
         if (error) {
             Spacer(Modifier.height(12.dp))
@@ -631,7 +649,13 @@ private fun PickAppsStep(
     onSelectedChange: (Set<String>) -> Unit,
     onNext: () -> Unit,
 ) {
-    Column(Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .imePadding()
+            .navigationBarsPadding()
+            .padding(horizontal = 20.dp)
+    ) {
         Text(
             "What pulls you in?",
             style = MaterialTheme.typography.headlineMedium,

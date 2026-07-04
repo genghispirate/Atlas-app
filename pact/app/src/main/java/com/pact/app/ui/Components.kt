@@ -20,12 +20,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
@@ -137,7 +141,12 @@ fun CodeInput(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isError: Boolean = false,
+    autoFocus: Boolean = false,
 ) {
+    val focusRequester = remember { FocusRequester() }
+    if (autoFocus) {
+        LaunchedEffect(Unit) { focusRequester.requestFocus() }
+    }
     BasicTextField(
         value = value,
         onValueChange = { raw -> onValueChange(raw.filter { it.isDigit() }.take(6)) },
@@ -145,7 +154,7 @@ fun CodeInput(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
         cursorBrush = SolidColor(Color.Transparent),
         textStyle = TextStyle(color = Color.Transparent, fontSize = 1.sp),
-        modifier = modifier,
+        modifier = modifier.focusRequester(focusRequester),
         decorationBox = { innerTextField ->
             Box {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

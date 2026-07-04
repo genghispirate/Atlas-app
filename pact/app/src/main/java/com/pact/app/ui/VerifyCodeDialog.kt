@@ -69,6 +69,7 @@ fun VerifyCodeDialog(
                     },
                     enabled = !isLockedOut,
                     isError = error != null,
+                    autoFocus = true,
                     modifier = Modifier.padding(top = 4.dp),
                 )
                 if (isLockedOut) {
