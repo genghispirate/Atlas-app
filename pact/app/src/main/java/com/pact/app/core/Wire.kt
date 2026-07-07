@@ -26,6 +26,10 @@ object Wire {
     const val TYPE_CHAT = "chat"
     const val TYPE_REQUEST = "request"
     const val TYPE_RESPONSE = "response"
+    /** Periodic encrypted stats digest shared with contacts who may view stats. */
+    const val TYPE_STATS = "stats"
+    /** Challenge invites and answers. */
+    const val TYPE_CHALLENGE = "challenge"
 
     /** Requests expire quickly: an approval is for *now*, not for later reuse. */
     const val REQUEST_TTL_MILLIS = 15 * 60 * 1000L

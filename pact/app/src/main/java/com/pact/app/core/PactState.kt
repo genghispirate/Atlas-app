@@ -58,6 +58,10 @@ class PactState private constructor(context: Context) {
         val guardianName: String = "",
         val blocked: Set<String> = emptySet(),
         val tiers: Map<String, Tier> = emptyMap(),
+        /** Minutes of daily allowance per app. 0 (or absent) = no time, a hard lock. */
+        val dailyLimits: Map<String, Int> = emptyMap(),
+        /** Milliseconds already spent in each app today (resets at midnight). */
+        val usedTodayMillis: Map<String, Long> = emptyMap(),
         val unlockUntil: Map<String, Long> = emptyMap(),
         /** Yellow self-unlock rests until this time, per app. */
         val yellowCooldownUntil: Map<String, Long> = emptyMap(),
@@ -77,6 +81,28 @@ class PactState private constructor(context: Context) {
         fun tierOf(pkg: String): Tier = tiers[pkg] ?: Tier.RED
 
         fun focusActive(nowMillis: Long = System.currentTimeMillis()): Boolean = focusUntil > nowMillis
+
+        /** Does this app have a daily time allowance (vs. being a hard lock)? */
+        fun hasLimit(pkg: String): Boolean = (dailyLimits[pkg] ?: 0) > 0
+
+        fun limitMinutes(pkg: String): Int = dailyLimits[pkg] ?: 0
+
+        fun usedMillis(pkg: String): Long = usedTodayMillis[pkg] ?: 0L
+
+        /** Milliseconds of allowance still left on this app today. */
+        fun remainingMillis(pkg: String): Long {
+            val limit = dailyLimits[pkg] ?: 0
+            if (limit <= 0) return 0L
+            return (limit * 60_000L - usedMillis(pkg)).coerceAtLeast(0L)
+        }
+
+        /** Whole minutes of allowance left today (rounded up while any time remains). */
+        fun remainingMinutes(pkg: String): Int =
+            ((remainingMillis(pkg) + 59_999L) / 60_000L).toInt()
+
+        /** Total minutes spent across all limited apps today — the shareable number. */
+        fun screenTimeTodayMinutes(): Int =
+            (usedTodayMillis.filterKeys { it in blocked }.values.sum() / 60_000L).toInt()
 
         val today: DayStats get() = days.lastOrNull()?.takeIf { it.day == dayKey(System.currentTimeMillis()) }
             ?: DayStats(dayKey(System.currentTimeMillis()))
@@ -101,12 +127,13 @@ class PactState private constructor(context: Context) {
 
     // ---------------------------------------------------------------- setup
 
-    fun completeSetup(myName: String, blocked: Set<String>) {
+    fun completeSetup(myName: String, blocked: Set<String>, limits: Map<String, Int> = emptyMap()) {
         prefs.edit()
             .putString(KEY_ROLE, Role.USER.name)
             .putBoolean(KEY_SETUP, true)
             .putString(KEY_GUARDIAN, myName.trim())
             .putStringSet(KEY_BLOCKED, blocked)
+            .putString(KEY_LIMITS, encodeIntMap(limits))
             .putLong(KEY_SETUP_AT, System.currentTimeMillis())
             .apply()
         refresh()
@@ -127,18 +154,52 @@ class PactState private constructor(context: Context) {
 
     // ------------------------------------------------------------- blocking
 
-    fun addBlocked(packages: Collection<String>) {
-        val next = _snapshot.value.blocked + packages
-        prefs.edit().putStringSet(KEY_BLOCKED, next).apply()
+    fun addBlocked(packages: Collection<String>, limitMinutes: Int = DEFAULT_LIMIT_MINUTES) {
+        val s = _snapshot.value
+        val next = s.blocked + packages
+        // Only set a limit for apps that don't already have one — never clobber.
+        val newLimits = packages.filter { it !in s.dailyLimits }.associateWith { limitMinutes }
+        prefs.edit()
+            .putStringSet(KEY_BLOCKED, next)
+            .putString(KEY_LIMITS, encodeIntMap(s.dailyLimits + newLimits))
+            .apply()
         refresh()
     }
 
-    fun removeBlocked(pkg: String) {
-        val next = _snapshot.value.blocked - pkg
-        val unlocks = _snapshot.value.unlockUntil - pkg
+    /** Set an app's daily allowance in minutes. 0 turns it into a hard lock. */
+    fun setDailyLimit(pkg: String, minutes: Int) {
+        val next = _snapshot.value.dailyLimits + (pkg to minutes.coerceIn(0, 24 * 60))
+        prefs.edit().putString(KEY_LIMITS, encodeIntMap(next)).apply()
+        refresh()
+    }
+
+    /** Accrue foreground time the shield measured for a limited app today. */
+    fun recordUsage(pkg: String, addMillis: Long) {
+        if (addMillis <= 0L) return
+        val today = dayKey(System.currentTimeMillis())
+        val storedDay = prefs.getInt(KEY_USAGE_DAY, 0)
+        val current = if (storedDay == today) decodeLongMap(prefs.getString(KEY_USAGE, "") ?: "") else emptyMap()
+        val next = current + (pkg to (current[pkg] ?: 0L) + addMillis)
         prefs.edit()
-            .putStringSet(KEY_BLOCKED, next)
-            .putString(KEY_UNLOCKS, encodeLongMap(unlocks))
+            .putInt(KEY_USAGE_DAY, today)
+            .putString(KEY_USAGE, encodeUsage(next))
+            .apply()
+        refresh()
+    }
+
+    /** Is this app under Pact's management (blocked, or system-guarded in strict mode)? */
+    fun isManaged(pkg: String): Boolean {
+        val s = _snapshot.value
+        return s.setupComplete && (s.blocked.contains(pkg) ||
+            (s.strictMode && pkg in PROTECTED_WHEN_STRICT))
+    }
+
+    fun removeBlocked(pkg: String) {
+        val s = _snapshot.value
+        prefs.edit()
+            .putStringSet(KEY_BLOCKED, s.blocked - pkg)
+            .putString(KEY_UNLOCKS, encodeLongMap(s.unlockUntil - pkg))
+            .putString(KEY_LIMITS, encodeIntMap(s.dailyLimits - pkg))
             .apply()
         refresh()
     }
@@ -176,7 +237,11 @@ class PactState private constructor(context: Context) {
         if (!covered) return false
         // During a focus session, nothing blocked gets through — even active breaks.
         if (s.blocked.contains(pkg) && s.focusActive(nowMillis)) return true
-        return (s.unlockUntil[pkg] ?: 0L) <= nowMillis
+        // A granted bonus break lets you back in for its window.
+        if ((s.unlockUntil[pkg] ?: 0L) > nowMillis) return false
+        // Still inside today's allowance? The app opens normally.
+        if (s.blocked.contains(pkg) && s.remainingMillis(pkg) > 0L) return false
+        return true
     }
 
     // -------------------------------------------------------------- unlocks
@@ -288,9 +353,14 @@ class PactState private constructor(context: Context) {
             (0 until arr.length()).map { arr.getInt(it) }
         }?.takeIf { it.size == 24 } ?: List(24) { 0 }
 
+        val limits = mutableMapOf<String, Int>()
+        val limitsObj = json.optJSONObject("limits") ?: JSONObject()
+        for (k in limitsObj.keys()) limits[k] = limitsObj.getInt(k)
+
         prefs.edit()
             .putStringSet(KEY_BLOCKED, blocked)
             .putString(KEY_TIERS, encodeTiers(tiers))
+            .putString(KEY_LIMITS, encodeIntMap(limits))
             .putBoolean(KEY_STRICT, json.optBoolean("strictMode"))
             .putString(KEY_DAYS, json.optJSONArray("days")?.toString() ?: "")
             .putString(KEY_HOURS, hours.joinToString(","))
@@ -325,6 +395,9 @@ class PactState private constructor(context: Context) {
         guardianName = prefs.getString(KEY_GUARDIAN, "") ?: "",
         blocked = prefs.getStringSet(KEY_BLOCKED, emptySet()) ?: emptySet(),
         tiers = decodeTiers(prefs.getString(KEY_TIERS, "") ?: ""),
+        dailyLimits = decodeIntMap(prefs.getString(KEY_LIMITS, "") ?: ""),
+        usedTodayMillis = if (prefs.getInt(KEY_USAGE_DAY, 0) == dayKey(System.currentTimeMillis()))
+            decodeLongMap(prefs.getString(KEY_USAGE, "") ?: "") else emptyMap(),
         unlockUntil = decodeLongMap(prefs.getString(KEY_UNLOCKS, "") ?: ""),
         yellowCooldownUntil = decodeLongMap(prefs.getString(KEY_COOLDOWNS, "") ?: ""),
         strictMode = prefs.getBoolean(KEY_STRICT, false),
@@ -352,6 +425,20 @@ class PactState private constructor(context: Context) {
             if (i <= 0) null
             else entry.substring(0, i) to (entry.substring(i + 1).toLongOrNull() ?: return@mapNotNull null)
         }.toMap()
+
+    private fun encodeIntMap(map: Map<String, Int>): String =
+        map.entries.joinToString(";") { "${it.key}=${it.value}" }
+
+    private fun decodeIntMap(raw: String): Map<String, Int> =
+        raw.split(";").mapNotNull { entry ->
+            val i = entry.lastIndexOf('=')
+            if (i <= 0) null
+            else entry.substring(0, i) to (entry.substring(i + 1).toIntOrNull() ?: return@mapNotNull null)
+        }.toMap()
+
+    /** Like [encodeLongMap] but keeps every entry — usage millis are small, not timestamps. */
+    private fun encodeUsage(map: Map<String, Long>): String =
+        map.entries.joinToString(";") { "${it.key}=${it.value}" }
 
     private fun encodeTiers(map: Map<String, Tier>): String =
         map.entries.joinToString(";") { "${it.key}=${it.value.name}" }
@@ -454,11 +541,17 @@ class PactState private constructor(context: Context) {
         const val DAYS_KEPT = 14
         const val EVENTS_KEPT = 100
 
+        /** A friendly default allowance for a newly added app — an hour a day would be lax, a few minutes harsh. */
+        const val DEFAULT_LIMIT_MINUTES = 30
+
         private const val KEY_SETUP = "setup_complete"
         private const val KEY_SETUP_AT = "setup_at"
         private const val KEY_GUARDIAN = "guardian_name"
         private const val KEY_BLOCKED = "blocked_packages"
         private const val KEY_TIERS = "tiers"
+        private const val KEY_LIMITS = "daily_limits"
+        private const val KEY_USAGE = "usage_today"
+        private const val KEY_USAGE_DAY = "usage_day"
         private const val KEY_UNLOCKS = "unlock_until"
         private const val KEY_COOLDOWNS = "yellow_cooldowns"
         private const val KEY_STRICT = "strict_mode"

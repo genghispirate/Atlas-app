@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pact.app.core.PactState
 import com.pact.app.ui.AppPickerList
+import com.pact.app.ui.ChallengesScreen
 import com.pact.app.ui.ChatScreen
 import com.pact.app.ui.CircleScreen
 import com.pact.app.ui.HomeScreen
@@ -77,7 +78,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Screen { Home, AddApps, Settings, Stats, Circle, Chat }
+private enum class Screen { Home, AddApps, Settings, Stats, Circle, Chat, Challenges }
 
 @Composable
 private fun PactApp(state: PactState) {
@@ -110,7 +111,12 @@ private fun PactApp(state: PactState) {
             onOpenSettings = { screen = Screen.Settings },
             onOpenStats = { screen = Screen.Stats },
             onOpenCircle = { screen = Screen.Circle },
+            onOpenChallenges = { screen = Screen.Challenges },
         )
+        Screen.Challenges -> {
+            BackHandler { screen = Screen.Home }
+            ChallengesScreen(state = state, onBack = { screen = Screen.Home })
+        }
         Screen.AddApps -> AddAppsScreen(
             state = state,
             alreadyBlocked = snapshot.blocked,

@@ -91,16 +91,74 @@
     <string name="hero_down_title">The shield is off</string>
     <string name="hero_down_sub">Nothing is being blocked right now. Turn the shield back on in accessibility settings.</string>
     <string name="hero_enable">Turn the shield on</string>
-    <string name="stat_locked_label">under lock</string>
-    <string name="stat_saves_label">blocks today</string>
+    <string name="stat_limited_label">apps on a budget</string>
+    <string name="stat_screen_time_label">screen time today</string>
+    <string name="stat_streak_label">day streak</string>
     <string name="section_on_break">On a break</string>
     <string name="row_relocks_in">Relocks in %1$s</string>
     <string name="action_relock">Relock</string>
-    <string name="section_locked">Locked</string>
-    <string name="home_empty">Nothing here yet. Tap + and pick the apps that eat your time.</string>
+    <string name="section_your_apps">Your apps</string>
+    <string name="home_empty">Nothing here yet. Tap to pick the apps that eat your time.</string>
     <string name="home_all_on_break">Everything is on a break right now.</string>
     <string name="row_blocked_once">Blocked once today</string>
     <string name="row_blocked_times">Blocked %1$d times today</string>
+
+    <!-- daily limits -->
+    <string name="row_time_left">%1$d min left today</string>
+    <string name="row_limit_reached">Limit reached · locked till tomorrow</string>
+    <string name="row_hard_locked">Locked all day</string>
+    <string name="row_limit_of">of %1$d min</string>
+    <string name="limit_label">Daily limit</string>
+    <string name="limit_help">How much time you get in this app each day. Loosening a limit needs your circle.</string>
+    <string name="limit_off">Off</string>
+    <string name="limit_minutes">%1$d min</string>
+    <string name="limit_hours">%1$dh</string>
+    <string name="limit_h_m">%1$dh %2$dm</string>
+    <string name="limits_step_title">Set your daily limits</string>
+    <string name="limits_step_body">You don\'t have to quit — just set how long each app gets per day. Slide to the left for a hard lock.</string>
+    <string name="wall_limit_reached">You\'ve used your %1$d minutes for today.</string>
+
+    <!-- challenges &amp; leaderboard -->
+    <string name="challenges_title">Challenges</string>
+    <string name="leaderboard_you">You</string>
+    <string name="leaderboard_challenge">Standings</string>
+    <string name="leaderboard_circle">Your circle</string>
+    <string name="leaderboard_solo">Add friends and share your streak — the leaderboard fills in as they join.</string>
+    <string name="leaderboard_screen_time">%1$d min today</string>
+    <string name="leaderboard_no_screen_time">no time used yet today</string>
+    <string name="leaderboard_out">broke streak</string>
+    <string name="share_streak">Share your streak</string>
+    <string name="challenge_day_of">Day %1$d of %2$d</string>
+    <string name="challenge_leader">%1$s is out in front</string>
+    <string name="challenge_ends_in">Ends in %1$s</string>
+    <string name="challenge_leave">Leave challenge</string>
+    <string name="challenge_invite_title">%1$s invited you</string>
+    <string name="challenge_invite_body">\"%1$s\" — keep the longest streak within your limits over %2$d days.</string>
+    <string name="challenge_join">Join</string>
+    <string name="challenge_no_thanks">Not now</string>
+    <string name="challenge_start_title">Start a challenge</string>
+    <string name="challenge_start_body">Dare your friends to keep the longest streak within their daily limits. Highest streak wins.</string>
+    <string name="challenge_start_button">New challenge</string>
+    <string name="challenge_need_friends">Add a friend to your circle first.</string>
+    <string name="challenge_create_title">New challenge</string>
+    <string name="challenge_name_label">Name</string>
+    <string name="challenge_length_label">Length</string>
+    <string name="challenge_days_n">%1$d days</string>
+    <string name="challenge_invite_label">Invite friends</string>
+    <string name="challenge_send_invites">Send invites</string>
+    <string name="challenge_preset_noscroll">No-Scroll Week</string>
+    <string name="challenge_preset_week">7-Day Streak</string>
+    <string name="challenge_preset_lockin">Lock-In</string>
+
+    <!-- share card -->
+    <string name="share_sheet_title">Share your streak</string>
+    <string name="share_caption">My streak on Pact 🛡 — staying within my daily limits with my friends. Join me.</string>
+    <string name="share_streak_unit">day streak</string>
+    <string name="share_streak_sub">within my daily limits</string>
+    <string name="share_stat_screen_time">screen time today</string>
+    <string name="share_stat_best">best streak</string>
+    <string name="share_challenge_rank">%1$s · #%2$d of %3$d</string>
+    <string name="share_footer">My friends hold my limits. — Pact</string>
     <string name="dialog_locked_body">This app is locked by your Pact. Both actions below need a fresh code from %1$s.</string>
     <string name="action_unlock_a_while">Unlock for a while…</string>
     <string name="action_remove_from_pact">Remove from Pact…</string>
@@ -187,11 +245,11 @@
     <string name="cd_torch">Flashlight</string>
 
     <!-- tiers -->
-    <string name="tier_red">Red · sponsor code</string>
-    <string name="tier_yellow">Yellow · mindful pause</string>
-    <string name="tier_label">Difficulty</string>
-    <string name="tier_red_desc">Opening needs a fresh code from your sponsor.</string>
-    <string name="tier_yellow_desc">Opening needs a 30-second pause and a short reflection — no code.</string>
+    <string name="tier_red">Ask my circle</string>
+    <string name="tier_yellow">Mindful pause</string>
+    <string name="tier_label">When the day\'s time runs out</string>
+    <string name="tier_red_desc">More time needs a yes from your circle.</string>
+    <string name="tier_yellow_desc">More time needs a 30-second pause and a quick reflection — no one to ask.</string>
     <string name="tier_downgrade_title">Relax to yellow?</string>
     <string name="tier_downgrade_body">Making %1$s easier to open needs a code from %2$s.</string>
 
@@ -341,6 +399,7 @@
     <string name="incoming_unlock">%1$s · +%2$d minutes</string>
     <string name="incoming_change_remove">Wants to remove %1$s from their locks</string>
     <string name="incoming_change_tier">Wants to make %1$s easier to open</string>
+    <string name="incoming_change_limit">Wants to raise their %1$s limit to %2$d min/day</string>
     <string name="incoming_change_strict">Wants to turn off strict mode</string>
     <string name="incoming_change_reset">Wants to end their Pact and reset</string>
     <string name="incoming_reason">Their reason: %1$s</string>

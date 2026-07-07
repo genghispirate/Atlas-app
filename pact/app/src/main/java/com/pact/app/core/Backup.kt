@@ -30,6 +30,7 @@ object Backup {
         .put("guardianName", snapshot.guardianName)
         .put("blocked", JSONArray(snapshot.blocked.toList()))
         .put("tiers", JSONObject(snapshot.tiers.mapValues { it.value.name as Any }))
+        .put("limits", JSONObject(snapshot.dailyLimits.mapValues { it.value as Any }))
         .put("strictMode", snapshot.strictMode)
         .put("days", JSONArray(snapshot.days.map { d ->
             JSONObject()

@@ -371,6 +371,8 @@ fun IncomingRequestCard(
                     stringResource(R.string.incoming_change_remove, request.label)
                 request.changeAction == TrustNetwork.CHANGE_TIER_DOWN ->
                     stringResource(R.string.incoming_change_tier, request.label)
+                request.changeAction == TrustNetwork.CHANGE_LIMIT_UP ->
+                    stringResource(R.string.incoming_change_limit, request.label, request.minutes)
                 request.changeAction == TrustNetwork.CHANGE_STRICT_OFF ->
                     stringResource(R.string.incoming_change_strict)
                 else -> stringResource(R.string.incoming_change_reset)

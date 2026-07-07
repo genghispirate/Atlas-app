@@ -1,12 +1,14 @@
 # Pact 🛡
 
-**A private, encrypted trust network for beating phone addiction.**
+**A private, encrypted trust network for beating phone addiction — together.**
 
-Pact locks the apps that pull you in. The only way back in is your **circle** — the people you
-trust — approving your request. There are no passwords, no accounts, no servers, and no codes to
-type. Just people who care, holding your locks.
+Pact puts your distracting apps on a **daily budget**. You don't quit them forever; you decide up
+front how many minutes a day each one gets. When the time runs out, the app locks — and the only
+way to more is your **circle**, the people you trust. Then the part that makes it stick: you and
+your friends **share your screen time** and **race to keep the longest streak** within your
+limits. No passwords, no accounts, no servers, no codes to type.
 
-<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v4.1.apk"><code>release/Pact-v4.1.apk</code></a></em></p>
+<p align="center"><em>Ready-to-install APK: <a href="release/Pact-v5.0.apk"><code>release/Pact-v5.0.apk</code></a></em></p>
 
 ---
 
@@ -14,28 +16,45 @@ type. Just people who care, holding your locks.
 
 Pact has two sides, chosen on first launch:
 
-**If you're locking your apps:**
+**If you're budgeting your apps:**
 
 1. **Choose your name and build your circle.** Add trusted people — a partner, a parent, a
    friend, a therapist — by having them install Pact, pick "I'm a trusted person", and scan
    your code. One scan pairs you. Add as many as you like.
-2. **Pick your apps and raise the shield.** A guided, one-permission setup; the accessibility
-   service then covers any locked app with a full-screen wall the moment it opens.
-3. **Want back in?** Each app has a difficulty:
-   - **Red** (default): the wall sends a request to your circle. They see the app, how long
-     you asked for, and why. If they approve — per your rule — the time starts automatically,
-     even if you walked away.
-   - **Yellow**: a 30-second mindful pause and a quick "what's pulling you?", then a short
-     break — no approval needed, but a cooldown stops back-to-back unlocks.
-   - (Green is simply an app you never added.)
-4. **The circle decides the hard stuff too.** Removing an app, relaxing a red lock to yellow,
-   turning off strict mode, or ending your Pact are all requests your circle approves.
+2. **Pick your apps and set a daily limit for each.** Slide Instagram to 20 minutes, TikTok to
+   10, or all the way to a hard lock. A guided, one-permission setup raises the shield; the
+   accessibility service then measures your time in each app and steps in when the budget's gone.
+3. **Ran out of time today?** The wall goes up. What happens next is your choice, per app:
+   - **Ask my circle** (default): the wall sends a request to your trusted people. They see the
+     app, how long you asked for, and why. If they approve — per your rule — the time starts
+     automatically, even if you walked away.
+   - **Mindful pause**: a 30-second breath and a quick "what's pulling you?", then a short
+     stretch of extra time — no one to ask, but a cooldown stops back-to-back top-ups.
+   - Staying inside your budget never involves the wall at all — the app just opens.
+4. **The circle decides the hard stuff too.** Raising a daily limit, removing an app, softening a
+   lock, turning off strict mode, or ending your Pact are all requests your circle approves.
+   Tightening a limit is always free and instant.
 
 **If you're a trusted person:**
 
 Install the same app, pick "I'm a trusted person", scan their code. Their requests land on your
 home screen — Approve, Not now, or grant a custom amount with a note. You can also just message
 them. One device can hold the trust of several people.
+
+## Streaks, screen time & challenges — the social layer
+
+This is what turns a willpower app into something you *want* to open:
+
+- **Your streak** counts every day you stayed inside all your limits. Blow a budget and it resets
+  — so the number is honestly earned.
+- **Share your screen time.** Give any friend "can see my stats" and today's minutes and your
+  streak flow to them, end-to-end encrypted. No feed, no servers — just the people you chose.
+- **Challenges.** Start a *No-Scroll Week* or a *7-Day Streak*, invite friends, and everyone
+  races to keep the longest streak within their limits. A live leaderboard ranks the group by
+  streak, with a 🔥 for each person and a flag when someone breaks.
+- **A shareable streak card.** One tap renders a clean, private card — your streak, your screen
+  time, your challenge rank — straight to the Android share sheet for a story or a group chat.
+  Nothing personal leaves unless you send it.
 
 ## The trust model — public-key cryptography, zero setup
 
@@ -90,15 +109,16 @@ payloads on unguessable inbox topics.
 
 ## Also included
 
-Difficulty tiers · **focus sessions** (lock everything for a set stretch, no unlocks) · urge
-tracking · post-break reflection · an Insights screen (streak, walls per day, most tempting
-apps, craving hours, triggers) · a home-screen widget · quiet, actionable notifications
-(requests, approvals, messages) · encrypted passphrase backup + stats CSV · animated,
-Compose-drawn illustrations · 10 languages.
+Per-app daily limits · **challenges & a live streak leaderboard** · end-to-end-encrypted
+screen-time sharing · a one-tap shareable streak card · **focus sessions** (lock everything for
+a set stretch, no top-ups) · urge tracking · post-break reflection · an Insights screen (streak,
+walls per day, most tempting apps, craving hours, triggers) · a home-screen widget · quiet,
+actionable notifications (requests, approvals, messages, challenge invites) · encrypted
+passphrase backup + stats CSV · animated, Compose-drawn illustrations · 10 languages.
 
 ## Install
 
-Copy `release/Pact-v4.1.apk` to **both** phones — yours and each trusted person's — allow
+Copy `release/Pact-v5.0.apk` to **both** phones — yours and each trusted person's — allow
 "install from unknown sources", and follow the in-app setup. Requires Android 8.0+ (API 26).
 No Google services needed.
 

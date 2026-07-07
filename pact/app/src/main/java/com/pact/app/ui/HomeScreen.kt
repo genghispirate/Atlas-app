@@ -26,11 +26,15 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.Bolt
+import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Settings
@@ -64,7 +68,9 @@ import com.pact.app.core.TrustNetwork
 import com.pact.app.service.BlockerService
 import com.pact.app.ui.theme.Amber
 import com.pact.app.ui.theme.CardBorder
+import com.pact.app.ui.theme.Ink
 import com.pact.app.ui.theme.Mint
+import com.pact.app.ui.theme.PactGradient
 import com.pact.app.ui.theme.Periwinkle
 import com.pact.app.ui.theme.Rose
 import com.pact.app.ui.theme.Surface1
@@ -81,6 +87,7 @@ fun HomeScreen(
     onOpenSettings: () -> Unit,
     onOpenStats: () -> Unit,
     onOpenCircle: () -> Unit,
+    onOpenChallenges: () -> Unit,
 ) {
     val context = LocalContext.current
     val network = remember { TrustNetwork.get(context) }
@@ -137,6 +144,9 @@ fun HomeScreen(
                     color = Periwinkle,
                 )
             }
+            IconButton(onClick = onOpenChallenges) {
+                Icon(Icons.Rounded.EmojiEvents, contentDescription = stringResource(R.string.challenges_title), tint = TextSecondary)
+            }
             IconButton(onClick = onOpenCircle) {
                 Icon(Icons.Rounded.Group, contentDescription = stringResource(R.string.circle_title), tint = TextSecondary)
             }
@@ -157,7 +167,8 @@ fun HomeScreen(
                 HeroCard(
                     serviceOn = serviceOn,
                     lockedCount = snapshot.blocked.size,
-                    interventionsToday = snapshot.today.blocks,
+                    screenTimeToday = snapshot.screenTimeTodayMinutes(),
+                    streakDays = snapshot.streakDays(now),
                     onEnable = {
                         context.startActivity(
                             Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
@@ -302,14 +313,14 @@ fun HomeScreen(
                 }
             }
 
-            // locked apps
-            item { SectionLabel(stringResource(R.string.section_locked), Modifier.padding(top = 12.dp)) }
-            val locked = snapshot.blocked
+            // your apps: each with its daily allowance
+            item { SectionLabel(stringResource(R.string.section_your_apps), Modifier.padding(top = 12.dp)) }
+            val managed = snapshot.blocked
                 .filter { (snapshot.unlockUntil[it] ?: 0L) <= now }
                 .sortedBy { Apps.label(context, it).lowercase() }
             if (snapshot.blocked.isEmpty()) {
                 item {
-                    PactCard {
+                    PactCard(modifier = Modifier.clickable(onClick = onAddApps)) {
                         Text(
                             stringResource(R.string.home_empty),
                             style = MaterialTheme.typography.bodyMedium,
@@ -317,45 +328,30 @@ fun HomeScreen(
                         )
                     }
                 }
-            } else if (locked.isEmpty()) {
-                item {
-                    PactCard {
-                        Text(
-                            stringResource(R.string.home_all_on_break),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = TextSecondary,
-                        )
-                    }
-                }
             }
-            items(locked, key = { "l_$it" }) { pkg ->
-                val blocksToday = snapshot.today.blocksPerApp[pkg] ?: 0
-                val tier = snapshot.tierOf(pkg)
-                AppRow(
+            items(managed, key = { "l_$it" }) { pkg ->
+                LimitedAppRow(
                     pkg = pkg,
-                    subtitle = when {
-                        blocksToday == 1 -> stringResource(R.string.row_blocked_once)
-                        blocksToday > 1 -> stringResource(R.string.row_blocked_times, blocksToday)
-                        else -> null
-                    },
-                    subtitleColor = TextTertiary,
+                    limitMinutes = snapshot.limitMinutes(pkg),
+                    usedMinutes = (snapshot.usedMillis(pkg) / 60_000L).toInt(),
+                    remainingMinutes = snapshot.remainingMinutes(pkg),
+                    tier = snapshot.tierOf(pkg),
                     onClick = { appForAction = pkg },
-                    trailing = {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .clip(CircleShape)
-                                .background(if (tier == PactState.Tier.RED) Rose else Amber)
-                        )
-                        Spacer(Modifier.width(10.dp))
-                        Icon(
-                            Icons.Rounded.Lock,
-                            contentDescription = stringResource(R.string.cd_locked),
-                            tint = TextTertiary,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    },
                 )
+            }
+            item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable(onClick = onAddApps)
+                        .padding(vertical = 10.dp, horizontal = 6.dp),
+                ) {
+                    Icon(Icons.Rounded.Add, contentDescription = null, tint = Periwinkle, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.home_add_apps), style = MaterialTheme.typography.titleSmall, color = Periwinkle)
+                }
             }
             item { Spacer(Modifier.height(20.dp)) }
         }
@@ -369,7 +365,39 @@ fun HomeScreen(
             containerColor = MaterialTheme.colorScheme.surface,
             title = { Text(Apps.label(context, pkg), style = MaterialTheme.typography.headlineSmall) },
             text = {
-                Column {
+                Column(Modifier.verticalScroll(rememberScrollState())) {
+                    SectionLabel(stringResource(R.string.limit_label))
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        stringResource(R.string.limit_help),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextTertiary,
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    LimitChips(
+                        current = snapshot.limitMinutes(pkg),
+                        onPick = { target ->
+                            val current = snapshot.limitMinutes(pkg)
+                            when {
+                                target == current -> {}
+                                target < current || !hasCircle -> state.setDailyLimit(pkg, target)
+                                else -> {
+                                    network.createRequest(
+                                        kind = TrustNetwork.RequestKind.CHANGE,
+                                        changeAction = TrustNetwork.CHANGE_LIMIT_UP,
+                                        pkg = pkg,
+                                        label = Apps.label(context, pkg),
+                                        minutes = target,
+                                        reason = null,
+                                        usageNote = null,
+                                    )
+                                    changeRequested = true
+                                    appForAction = null
+                                }
+                            }
+                        },
+                    )
+                    Spacer(Modifier.height(20.dp))
                     SectionLabel(stringResource(R.string.tier_label))
                     Spacer(Modifier.height(8.dp))
                     TierOption(
@@ -487,6 +515,41 @@ fun HomeScreen(
     }
 }
 
+/** Daily-allowance picker: Off (hard lock) through a couple of hours. */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun LimitChips(current: Int, onPick: (Int) -> Unit) {
+    val options = listOf(0, 10, 20, 30, 45, 60, 90, 120)
+    androidx.compose.foundation.layout.FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        options.forEach { m ->
+            val selected = m == current
+            val label = when {
+                m == 0 -> stringResource(R.string.limit_off)
+                m % 60 == 0 -> stringResource(R.string.limit_hours, m / 60)
+                m > 60 -> stringResource(R.string.limit_h_m, m / 60, m % 60)
+                else -> stringResource(R.string.limit_minutes, m)
+            }
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(if (selected) PactGradient else androidx.compose.ui.graphics.SolidColor(Surface2))
+                    .border(1.dp, if (selected) Periwinkle else CardBorder, RoundedCornerShape(12.dp))
+                    .clickable { onPick(m) }
+                    .padding(horizontal = 14.dp, vertical = 9.dp),
+            ) {
+                Text(
+                    label,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (selected) Ink else TextSecondary,
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun TierOption(
     selected: Boolean,
@@ -525,7 +588,8 @@ private fun TierOption(
 private fun HeroCard(
     serviceOn: Boolean,
     lockedCount: Int,
-    interventionsToday: Int,
+    screenTimeToday: Int,
+    streakDays: Int,
     onEnable: () -> Unit,
 ) {
     val shape = RoundedCornerShape(28.dp)
@@ -576,12 +640,17 @@ private fun HeroCard(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 StatTile(
                     value = "$lockedCount",
-                    label = stringResource(R.string.stat_locked_label),
+                    label = stringResource(R.string.stat_limited_label),
                     modifier = Modifier.weight(1f),
                 )
                 StatTile(
-                    value = "$interventionsToday",
-                    label = stringResource(R.string.stat_saves_label),
+                    value = if (screenTimeToday >= 60) "${screenTimeToday / 60}h ${screenTimeToday % 60}m" else "${screenTimeToday}m",
+                    label = stringResource(R.string.stat_screen_time_label),
+                    modifier = Modifier.weight(1f),
+                )
+                StatTile(
+                    value = "$streakDays",
+                    label = stringResource(R.string.stat_streak_label),
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -602,10 +671,93 @@ private fun StatTile(value: String, label: String, modifier: Modifier = Modifier
             .clip(RoundedCornerShape(18.dp))
             .background(Surface1.copy(alpha = 0.75f))
             .border(1.dp, CardBorder, RoundedCornerShape(18.dp))
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = 12.dp, vertical = 14.dp),
     ) {
-        Text(value, style = MaterialTheme.typography.displaySmall, color = Periwinkle)
-        Text(label, style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+        Text(value, style = MaterialTheme.typography.headlineMedium, color = Periwinkle, maxLines = 1)
+        Text(label, style = MaterialTheme.typography.labelMedium, color = TextSecondary, maxLines = 2)
+    }
+}
+
+/** A managed app with its daily allowance: a usage bar and how much time is left. */
+@Composable
+private fun LimitedAppRow(
+    pkg: String,
+    limitMinutes: Int,
+    usedMinutes: Int,
+    remainingMinutes: Int,
+    tier: PactState.Tier,
+    onClick: () -> Unit,
+) {
+    val context = LocalContext.current
+    val shape = RoundedCornerShape(20.dp)
+    val hardLock = limitMinutes <= 0
+    val reached = !hardLock && remainingMinutes <= 0
+    val fraction = if (hardLock || limitMinutes == 0) 1f
+    else (usedMinutes.toFloat() / limitMinutes).coerceIn(0f, 1f)
+    val accent = when {
+        hardLock -> Rose
+        reached -> Rose
+        else -> Mint
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(Surface1)
+            .border(1.dp, CardBorder, shape)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AppIconImage(remember(pkg) { Apps.icon(context, pkg) }, sizeDp = 42)
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text(Apps.label(context, pkg), style = MaterialTheme.typography.titleSmall)
+                Text(
+                    when {
+                        hardLock -> stringResource(R.string.row_hard_locked)
+                        reached -> stringResource(R.string.row_limit_reached)
+                        else -> stringResource(R.string.row_time_left, remainingMinutes)
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = accent,
+                )
+            }
+            if (hardLock || reached) {
+                Icon(
+                    Icons.Rounded.Lock,
+                    contentDescription = stringResource(R.string.cd_locked),
+                    tint = TextTertiary,
+                    modifier = Modifier.size(20.dp),
+                )
+            } else {
+                Text(
+                    stringResource(R.string.row_limit_of, limitMinutes),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = TextTertiary,
+                )
+            }
+        }
+        if (!hardLock) {
+            Spacer(Modifier.height(10.dp))
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .clip(CircleShape)
+                    .background(Surface2)
+            ) {
+                val barBrush = if (reached) androidx.compose.ui.graphics.SolidColor(Rose)
+                else Brush.linearGradient(listOf(Mint, Periwinkle))
+                Box(
+                    Modifier
+                        .fillMaxWidth(fraction)
+                        .height(6.dp)
+                        .clip(CircleShape)
+                        .background(barBrush)
+                )
+            }
+        }
     }
 }
 

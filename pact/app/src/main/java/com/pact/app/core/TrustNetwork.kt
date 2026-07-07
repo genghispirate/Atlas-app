@@ -138,6 +138,36 @@ class TrustNetwork private constructor(context: Context) {
         val myDecision: Boolean? = null,
     )
 
+    /** A friend's shared screen-time snapshot, received encrypted. */
+    data class PeerStats(
+        val streakDays: Int,
+        val blocksToday: Int,
+        val walkawaysToday: Int,
+        val screenTimeMinutes: Int,   // minutes on their limited apps today
+        val lastUnlockAt: Long,
+        val receivedAt: Long,
+    )
+
+    /**
+     * A social challenge: everyone tries to keep their locks held for
+     * [days] days from [startAt]. Held = no unlock since the start.
+     */
+    data class Challenge(
+        val id: String,
+        val name: String,
+        val days: Int,
+        val startAt: Long,
+        val ownerId: String,                       // "" when I created it
+        val participantIds: Set<String>,           // contacts invited (excl. me)
+        val accepted: Map<String, Boolean> = emptyMap(),
+        val joinedByMe: Boolean = true,
+    ) {
+        val endsAt: Long get() = startAt + days * 86_400_000L
+        fun finished(now: Long = System.currentTimeMillis()) = now >= endsAt
+        fun dayNumber(now: Long = System.currentTimeMillis()): Int =
+            (((now - startAt) / 86_400_000L).toInt() + 1).coerceIn(1, days)
+    }
+
     data class Snapshot(
         val myName: String = "",
         val contacts: List<Contact> = emptyList(),
@@ -147,6 +177,8 @@ class TrustNetwork private constructor(context: Context) {
         val rule: Rule = Rule.ANY,
         val unread: Map<String, Int> = emptyMap(),
         val pendingOutbox: Int = 0,
+        val peerStats: Map<String, PeerStats> = emptyMap(),
+        val challenge: Challenge? = null,
     ) {
         fun supporters() = contacts.filter { it.direction == Direction.SUPPORTER }
         fun wards() = contacts.filter { it.direction == Direction.WARD }
@@ -286,6 +318,205 @@ class TrustNetwork private constructor(context: Context) {
         refresh()
     }
 
+    // ------------------------------------------------- stats sharing & challenges
+
+    /**
+     * Share my screen-time snapshot, encrypted, with every contact allowed to
+     * see it — plus all challenge participants while a challenge runs.
+     * Throttled; called from [syncNow].
+     */
+    private fun maybeShareStats() {
+        val last = prefs.getLong(KEY_LAST_STATS_SHARE, 0L)
+        val now = System.currentTimeMillis()
+        val challengeRunning = loadChallenge()?.let { !it.finished(now) } == true
+        val interval = if (challengeRunning) 2 * 60 * 60 * 1000L else 6 * 60 * 60 * 1000L
+        if (now - last < interval) return
+
+        val pact = PactState.get(appContext).snapshot.value
+        if (!pact.setupComplete) return
+        val audience = buildSet {
+            addAll(_snapshot.value.supporters().filter { it.canViewStats }.map { it.id })
+            loadChallenge()?.let { addAll(it.participantIds) }
+        }
+        if (audience.isEmpty()) return
+
+        val body = JSONObject()
+            .put("s", pact.streakDays(now))
+            .put("b", pact.today.blocks)
+            .put("w", pact.today.walkaways)
+            .put("m", pact.screenTimeTodayMinutes())   // today's screen time on limited apps
+            .put("lu", pact.lastUnlockAt)
+        for (id in audience) {
+            contact(id)?.let { sendPayload(Wire.TYPE_STATS, UUID.randomUUID().toString(), body, Wire.MESSAGE_TTL_MILLIS, it) }
+        }
+        prefs.edit().putLong(KEY_LAST_STATS_SHARE, now).apply()
+    }
+
+    /** Start a challenge and invite [contactIds]. Returns the challenge. */
+    fun createChallenge(name: String, days: Int, contactIds: Set<String>): Challenge {
+        val challenge = Challenge(
+            id = UUID.randomUUID().toString(),
+            name = name,
+            days = days,
+            startAt = System.currentTimeMillis(),
+            ownerId = "",
+            participantIds = contactIds,
+        )
+        saveChallenge(challenge)
+        val body = JSONObject()
+            .put("act", "invite")
+            .put("cid", challenge.id)
+            .put("name", name)
+            .put("days", days)
+            .put("start", challenge.startAt)
+        for (id in contactIds) {
+            contact(id)?.let { sendPayload(Wire.TYPE_CHALLENGE, UUID.randomUUID().toString(), body, Wire.MESSAGE_TTL_MILLIS, it) }
+        }
+        // fresh stats go out immediately so everyone sees day-one state
+        prefs.edit().putLong(KEY_LAST_STATS_SHARE, 0L).apply()
+        refresh()
+        return challenge
+    }
+
+    /** Answer a challenge invite I received. */
+    fun respondChallenge(accept: Boolean) {
+        val challenge = loadChallenge() ?: return
+        if (challenge.ownerId.isEmpty()) return
+        val owner = contact(challenge.ownerId) ?: return
+        val body = JSONObject()
+            .put("act", if (accept) "accept" else "decline")
+            .put("cid", challenge.id)
+        sendPayload(Wire.TYPE_CHALLENGE, UUID.randomUUID().toString(), body, Wire.MESSAGE_TTL_MILLIS, owner)
+        if (accept) {
+            saveChallenge(challenge.copy(joinedByMe = true))
+            prefs.edit().putLong(KEY_LAST_STATS_SHARE, 0L).apply()
+        } else {
+            clearChallenge()
+        }
+        refresh()
+    }
+
+    fun dismissChallenge() {
+        clearChallenge()
+        refresh()
+    }
+
+    /** Has this participant held their locks since the challenge began? */
+    fun participantHeld(challenge: Challenge, contactId: String?): Boolean? {
+        return if (contactId == null) {
+            PactState.get(appContext).snapshot.value.lastUnlockAt < challenge.startAt
+        } else {
+            val stats = _snapshot.value.peerStats[contactId] ?: return null
+            stats.lastUnlockAt < challenge.startAt
+        }
+    }
+
+    private fun handleStats(payload: Wire.Payload) {
+        val from = B64.encode(payload.fromSignPublic)
+        if (contact(from) == null) return
+        val stats = PeerStats(
+            streakDays = payload.body.optInt("s"),
+            blocksToday = payload.body.optInt("b"),
+            walkawaysToday = payload.body.optInt("w"),
+            screenTimeMinutes = payload.body.optInt("m"),
+            lastUnlockAt = payload.body.optLong("lu"),
+            receivedAt = System.currentTimeMillis(),
+        )
+        val all = loadPeerStats().toMutableMap().also { it[from] = stats }
+        savePeerStats(all)
+        refresh()
+    }
+
+    private fun handleChallenge(payload: Wire.Payload) {
+        val from = B64.encode(payload.fromSignPublic)
+        val contact = contact(from) ?: return
+        when (payload.body.optString("act")) {
+            "invite" -> {
+                // one active challenge at a time; a fresh invite replaces a finished one
+                val current = loadChallenge()
+                if (current != null && !current.finished()) return
+                saveChallenge(
+                    Challenge(
+                        id = payload.body.optString("cid"),
+                        name = payload.body.optString("name"),
+                        days = payload.body.optInt("days").coerceIn(1, 30),
+                        startAt = payload.body.optLong("start"),
+                        ownerId = from,
+                        participantIds = setOf(from),
+                        joinedByMe = false,
+                    )
+                )
+                onEvent?.invoke(EVENT_CHALLENGE, contact.name, payload.body.optString("name"))
+            }
+            "accept", "decline" -> {
+                val challenge = loadChallenge() ?: return
+                if (payload.body.optString("cid") != challenge.id) return
+                saveChallenge(
+                    challenge.copy(
+                        accepted = challenge.accepted + (from to (payload.body.optString("act") == "accept"))
+                    )
+                )
+            }
+        }
+        refresh()
+    }
+
+    private fun loadPeerStats(): Map<String, PeerStats> = runCatching {
+        val o = JSONObject(prefs.getString(KEY_PEER_STATS, "") ?: "")
+        o.keys().asSequence().associateWith { k ->
+            val v = o.getJSONObject(k)
+            PeerStats(v.optInt("s"), v.optInt("b"), v.optInt("w"), v.optInt("m"), v.optLong("lu"), v.optLong("at"))
+            // fields: streak, blocks, walkaways, screen-time minutes, lastUnlock, receivedAt
+        }
+    }.getOrDefault(emptyMap())
+
+    private fun savePeerStats(map: Map<String, PeerStats>) {
+        val o = JSONObject()
+        for ((k, v) in map) {
+            o.put(k, JSONObject().put("s", v.streakDays).put("b", v.blocksToday)
+                .put("w", v.walkawaysToday).put("m", v.screenTimeMinutes)
+                .put("lu", v.lastUnlockAt).put("at", v.receivedAt))
+        }
+        prefs.edit().putString(KEY_PEER_STATS, o.toString()).apply()
+    }
+
+    private fun loadChallenge(): Challenge? = runCatching {
+        val raw = prefs.getString(KEY_CHALLENGE, null) ?: return null
+        val o = JSONObject(raw)
+        Challenge(
+            id = o.getString("id"),
+            name = o.getString("n"),
+            days = o.getInt("d"),
+            startAt = o.getLong("st"),
+            ownerId = o.optString("o"),
+            participantIds = (o.optJSONArray("p") ?: org.json.JSONArray()).let { a ->
+                (0 until a.length()).map { a.getString(it) }.toSet()
+            },
+            accepted = (o.optJSONObject("a") ?: JSONObject()).let { a ->
+                a.keys().asSequence().associateWith { a.getBoolean(it) }
+            },
+            joinedByMe = o.optBoolean("j", true),
+        )
+    }.getOrNull()
+
+    private fun saveChallenge(challenge: Challenge) {
+        val a = JSONObject()
+        for ((k, v) in challenge.accepted) a.put(k, v)
+        prefs.edit().putString(
+            KEY_CHALLENGE,
+            JSONObject().put("id", challenge.id).put("n", challenge.name)
+                .put("d", challenge.days).put("st", challenge.startAt)
+                .put("o", challenge.ownerId)
+                .put("p", org.json.JSONArray(challenge.participantIds.toList()))
+                .put("a", a).put("j", challenge.joinedByMe)
+                .toString()
+        ).apply()
+    }
+
+    private fun clearChallenge() {
+        prefs.edit().remove(KEY_CHALLENGE).apply()
+    }
+
     // ------------------------------------------------------ policy & apply
 
     var rule: Rule
@@ -333,6 +564,7 @@ class TrustNetwork private constructor(context: Context) {
                 CHANGE_REMOVE_APP -> request.pkg?.let(state::removeBlocked)
                 CHANGE_TIER_DOWN -> request.pkg?.let { state.setTier(it, PactState.Tier.YELLOW) }
                 CHANGE_STRICT_OFF -> state.setStrictMode(false)
+                CHANGE_LIMIT_UP -> request.pkg?.let { state.setDailyLimit(it, request.minutes) }
                 CHANGE_RESET -> state.reset()
             }
         }
@@ -355,6 +587,7 @@ class TrustNetwork private constructor(context: Context) {
 
     /** One full sync pass: drain the outbox, fetch and route the inbox. */
     suspend fun syncNow(): Unit = lock.withLock {
+        runCatching { maybeShareStats() }
         runCatching { outbox.drain(transport) }
         val since = prefs.getLong(KEY_LAST_SYNC, System.currentTimeMillis() - Wire.MESSAGE_TTL_MILLIS)
         val fetched = runCatching { transport.fetch(myInbox, since) }.getOrDefault(emptyList())
@@ -381,6 +614,8 @@ class TrustNetwork private constructor(context: Context) {
             Wire.TYPE_CHAT -> handleChat(payload)
             Wire.TYPE_REQUEST -> handleRequest(payload)
             Wire.TYPE_RESPONSE -> handleResponse(payload)
+            Wire.TYPE_STATS -> handleStats(payload)
+            Wire.TYPE_CHALLENGE -> handleChallenge(payload)
         }
     }
 
@@ -508,6 +743,8 @@ class TrustNetwork private constructor(context: Context) {
         rule = rule,
         unread = loadUnread(),
         pendingOutbox = outbox.size(),
+        peerStats = loadPeerStats(),
+        challenge = loadChallenge(),
     )
 
     private fun isNonceSeen(from: String, nonce: String): Boolean =
@@ -704,6 +941,7 @@ class TrustNetwork private constructor(context: Context) {
         const val CHANGE_REMOVE_APP = "REMOVE_APP"
         const val CHANGE_TIER_DOWN = "TIER_DOWN"
         const val CHANGE_STRICT_OFF = "STRICT_OFF"
+        const val CHANGE_LIMIT_UP = "LIMIT_UP"
         const val CHANGE_RESET = "RESET"
 
         const val EVENT_PAIRED = "paired"
@@ -711,6 +949,7 @@ class TrustNetwork private constructor(context: Context) {
         const val EVENT_REQUEST = "request"
         const val EVENT_APPROVED = "approved"
         const val EVENT_DENIED = "denied"
+        const val EVENT_CHALLENGE = "challenge"
 
         private const val KEY_IDENTITY = "identity"
         private const val KEY_INBOX = "inbox"
@@ -724,6 +963,9 @@ class TrustNetwork private constructor(context: Context) {
         private const val KEY_PAIR_TOKENS = "pair_tokens"
         private const val KEY_UNREAD = "unread"
         private const val KEY_LAST_SYNC = "last_sync"
+        private const val KEY_PEER_STATS = "peer_stats"
+        private const val KEY_CHALLENGE = "challenge"
+        private const val KEY_LAST_STATS_SHARE = "last_stats_share"
 
         @Volatile
         private var instance: TrustNetwork? = null

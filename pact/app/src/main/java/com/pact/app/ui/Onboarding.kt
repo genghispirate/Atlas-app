@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -341,6 +343,7 @@ private fun UserSetupFlow(state: PactState, onDone: () -> Unit) {
     var step by remember { mutableIntStateOf(0) }
     var myName by remember { mutableStateOf(network.myName) }
     var selectedApps by remember { mutableStateOf(setOf<String>()) }
+    var limits by remember { mutableStateOf(mapOf<String, Int>()) }
 
     BackHandler(enabled = step > 0) { step -= 1 }
 
@@ -351,7 +354,7 @@ private fun UserSetupFlow(state: PactState, onDone: () -> Unit) {
                 .padding(top = 56.dp, bottom = 8.dp),
             horizontalArrangement = Arrangement.Center,
         ) {
-            repeat(5) { i ->
+            repeat(6) { i ->
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
@@ -377,18 +380,127 @@ private fun UserSetupFlow(state: PactState, onDone: () -> Unit) {
                 3 -> PickAppsStep(
                     selected = selectedApps,
                     onSelectedChange = { selectedApps = it },
-                    onNext = { step = 4 },
+                    onNext = {
+                        // default every newly picked app to a sensible daily allowance
+                        limits = selectedApps.associateWith {
+                            limits[it] ?: PactState.DEFAULT_LIMIT_MINUTES
+                        }
+                        step = 4
+                    },
                 )
-                4 -> SealStep(
+                4 -> SetLimitsStep(
+                    apps = selectedApps.toList(),
+                    limits = limits,
+                    onLimitChange = { pkg, m -> limits = limits + (pkg to m) },
+                    onNext = { step = 5 },
+                )
+                5 -> SealStep(
                     circleCount = network.snapshot.collectAsState().value.supporters().size,
                     onFinish = {
-                        state.completeSetup(myName, selectedApps)
+                        state.completeSetup(myName, selectedApps, limits)
                         onDone()
                     },
                 )
             }
         }
     }
+}
+
+/** Set each locked app's daily allowance. The heart of the new model: not off forever, just budgeted. */
+@Composable
+private fun SetLimitsStep(
+    apps: List<String>,
+    limits: Map<String, Int>,
+    onLimitChange: (String, Int) -> Unit,
+    onNext: () -> Unit,
+) {
+    val context = LocalContext.current
+    Column(
+        Modifier
+            .fillMaxSize()
+            .imePadding()
+            .navigationBarsPadding()
+            .padding(horizontal = 20.dp),
+    ) {
+        Text(
+            stringResource(R.string.limits_step_title),
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            stringResource(R.string.limits_step_body),
+            style = MaterialTheme.typography.bodyMedium,
+            color = TextSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(16.dp))
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.weight(1f),
+        ) {
+            items(apps, key = { it }) { pkg ->
+                val shape = RoundedCornerShape(20.dp)
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(shape)
+                        .background(Surface1)
+                        .border(1.dp, com.pact.app.ui.theme.CardBorder, shape)
+                        .padding(14.dp),
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        AppIconImage(remember(pkg) { com.pact.app.core.Apps.icon(context, pkg) }, sizeDp = 40)
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            com.pact.app.core.Apps.label(context, pkg),
+                            style = MaterialTheme.typography.titleSmall,
+                            modifier = Modifier.weight(1f),
+                        )
+                        val m = limits[pkg] ?: PactState.DEFAULT_LIMIT_MINUTES
+                        Text(
+                            if (m == 0) stringResource(R.string.limit_off)
+                            else if (m % 60 == 0) stringResource(R.string.limit_hours, m / 60)
+                            else if (m > 60) stringResource(R.string.limit_h_m, m / 60, m % 60)
+                            else stringResource(R.string.limit_minutes, m),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = Periwinkle,
+                        )
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    LimitSlider(
+                        value = limits[pkg] ?: PactState.DEFAULT_LIMIT_MINUTES,
+                        onChange = { onLimitChange(pkg, it) },
+                    )
+                }
+            }
+        }
+        PactButton(
+            stringResource(R.string.common_continue),
+            onClick = onNext,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+        )
+    }
+}
+
+private val LIMIT_STEPS = listOf(0, 5, 10, 15, 20, 30, 45, 60, 90, 120)
+
+@Composable
+private fun LimitSlider(value: Int, onChange: (Int) -> Unit) {
+    val index = LIMIT_STEPS.indexOf(value).let { if (it < 0) 5 else it }
+    androidx.compose.material3.Slider(
+        value = index.toFloat(),
+        onValueChange = { onChange(LIMIT_STEPS[it.toInt().coerceIn(0, LIMIT_STEPS.lastIndex)]) },
+        valueRange = 0f..(LIMIT_STEPS.lastIndex.toFloat()),
+        steps = LIMIT_STEPS.size - 2,
+        colors = androidx.compose.material3.SliderDefaults.colors(
+            thumbColor = Periwinkle,
+            activeTrackColor = Violet,
+            inactiveTrackColor = Surface2,
+        ),
+    )
 }
 
 @Composable

@@ -151,10 +151,13 @@ fun BlockWall(
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(8.dp))
+            val overLimit = pactSnap.hasLimit(pkg) && pactSnap.remainingMillis(pkg) <= 0L &&
+                !pactSnap.focusActive(now)
             Text(
-                encouragement,
+                if (overLimit) stringResource(R.string.wall_limit_reached, pactSnap.limitMinutes(pkg))
+                else encouragement,
                 style = MaterialTheme.typography.bodyLarge,
-                color = TextSecondary,
+                color = if (overLimit) Amber else TextSecondary,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(28.dp))
